@@ -1,6 +1,14 @@
-# Track docs/ only for now.
+# Track docs/ only for now, plus tracker metadata.
 *
 !docs/
 !docs/**
 !.gitignore
 !AGENTS.md
+!.beads/
+!.beads/**
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads/proxieddb/

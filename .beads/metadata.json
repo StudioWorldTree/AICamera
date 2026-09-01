@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "aicam",
+  "project_id": "36abbb32-d414-4ab3-89ca-de1dc1f48769"
+}
