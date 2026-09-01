@@ -1,0 +1,6 @@
+# Track docs/ only for now.
+*
+!docs/
+!docs/**
+!.gitignore
+!AGENTS.md
