@@ -11,7 +11,9 @@ app in web3d-space is the spatial viewer, not the camera body.
 the body; RTX PRO 6000 is the quality box; NAS is source of truth;
 mode switch drops AI, never record; live overlay is depth-test not a
 DiT; rooms are captured not generated; H3 is license-gated in the US;
-snap is FLUX.2 klein 4B; AD is Qwen3.5-9B (27B on sticks). Bring-up
-starts on T4000; production target is T5000.
+snap is FLUX.2 klein 4B; AD is Qwen3.5-9B (27B on sticks). The AGX Thor Developer Kit is a T5000 module — there is no T4000
+kit. Lab brick is the AGX kit; production thermal/encode ceiling is
+the T4000 SOM (1× NVENC, 64 GB, 70 W) unless satellite count forces
+T5000.
 
 Issue tracking: `bd prime` / `bd ready`. Prefix `aicam`.
