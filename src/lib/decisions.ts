@@ -38,6 +38,22 @@ export const locked: Decision[] = [
 		doc: 'power'
 	},
 	{
+		id: 'fanless',
+		status: 'locked',
+		call: '70 W fanless is not honest',
+		detail:
+			'A cine-sized metal shell dumps ~38–50 W still air. Body-as-radiator is ~40 W. Record-only (NVENC + CSI, AI dropped) is 15–30 W and can be silent. 70 W AI wants heatpipes to a radiator and at most one slow fan.',
+		doc: 'references/thermal'
+	},
+	{
+		id: 'ttp-customer',
+		status: 'locked',
+		call: 'The cooler sits on the TTP. We design it.',
+		detail:
+			'T4000 TTP max 75 °C, SoC 90 °C recommended. NVIDIA sells neither a cine body nor a fanless 70 W promise. Do not open the TTP. ATS “passive” means chassis airflow, not still air.',
+		doc: 'references/thermal'
+	},
+	{
 		id: 'overlay',
 		status: 'locked',
 		call: 'Live overlay is a depth-test, not a DiT',
@@ -155,9 +171,9 @@ export const open: Decision[] = [
 	{
 		id: 'guides',
 		status: 'open',
-		call: 'Measure before sun-load numbers',
+		call: 'Pick a heat path, then measure',
 		detail:
-			'TDG-12271-001 v1.3 is in tree. Still need DG-12084-001 (design) and the AGX kit PDF. 70 W fanless in a cine envelope is not honest; hold sealed-body CAD until T4000 + Rogue-T5 + ATS is measured.',
+			'TDG-12271-001 v1.3 is in tree. Ranked: (1) body as radiator ~40 W, (2) heatpipes to a V-mount radiator + one slow fan for 70 W AI, (3) remote radiator. Hold metal CAD until T4000 + Rogue-T5 + ATS is on a bench with a thermocouple on the TTP. Still need DG-12084-001 and the AGX kit PDF.',
 		doc: 'references/thermal'
 	},
 	{
@@ -174,7 +190,7 @@ export const lab: Decision[] = [
 		id: 'lab-brick',
 		status: 'lab',
 		call: 'First enclosure wraps the AGX kit',
-		detail: '243.19 × 112.40 × 56.88 mm. Two-part resin fit-check, not a heat sink. Production SOM lid is a second print.',
+		detail: '243.19 × 112.40 × 56.88 mm. Two-part resin fit-check, not a heat sink. Leave the kit fan. Production body is metal.',
 		doc: 'enclosure'
 	},
 	{

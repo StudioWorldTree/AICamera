@@ -74,10 +74,19 @@ export const chapters: Chapter[] = [
 	{
 		slug: 'power',
 		file: 'docs/POWER.md',
-		title: 'Power & thermal',
+		title: 'Power',
 		kicker: 'Watts',
 		summary:
-			'T4000 default 70 W, throttle at 90 W, TTP max 75 °C. Thermal guide is in tree. If power sags: drop AI, never record. Production body is metal, not resin.',
+			'T4000 default 70 W, throttle at 90 W. If power sags: drop AI, never record. Two PoE+ sats ≈ 60 W at the PSE. Do not power Thor from the switch.',
+		group: 'hardware'
+	},
+	{
+		slug: 'references/thermal',
+		file: 'docs/references/THERMAL.md',
+		title: 'Thermal',
+		kicker: 'Heat',
+		summary:
+			'TDG-12271-001 v1.3. TTP max 75 °C. 70 W fanless in a cine envelope is not honest. Body-as-radiator ~40 W still air; 70 W AI wants heatpipes to a real radiator and at most one slow fan. Measure TTP before metal CAD.',
 		group: 'hardware'
 	},
 	{
@@ -86,7 +95,7 @@ export const chapters: Chapter[] = [
 		title: 'Enclosure',
 		kicker: 'Shell',
 		summary:
-			'First article wraps the AGX kit, two-part resin for an Anycubic bed, 32 mm camera boss, cable exits. Production SOM lid comes after the thermal guide.',
+			'First article wraps the AGX kit, two-part resin for an Anycubic bed. Resin is a fit-check, not a heat sink. Production body is metal — the radiator.',
 		group: 'hardware'
 	},
 	{
@@ -114,15 +123,6 @@ export const chapters: Chapter[] = [
 		kicker: 'Datasheet',
 		summary:
 			'Facts from NVIDIA DS-11945-001 v1.4: 1536 CUDA, 64 GB, 1× NVENC, 3× 25G, no CAN, no 3.3 V SV. The SOM, not the kit.',
-		group: 'reference'
-	},
-	{
-		slug: 'references/thermal',
-		file: 'docs/references/THERMAL.md',
-		title: 'T4000 thermal',
-		kicker: 'Datasheet',
-		summary:
-			'TDG-12271-001 v1.3. T4000 TTP max 75 °C. 70 W still-air handheld is not honest. Customer designs the cooler on the TTP; NVIDIA sells neither a cine body nor a fanless promise.',
 		group: 'reference'
 	},
 	{

@@ -33,7 +33,7 @@
 
 	<label class="find">
 		<span>Filter</span>
-		<input type="search" bind:value={q} placeholder="carrier, HEVC, Cooke, T4000…" />
+		<input type="search" bind:value={q} placeholder="carrier, HEVC, Cooke, TTP, T4000…" />
 	</label>
 
 	<section>
@@ -46,6 +46,8 @@
 		<ChapterList items={match(reference)} />
 		<p class="pdf">
 			<a href="{base}/media/thor-modules-ds.pdf">Jetson Thor modules datasheet (PDF)</a>
+			·
+			<a href="{base}/media/thor-thermal-dg.pdf">Thermal design guide TDG-12271-001 v1.3 (PDF)</a>
 		</p>
 	</section>
 

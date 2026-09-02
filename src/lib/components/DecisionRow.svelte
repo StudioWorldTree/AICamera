@@ -3,6 +3,7 @@
 	import type { Decision } from '$lib/decisions';
 
 	let { item }: { item: Decision } = $props();
+	const label = $derived(item.doc?.split('/').pop());
 </script>
 
 <article class="row">
@@ -14,7 +15,7 @@
 		<p>{item.detail}</p>
 	</div>
 	{#if item.doc}
-		<a class="more" href="{base}/docs/{item.doc}/">Read {item.doc}</a>
+		<a class="more" href="{base}/docs/{item.doc}/">Read {label}</a>
 	{/if}
 </article>
 

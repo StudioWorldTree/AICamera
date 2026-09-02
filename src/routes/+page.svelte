@@ -7,7 +7,7 @@
 	import { locked } from '$lib/decisions';
 
 	const chapters = hardwareDocs();
-	const headline = locked.slice(0, 8);
+	const headline = locked.slice(0, 10);
 </script>
 
 <svelte:head>
@@ -59,9 +59,17 @@
 				<dt>Fabric</dt>
 				<dd>Body on CSI/GMSL. Sats on PoE H.265. USB-C is not the trunk.</dd>
 			</div>
+			<div>
+				<dt>Heat</dt>
+				<dd>
+					70 W fanless is not honest. Body-as-radiator ~40 W. Metal production shell; resin is a
+					fit-check.
+				</dd>
+			</div>
 		</dl>
 		<p class="links">
 			<a href="{base}/kit/">Lab vs production</a>
+			<a href="{base}/docs/references/thermal/">Thermal</a>
 			<a href="{base}/docs/enclosure/">Enclosure CAD</a>
 		</p>
 	</div>

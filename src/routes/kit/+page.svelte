@@ -51,6 +51,32 @@
 		</section>
 	</div>
 
+	<section class="heat">
+		<h2>Heat</h2>
+		<p>
+			TDG-12271-001 v1.3 is in the tree. The cooler is ours: it bonds to the TTP (62.5 × 81.4 mm).
+			T4000 TTP max <strong>75 °C</strong>. At 70 W balanced, SoC sits 16.8 °C above TTP — so TTP
+			must stay ≤ 73.2 °C to hold SoC at 90 °C.
+		</p>
+		<ul>
+			<li>25 °C ambient, 70 W: cooler needs θpa ≤ <strong>0.69 °C/W</strong></li>
+			<li>45 °C (NVIDIA air-cooled ceiling): θpa ≤ <strong>0.40 °C/W</strong></li>
+			<li>
+				ATS “passive” 100 W is <strong>500 LFM chassis air</strong>, not still air. Natural
+				convection on that brick is ~140 °C rise at 70 W.
+			</li>
+			<li>Cine shell still air: ~38–50 W. Body-as-radiator is honest at ~40 W.</li>
+			<li>70 W AI: heatpipes to a rear radiator + one large slow fan. Not a flock of blowers.</li>
+			<li>Record-only (drop AI): 15–30 W, fanless-capable.</li>
+		</ul>
+		<p>
+			Thor-in-body stays the product shape. Metal CAD waits on a T4000 + Rogue-T5 + ATS measurement.
+			<a href="{base}/docs/references/thermal/">Thermal extract</a>
+			·
+			<a href="{base}/media/thor-thermal-dg.pdf">TDG PDF</a>
+		</p>
+	</section>
+
 	<section class="plant">
 		<h2>Plant (bring-up)</h2>
 		<pre>
@@ -124,6 +150,7 @@
 		color: var(--tungsten);
 	}
 
+	.heat,
 	.plant {
 		margin-top: 1.25rem;
 	}
