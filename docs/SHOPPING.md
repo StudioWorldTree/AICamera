@@ -42,7 +42,7 @@ ATS Thor heatsinks at Digi-Key: active **~$106**, passive **~$47**.
 | I/O | 5GbE, QSFP28 (4× **independent** 25G, not 100G), HDMI **out**, DP, USB-C, HSB, USB cameras |
 | Notes | Fastest software bring-up. **No HDMI/SDI in.** Wrong envelope vs production T4000. Fine as the lab brick we already designed the resin shell around. |
 
-### Connect Tech Rogue-T5 (`AGX302`) — T4000 *and* T5000
+### Connect Tech Rogue-T5 (`AGX302`) — T4000 *and* T5000  **(preferred carrier)**
 
 | | |
 |---|---|
@@ -141,16 +141,20 @@ Rewire value: tap /i UART and HDMI/SDI. Leave the sensor in the BMD box unless y
 
 **~$5.8k.** Matches the resin shell. Not production T4000.
 
-### Cart T — T4000 prototype, no custom PCB **(recommended if you insist on T4000 now)**
+### Cart T — T4000 + Rogue-T5 **(preferred production stack)**
 
 1. T4000 SOM — **$2,749** Arrow `900-13834-0000-000`  
-2. FORECR DSBOARD-THRMAX — **€999** (or CTI Rogue-T5 AGX302 quote if you want SDI/HDMI add-ons)  
-3. ATS Thor heatsink — **$47–106** Digi-Key  
-4. **PYXIS 6K PL** — **$3,675** B&H  
+2. **CTI Rogue-T5 AGX302** — quote `sales@connecttech.com` (carrier-only). WDL T5000 assemblies $8.2k+ if you want them to solder a T5000  
+3. ATS Thor HS — passive `ATS-NVP-3739` **~$56** (needs system air) or active `ATS-NVA-3740` **~$125** Digi-Key. Prefer measuring the passive on the bench; production wants heatpipes to a radiator, not this brick as the product lid  
+4. **PYXIS 6K PL** — **$3,675** B&H (hero /i + BRAW; not the CSI body)  
+5. 1–2× RV1126/B IMX415 **PoE turrets** — **$50–150** each (encode mule)  
+6. 1× RV1126B EVB/core — **$160–244** (sat software; UART for ToF + /i)  
 
-**~$7.5k** plus PSU/NVMe/cables. Live AI is HDMI/USB until you add a capture card. Master is BRAW + /i on the PYXIS. Thor remuxes a proxy and writes the JSONL sidecar from /i (barrel port or BMD Ethernet/API).
+Carrier + SOM + HS is the T4000 prototype. Live AI is HDMI/USB until a CSI/GMSL add-on. Master is BRAW + /i on the PYXIS until the CSI body exists. Thor remuxes sat HEVC.
 
-If you need SDI→CSI on day one, swap FORECR for **Rogue-T5 + JCB003 ($1,538)** and accept **1080p** into the ISP.
+FORECR THRMAX (€999, 140×125, QSFP) is the fallback if CTI quotes slowly. Bigger board.
+
+If you need SDI→CSI on day one, add **JCB003 ($1,538)** and accept **1080p** into the ISP.
 
 ### Cart C — cine body that is actually /i, Thor is the brain
 

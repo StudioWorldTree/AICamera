@@ -1,3 +1,11 @@
+## Project Configuration
+
+- **Language**: TypeScript
+- **Package Manager**: npm
+- **Add-ons**: none
+
+---
+
 # AICamera (AllSystemsGo)
 
 Hardware home for the All Systems Go AI camera. Work on `main`. Repo currently tracks `docs/`, `AGENTS.md`, and beads.
@@ -19,8 +27,15 @@ datasheet: `docs/references/` (DS-11945-001 v1.4 from Arrow).
 
 **Record path is HEVC** (Thor NVENC and/or camera-side H.265). Do not
 haul RAW over Ethernet. CSI RAW is the body sensor hop into NVENC.
+Sats: Rockchip **RV1126B** (or RV1126). Preferred carrier: **Rogue-T5**.
+Thor-in-body is the product shape; 70 W fanless is not honest — radiators
+over lots of fans; measure TTP before metal CAD
+(`docs/references/THERMAL.md`).
 
 **Lens metadata is Cooke /i class** from every camera (body and sats),
 written as a JSONL sidecar 1:1 with picture. See `docs/LENS.md`.
 
 Issue tracking: `bd prime` / `bd ready`. Prefix `aicam`.
+
+Public notebook (SvelteKit SSG + mdsvex, GitHub Pages):
+https://studioworldtree.github.io/AICamera/

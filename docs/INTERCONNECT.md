@@ -28,6 +28,8 @@ See [LENS.md](LENS.md).
 | Encode split | Body = Thor NVENC. Sats = camera H.265 (T4000 HQ is 2× 4Kp30) |
 | Time | PTP on sats; GMSL/HW on body. SMPTE genlock unproven |
 | GMSL2 count | Honest **4× 4K30 RAW** (8× 2-lane/1080p) on one JCB022. 20 is HSB. Sats scale on PoE H.265, not more FAKRA. |
+| Sat SoC | **RV1126B** (RV1126 ok). Turret = encode mule; module = product (UART for /i + 1D ToF). |
+| Lidar | 1D ToF on every sat sidecar. One Ethernet 3D lidar on the rig, not per camera. |
 | Lens | Cooke /i class from **every** camera, sidecar JSONL |
 
 ## Why HEVC

@@ -27,12 +27,17 @@ Module facts: [references/T4000.md](references/T4000.md).
 
 Stay on T4000 unless satellite count forces T5000 encode.
 
+**Preferred carrier (2026-09-02): Connect Tech Rogue-T5 (`AGX302`)**,
+92 × 108 mm, T4000 and T5000, camera I/O via JCB add-ons. See
+[SHOPPING.md](SHOPPING.md). Thermal: TTP cooler is customer-side;
+[references/THERMAL.md](references/THERMAL.md).
+
 ## Carrier I/O the body needs
 
 - CSI-2 (or GMSL deserializer) for the **body** camera
 - MGBE copper/fiber to a **PoE switch** (switch is not on the SOM)
 - NVMe
-- TTP / heat pipe per TDG-12271-001 (not in tree yet)
+- TTP cooler per [references/THERMAL.md](references/THERMAL.md) (TDG-12271-001 v1.3 in tree)
 - 7–20 V input that does not backfeed from PoE
 
 Partner boards with 8× GMSL2 (e.g. Firefly EC-ThorT5000) are T5000-class
@@ -41,5 +46,5 @@ and GMSL-first. Only buy one if we abandon T4000 ceiling or need GMSL sats.
 ## Still need
 
 - DG-12084-001 Design Guide
-- TDG-12271-001 Thermal Design Guide
 - AGX kit datasheet PDF
+- P3834 STEP model (metal body fit)

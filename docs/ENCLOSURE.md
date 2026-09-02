@@ -12,11 +12,15 @@ Wrap the **AGX Thor Developer Kit**, not the SOM:
 - Boss or clamp for the **body camera** on the front
 - Cable exits: 5GbE, QSFP, USB-C, power, body CSI/GMSL if present
 
-Production SOM lid (87 × 100 × 15.29 mm, 350 g) is a second print after
-TDG-12271-001. Product shape is **Thor inside the camera body** (T4000
-+ compact carrier + CSI sensor + active HS), not the AGX kit and not a
-PYXIS bolted onto a brick. Sats stay off-body PoE. See [CAMERAS.md](CAMERAS.md)
-(size/weight + body-integration).
+Production SOM lid is a **later metal** article, not resin. Product
+shape is still **Thor inside the camera body** (T4000 + **Rogue-T5** +
+CSI sensor), not the AGX kit and not a PYXIS bolted onto a brick.
+Thermal architecture is a **hold** until we measure T4000 + Rogue-T5 +
+ATS on the TTP (TDG-12271-001 v1.3): prefer heatpipes / vapor chamber /
+a real radiator over lots of fans. 70 W fanless in a cine envelope is
+not honest; record-only / drop-AI is. See
+[references/THERMAL.md](references/THERMAL.md) and [CAMERAS.md](CAMERAS.md).
+Sats stay off-body PoE.
 
 ## CAD (first article, 2026-09-01)
 
@@ -38,4 +42,4 @@ is tight on a 120 mm vat — rotate or knock 0.5 mm off the walls if the
 slicer complains. Resin is a fit-check, not a heat sink. Leave the TTP
 path open.
 
-Production SOM lid (87 × 100 × 15.29 mm) is a later print.
+Production SOM lid is metal, after a TTP measurement, not this resin print.

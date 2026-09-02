@@ -1,0 +1,272 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@theme {
+	--font-ui: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+	--font-serif: 'Source Serif 4', ui-serif, Georgia, serif;
+	--font-mono: 'Red Hat Mono', ui-monospace, monospace;
+}
+
+:root {
+	color-scheme: dark;
+	--bg: oklch(0.145 0.008 250);
+	--bg-2: oklch(0.185 0.01 250);
+	--bg-3: oklch(0.22 0.012 250);
+	--ink: oklch(0.93 0.012 90);
+	--ink-2: oklch(0.76 0.014 90);
+	--ink-3: oklch(0.62 0.012 90);
+	--line: oklch(0.32 0.012 250);
+	--tungsten: oklch(0.76 0.14 72);
+	--tungsten-dim: oklch(0.52 0.1 72);
+	--tally: oklch(0.62 0.2 28);
+	--ok: oklch(0.74 0.12 145);
+	--warn: oklch(0.8 0.12 85);
+	--focus: oklch(0.76 0.14 72);
+	--shadow: 0 0 0 1px oklch(0.32 0.012 250);
+	--max: 72rem;
+	--prose: 42rem;
+}
+
+[data-theme='light'] {
+	color-scheme: light;
+	--bg: oklch(0.97 0.004 250);
+	--bg-2: oklch(0.94 0.006 250);
+	--bg-3: oklch(0.9 0.008 250);
+	--ink: oklch(0.2 0.02 250);
+	--ink-2: oklch(0.38 0.016 250);
+	--ink-3: oklch(0.5 0.014 250);
+	--line: oklch(0.84 0.01 250);
+	--tungsten: oklch(0.52 0.14 62);
+	--tungsten-dim: oklch(0.42 0.1 62);
+	--tally: oklch(0.52 0.18 28);
+	--ok: oklch(0.48 0.12 145);
+	--warn: oklch(0.55 0.12 75);
+	--focus: oklch(0.52 0.14 62);
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme='dark']) {
+		color-scheme: light;
+		--bg: oklch(0.97 0.004 250);
+		--bg-2: oklch(0.94 0.006 250);
+		--bg-3: oklch(0.9 0.008 250);
+		--ink: oklch(0.2 0.02 250);
+		--ink-2: oklch(0.38 0.016 250);
+		--ink-3: oklch(0.5 0.014 250);
+		--line: oklch(0.84 0.01 250);
+		--tungsten: oklch(0.52 0.14 62);
+		--tungsten-dim: oklch(0.42 0.1 62);
+		--tally: oklch(0.52 0.18 28);
+		--ok: oklch(0.48 0.12 145);
+		--warn: oklch(0.55 0.12 75);
+		--focus: oklch(0.52 0.14 62);
+	}
+}
+
+html,
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font-family: var(--font-ui);
+	font-size: 16px;
+	line-height: 1.55;
+	min-height: 100%;
+}
+
+main {
+	background-image:
+		linear-gradient(to right, color-mix(in oklch, var(--line) 45%, transparent) 1px, transparent 1px),
+		linear-gradient(to bottom, color-mix(in oklch, var(--line) 28%, transparent) 1px, transparent 1px);
+	background-size: 48px 48px;
+	background-position: -1px -1px;
+}
+
+:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+	text-wrap: balance;
+}
+
+p,
+li,
+td,
+th {
+	text-wrap: pretty;
+}
+
+a {
+	color: inherit;
+}
+
+.skip {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.skip:focus,
+.skip:focus-visible {
+	position: fixed;
+	top: 0.75rem;
+	left: 0.75rem;
+	z-index: 80;
+	width: auto;
+	height: auto;
+	clip: auto;
+	clip-path: none;
+	overflow: visible;
+	white-space: normal;
+	background: var(--tungsten);
+	color: oklch(0.16 0.02 70);
+	padding: 0.4rem 0.7rem;
+	font-weight: 600;
+}
+
+.shell {
+	max-width: var(--max);
+	margin: 0 auto;
+	padding: 0 1.25rem;
+}
+
+@media (min-width: 768px) {
+	.shell {
+		padding: 0 2rem;
+	}
+}
+
+.prose-doc {
+	--tw-prose-body: var(--ink-2);
+	--tw-prose-headings: var(--ink);
+	--tw-prose-links: var(--tungsten);
+	--tw-prose-bold: var(--ink);
+	--tw-prose-counters: var(--ink-3);
+	--tw-prose-bullets: var(--tungsten-dim);
+	--tw-prose-hr: var(--line);
+	--tw-prose-quotes: var(--ink);
+	--tw-prose-quote-borders: var(--tungsten);
+	--tw-prose-captions: var(--ink-3);
+	--tw-prose-code: var(--ink);
+	--tw-prose-pre-code: var(--ink);
+	--tw-prose-pre-bg: var(--bg-3);
+	--tw-prose-th-borders: var(--line);
+	--tw-prose-td-borders: var(--line);
+	font-family: var(--font-serif);
+	max-width: none;
+	color: var(--ink-2);
+	font-size: 1.05rem;
+	line-height: 1.7;
+}
+
+.prose-doc h1,
+.prose-doc h2,
+.prose-doc h3,
+.prose-doc h4 {
+	font-family: var(--font-ui);
+	color: var(--ink);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.prose-doc a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+	color: var(--tungsten);
+}
+
+.prose-doc a:hover {
+	color: var(--ink);
+}
+
+.prose-doc code,
+.prose-doc pre {
+	font-family: var(--font-mono);
+	font-size: 0.84em;
+}
+
+.prose-doc pre {
+	border: 1px solid var(--line);
+	border-radius: 0;
+	background: var(--bg-3);
+}
+
+.prose-doc table {
+	font-family: var(--font-ui);
+	font-size: 0.88rem;
+	line-height: 1.45;
+	display: block;
+	overflow-x: auto;
+}
+
+.prose-doc thead {
+	background: var(--bg-3);
+}
+
+.prose-doc th {
+	color: var(--ink);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.prose-doc td,
+.prose-doc th {
+	border-color: var(--line);
+	padding: 0.45rem 0.65rem;
+}
+
+.prose-doc img {
+	border: 1px solid var(--line);
+	background: var(--bg-3);
+}
+
+.prose-doc blockquote {
+	font-style: normal;
+	border-left-width: 2px;
+	color: var(--ink);
+}
+
+.pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	padding: 0.15rem 0.45rem;
+	border: 1px solid var(--line);
+	background: var(--bg-3);
+}
+
+.pill-locked {
+	color: var(--ok);
+	border-color: color-mix(in oklch, var(--ok) 45%, var(--line));
+}
+
+.pill-open {
+	color: var(--warn);
+	border-color: color-mix(in oklch, var(--warn) 45%, var(--line));
+}
+
+.pill-lab {
+	color: var(--tungsten);
+	border-color: color-mix(in oklch, var(--tungsten) 45%, var(--line));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation: none !important;
+		transition: none !important;
+	}
+}

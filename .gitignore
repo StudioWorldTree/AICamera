@@ -1,15 +1,29 @@
-# Track docs/, openspec, tracker metadata.
-*
-!docs/
-!docs/**
-!.gitignore
-!AGENTS.md
-!.beads/
-!.beads/**
-!openspec/
-!openspec/**
+node_modules
 
-# Beads / Dolt files (added by bd init)
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+static/media
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Beads / Dolt
 .dolt/
 *.db
 .beads-credential-key
@@ -17,3 +31,12 @@
 
 # Blender autosave
 *.blend1
+
+# Editor
+.idea/
+.vscode/
+*.swp
+
+# Local preview captures
+.playwright-mcp/
+aicam-*.png

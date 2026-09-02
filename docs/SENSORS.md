@@ -20,6 +20,10 @@ Count: **1 body + 2 satellites, 4K30**. 4-sat and 6-sat stay in the budget.
   not enough for a hero sat. Zoom is nice, not required for v1.
 - Time: PTP if the camera has it
 - Not GigE Vision RAW unless we later add one hero sat
+- **Range:** 1D ToF (TFmini-S class, UART) on every sat → JSONL sidecar.
+  One 3D lidar (Livox Mid-360S class, Ethernet) on the rig, not per
+  eyeball. Needs the RV1126B module, not a sealed turret. See
+  [CAMERAS.md](CAMERAS.md).
 
 ## Classes to shop (no SKU until datasheets)
 
@@ -27,7 +31,9 @@ Count: **1 body + 2 satellites, 4K30**. 4-sat and 6-sat stay in the budget.
 |---|---|---|
 | Body | CSI/GMSL 4K + PL/LPL with /i (or EF electronic) | Native NVENC + SLAM + lens sidecar |
 | Sat | Cine /i (or LDS/XD) glass on a PoE H.265 encoder, barrel /i → Ethernet | HEVC + /i + 100 m cable |
-| Sat (stub) | Industrial 4K PoE box, P-iris | Bring-up picture only; no hero metadata |
+| Sat (stub) | Industrial 4K PoE turret, P-iris | Encode mule this week; crack the shell, not the product |
+| Sat (module) | RV1126B core + our case + UART ToF + /i | What we ship |
+| Rig lidar | One Ethernet 3D lidar on the switch | Point cloud; not per camera |
 
 Do not buy six cinema bodies for bring-up.
 

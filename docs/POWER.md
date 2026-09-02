@@ -14,7 +14,11 @@ If power sags: **drop AI, never record**.
 | MV | 5 V, 6 A max | kit brick |
 | SV 3.3 V | none | T5000 only |
 
-Need TDG-12271-001 before promising sun-load numbers.
+TDG-12271-001 v1.3 is in tree: [references/THERMAL.md](references/THERMAL.md).
+T4000 TTP **75 °C**, SoC 90 °C recommended. 70 W still-air handheld
+is not honest; body-as-radiator ~40 W; 70 W AI wants heatpipes to a
+real radiator and at most one slow fan. Prefer radiators to lots of
+fans. Measure before sun-load promises.
 
 ## PoE satellites
 
@@ -33,4 +37,5 @@ PoE switch is its own PSU. Do not power Thor from the switch.
 
 Resin is structural, not a heat sink. Vent the TTP / kit fan. First
 print is a fit-check of the **AGX kit** (243 × 112 × 57 mm), not the
-15 mm SOM sandwich.
+15 mm SOM sandwich. Production body is **metal** (the radiator).
+Hold sealed-body CAD until T4000 + Rogue-T5 + ATS is measured.

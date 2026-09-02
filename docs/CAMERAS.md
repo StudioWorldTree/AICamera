@@ -230,41 +230,87 @@ camera). Worth a later look; not cheap, not a $50 turret.
 
 ---
 
+## What a “turret” is
+
+CCTV housing slang, not a PTZ and not a tank:
+
+| Shape | What |
+|---|---|
+| **Turret / eyeball** | Ball-and-socket. Lens sits in a sphere you twist by hand after the base is screwed to the wall. No bubble, so IR doesn’t bounce. The cheap 4K PoE cameras. |
+| Dome | Same guts under a plastic bubble. Harder to aim, vandal-resistant. |
+| Bullet | Long tube on a bracket. Deterrent shape, longer lenses. |
+
+When we say “buy a turret,” we mean a complete **PoE + IMX415 + RV1126 + H.265 + ONVIF** camera in that eyeball shell, ~$50–150. Ethernet and hardware 4K encode are already in there. We do not want the shell as the product.
+
+---
+
 ## Cheap hardware for Ethernet + hardware 4K H.265
 
-**Do not use a Raspberry Pi as the sat encoder.**
+Sat SoC is **Rockchip RV1126B** (newer) or **RV1126** (same job, cheaper stock). They are close enough that a turret on either silicon is a valid encode mule.
 
-| Board | HW encode | HW decode | Ethernet | Verdict |
-|---|---|---|---|---|
-| **Pi CM4** (BCM2711, 55×40 mm) | **H.264 1080p30 only** | HEVC 4Kp60 | GbE | Cannot 4K-encode. Wrong chip. |
-| **Pi CM5 / Pi 5** (BCM2712) | **none** (RPi engineer, 2025: no HW encoder; ARM MJPEG maybe) | HEVC 4Kp60 | GbE | Worse than CM4 for this job. |
-| **Rockchip RV1126** | **H.265/H.264 4K30** (+ 1080p30 second stream) | 4K30 | 100/1000 | **This is the sat SoC.** 4× A7, 2 TOPS NPU, ~5 W. |
-| **Rockchip RV1126B** | **H.265/H.264 4K30** (brochure 4K45 / 12 MP30, bitrate to 200 Mbps) | 4K30 | **GbE** | Newer: 4× A53, 3 TOPS, USB3. Buy this if the module exists in stock. |
-| HiSilicon Hi3519A | 4K60 H.265, better ISP | 4K | GbE | Classic IPC. Export-painful in the US. Skip unless a turret already has it. |
-| Ambarella CV2/CV5 | cinema-grade | — | — | Wrong price. |
-| RK3588 / Orange Pi 5 | 4K encode *and* a desktop | — | GbE | Overkill; power and size of a mini PC. |
-
-### What to actually buy (qty-1, 2026)
-
-| Item | Street | What you get |
+| SoC | Encode | Notes |
 |---|---|---|
-| **RV1126 + IMX415** turret, PoE, ONVIF | **~$50–150** (Alibaba/Made-in-China Smartgiant etc.; complete camera) | 8 MP / 4K30 H.265, 802.3af, RTSP. Crack the shell, keep the board. This is the sat prototype. |
-| RV1126 IPC **dev board** + IMX415 | **$160–244** (ivcan.com Thinkcore / EVB) | SDK, serial, Ethernet. For bringing up our sidecar, not for hanging on a stand. |
-| RV1126 **core board** 38×38 mm | **~$90–135** 1-off | Sensor + PoE carrier separate. Path to a C-mount sat we own. |
-| RV1126B-P SoM (Boardcon MINI1126B-P) | quote | 2–4 GB LPDDR4, GbE PHY on module. Newer silicon. |
-| Firefly CQ38W-1126B | IP67, **no PoE** (12 V) | Rugged shell; 3/5 MP not 4K. Skip for picture sats. |
+| **RV1126B** | H.265/H.264 4K30 (brochure 4K45 / 12 MP30, to 200 Mbps) | **Prefer.** 4× A53, 3 TOPS, **GbE**, USB3. Fanconn / Boardcon MINI1126B-P, EASY-EAI, G126BP-IPC modules. |
+| **RV1126** | H.265/H.264 4K30 + 1080p30 second stream | 4× A7, 2 TOPS, ~5 W. Most $50 turrets. Fine if that’s what’s in the shell. |
+| HiSilicon Hi3519A | 4K60, better ISP | Export-painful in the US. Skip unless a camera we already opened has it. |
+| Ambarella CV2/CV5 | cinema-grade | Wrong price. |
+| RK3588 | 4K encode *and* a desktop | Overkill; mini-PC size and watts. |
 
-A $60 PoE turret already is “ethernet + hardware-level 4K encode.”
-You do not need to invent a CM4 carrier. If we later want C-mount +
-/i on a sat: RV1126 core board + Alvium-class sensor is a custom
-PCB, not a Pi hat.
+### Crack a turret vs buy a module (we make our own case)
 
-**Pi CM4 is a fine GPIO/I2C sidecar** (Cooke /i UART → Ethernet
-bridge) bolted onto a real encoder. It is not the encoder.
+| | **Crack a PoE turret** | **RV1126B IPC module / EVB** |
+|---|---|---|
+| First picture to Thor | **Hours.** RTSP/ONVIF, PoE, 4K30 H.265 already work. | Days. Flash SDK, wire sensor, bring up rkipc. |
+| UART / GPIO | Usually **none** you can reach. Closed firmware, may phone home. | **Yes.** UART for /i and 1D ToF, GPIO, SDK. |
+| Lens | Soldered M12. | MIPI CSI — C-mount / our glass later. |
+| Lidar sidecar | You will fight the vendor image. | This is why we own the board. |
+| Case | Their eyeball is junk for a set. We throw it away. | We were printing a case anyway. |
+| Cost | **$50–150** complete | EVB **$160–244**; 38 mm core **$90–135** |
+
+**Both.** One or two turrets this week as a known-good encode+PoE reference
+(does Thor remux? does NVDEC decode for AD?). **The sat we ship is the
+module in our case**, because Cooke /i and lidar need pins a sealed
+turret will not give us. Cracking is not easier than an EVB once we
+are fabricating the housing — it is only easier for the *first RTSP
+packet*. Do not design the product around the board you pulled out
+of a Hikvision-shaped shell.
+
+| Buy | Street | Role |
+|---|---|---|
+| RV1126/B + IMX415 **turret**, PoE, ONVIF | **$50–150** | Encode mule. Crack, keep the PCB, bin the shell. |
+| RV1126B **EVB** + IMX415 | **$160–244** | Software home. SDK, serial, Ethernet. |
+| RV1126/B **38 mm core** | **$90–135** 1-off | Path to C-mount sat we own. |
+| Boardcon MINI1126B-P | quote | Newer B silicon, GbE on module. |
 
 Bitrate we haul: ~80 Mbps/cam 4K30 (STREAM-BUDGET). 3 sats ≈
 0.24 Gbps. Gigabit PoE + Thor 5GbE is plenty. T4000 NVDEC 9× 4Kp30
 is the AI ceiling, not the NIC.
+
+---
+
+## Lidar on the data cameras
+
+Feasible. Not “a Livox on every $80 sat.”
+
+| Tier | What | Street | On every sat? |
+|---|---|---|---|
+| **1D ToF** (Benewake TFmini-S / TF-Luna) | Subject distance, 0.1–12 m, UART, ~0.7 W, 10–40 g | **$25–45** | **Yes.** JSONL sidecar next to /i. Needs the module UART, not a sealed turret. |
+| **2D spin** (YDLIDAR T-mini Plus) | 360° × 12 m, ~45 g, robot-vac class | **~$80** | No. Room layout, not picture-aligned depth. |
+| **3D lidar** (Livox Mid-360S) | 360° × 59°, 200 kpts/s, **Ethernet**, 65 mm cube, **265 g** | **~$550** | **One on the rig**, not per camera. Another Ethernet endpoint on the PoE switch. |
+| Stereo / iToF (Orbbec Gemini, etc.) | Depth image, GMSL or USB | $200–800 | Body, if we want occlusion better than Depth Anything. |
+
+Working plant:
+
+- **Body / rig:** one Mid-360S (or a stereo/ToF) as an Ethernet peer.
+  Point cloud is a fourth “camera” on the switch. 905 nm Class 1 —
+  still a laser on a film set; flag it.
+- **Every picture sat:** TFmini-S on UART → distance in the sidecar.
+  Cheap, metric scale for SLAM, not a point cloud.
+- Thor already runs cuVSLAM + Depth Anything on the body HEVC/CSI.
+  Per-sat 3D lidar does not replace that and does not fit the BOM.
+
+Do not put 265 g / $550 on each eyeball. Do not skip the 1D ToF —
+that is the “lidar on all data cameras” that actually ships.
 
 ---
 
@@ -275,12 +321,13 @@ is the AI ceiling, not the NIC.
 | | mm | g | W |
 |---|---|---|---|
 | **T4000 SOM** (DS-11945 §6.4) | **87.0 × 100.0 × 15.29** | **350 ±4%** | 70 default / 90 throttle |
-| ATS **passive** HS `ATS-NVP-3739` | 87 × 100.8 × **20** | **168** | 100 W @ 50 °C with airflow |
+| ATS **passive** HS `ATS-NVP-3739` | 87 × 100.8 × **20** | **168** | 100 W @ 50 °C **with 500 LFM** (not still air) |
 | ATS **active** HS `ATS-NVA-3740` | 87 × 100.8 × **20** (fan in fins) | **104** | 95 W @ 50 °C |
 | ATS blower `ATS-NVA-3752` | 92 × 100.8 × 28.6 | 174 | 175 W — T5000-class, skip |
-| **SOM + active HS** | ~87 × 101 × **~36** | **~450** | still needs a carrier |
+| **SOM + HS** | ~87 × 101 × **~36** | **~450–520** | still needs a carrier |
 
 TTP contact patch is 62.5 × 81.4 mm. Resin is not a heat sink.
+Full thermal math: [references/THERMAL.md](references/THERMAL.md).
 
 ### The carrier (you cannot skip this)
 
@@ -290,9 +337,14 @@ TTP contact patch is 62.5 × 81.4 mm. Resin is not a heat sink.
 | FORECR **DSBOARD-THRMAX** | **140 × 125** | — |
 | NVIDIA **AGX Thor Dev Kit** | **243.19 × 112.40 × 56.88** | brick | 40–130 W, T5000. Lab only. |
 
-Rogue-T5 + T4000 + active HS is the smallest catalog stack:
-about **92 × 108 × 40–55 mm** plus connectors, **~0.7–1.0 kg**
-before battery, lens, NVMe. FORECR is a bigger rectangle with QSFP.
+**Rogue-T5 is the preferred carrier** (2026-09-02). Smallest
+production board that takes T4000 *and* T5000; camera I/O is an
+add-on (JCB022 GMSL, JCB003 3G-SDI, MIPI). 2× 10GbE + 2.5G on
+locking IX plugs (need breakout cables). 12 V.
+
+Rogue-T5 + T4000 + HS is the smallest catalog stack: about
+**92 × 108 × 40–55 mm** plus connectors, **~0.7–1.0 kg** before
+battery, lens, NVMe. FORECR is a bigger rectangle with QSFP.
 
 ### Against a cine body
 
@@ -307,36 +359,35 @@ hotter.** PYXIS depth is the PL mount + sensor stack. Ours would
 be: PL (or C) on the front, CSI flex 20 cm to Thor, heatsink
 exhaust, V-mount on the back.
 
-### Verdict: yes, Thor-in-body is the product — with the kit as lab
+### Verdict: Thor-in-body is still the product shape — thermal is the hold
+
+TDG-12271-001 v1.3 is in tree. Read [references/THERMAL.md](references/THERMAL.md)
+before any solid body CAD.
 
 **Coolest (and right) shape:** one box that *is* the camera.
-T4000 + compact carrier + CSI body sensor + PL /i reader + NVENC
-+ 5/10GbE. Sats are cheap PoE H.265, not more Thors.
+T4000 + **Rogue-T5** + CSI body sensor + PL /i reader + NVENC
++ 10GbE. Sats are PoE H.265 on RV1126B, not more Thors.
 
-**Do not put the AGX kit in a cine body.** 243 mm brick, 130 W,
-wrong envelope. The resin shell is a fit-check of the lab brick,
-not the product.
+**Do not put the AGX kit in a cine body.** 243 mm brick, 130 W.
+The resin shell is a fit-check of the lab brick, not the product.
 
 **Do not put a Thor in every sat.** $2,749 + 70 W + 350 g per
-eyeball. Sats encode on RV1126.
+eyeball.
 
-Constraints that will shape the body, in order:
+**Do not freeze a sealed handheld at 70 W.** NVIDIA allows a
+passive *or* active cooler on the TTP. The math does not: 70 W
+in still air needs ~0.55–0.69 °C/W, which a small extrusion is
+not. A PYXIS-sized metal shell dumps ~40 W natural convection.
+Prefer **radiators / heatpipes / vapor chamber**, not a flock of
+fans:
 
-1. **Heat, not volume.** 70 W into a handheld cine envelope is a
-   fan, vents, and a TTP lid. PYXIS-class 20 W is silent; we will
-   not be. Active ATS HS (104 g, 20 mm) is the starting lid.
-2. **Battery.** 70 W + sensor + fan. A 98 Wh V-mount is ~1 hour at
-   full AI. Cine already lives on V-mount; handheld-without-brick
-   is a later SKU. Drop AI, never record, still helps here.
-3. **Carrier area.** Rogue-T5 92×108 mm is the board to design
-   around. FORECR 140×125 and the AGX kit are not.
-4. **Sensor is CSI, not PYXIS.** Bolting a 1.5 kg PYXIS onto a
-   Thor box is two cameras taped together. Fine as a /i + BRAW
-   hero *next to* the AI body. The product body is a CSI IMX585 /
-   Alvium (or a PL CSI box we build) with Thor inside.
-5. **Need TDG-12271-001** before promising sun-load or a sealed
-   magnesium shell. First print stays the AGX kit.
+1. Body-as-radiator, fanless — honest at **record-only / AI dropped
+   (~15–40 W)**. Matches drop-AI-never-record.
+2. Heatpipes to a rear / V-mount radiator + **one** large slow fan
+   — 70 W AI. Cine already sounds like this.
+3. Remote radiator on the battery plate — optical body silent.
 
-So: **integrate Thor into the camera body for production.** Lab
-is the kit in resin with a camera clamped on the front. Those
-are two different objects; do not confuse the CAD.
+Measure T4000 + Rogue-T5 + ATS on the bench (thermocouple on TTP
+per TDG Fig. 3-2) before promising sun-load or a magnesium shell.
+Lab stays the AGX kit. Production body is **metal**. Those are
+two different objects; do not confuse the CAD.

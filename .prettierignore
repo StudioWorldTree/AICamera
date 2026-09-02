@@ -1,0 +1,11 @@
+docs/**
+openspec/**
+.beads/**
+build
+.svelte-kit
+node_modules
+static/media
+*.stl
+*.blend
+*.pdf
+package-lock.json
