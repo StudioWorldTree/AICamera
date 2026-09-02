@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import ChapterList from '$lib/components/ChapterList.svelte';
 	import DecisionRow from '$lib/components/DecisionRow.svelte';
+	import ShellViewer from '$lib/components/ShellViewer.svelte';
 	import { hardwareDocs } from '$lib/content';
 	import { locked } from '$lib/decisions';
 
@@ -33,14 +34,10 @@
 
 <section class="split shell">
 	<figure>
-		<img
-			src="{base}/media/cad-preview.png"
-			alt="Top view of the two-part AGX Thor resin shell, camera boss on the left, cable-exit half on the right."
-			width="1600"
-			height="900"
-		/>
+		<ShellViewer />
 		<figcaption>
 			First article: two-part resin wrap of the AGX Thor Developer Kit. Fit-check, not a heat sink.
+			WebGL loads on click; the canvas idles with no render loop.
 		</figcaption>
 	</figure>
 	<div class="kit">
@@ -157,12 +154,6 @@
 		margin: 0;
 		background: var(--bg-2);
 		border: 1px solid var(--line);
-	}
-
-	img {
-		display: block;
-		width: 100%;
-		height: auto;
 	}
 
 	figcaption {

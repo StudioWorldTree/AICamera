@@ -14,6 +14,8 @@ const BASE: '' | `/${string}` = process.argv.includes('dev')
 function copyDocMedia() {
 	mkdirSync('static/media', { recursive: true });
 	cpSync('docs/cad/preview.png', 'static/media/cad-preview.png');
+	cpSync('docs/cad/agx_shell_front.stl', 'static/media/agx_shell_front.stl');
+	cpSync('docs/cad/agx_shell_rear.stl', 'static/media/agx_shell_rear.stl');
 	cpSync(
 		'docs/references/jetson_thor_series_modules_datasheet_ds-11945-001v1.4.pdf',
 		'static/media/thor-modules-ds.pdf'
