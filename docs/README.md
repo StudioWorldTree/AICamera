@@ -12,6 +12,11 @@ The SvelteKit app in that repo is the spatial viewer, not the EVF.
 |---|---|
 | [STREAM-BUDGET.md](STREAM-BUDGET.md) | HARDWARE.md, BRAINSTORM.md |
 | [MODEL-MAP.md](MODEL-MAP.md) | MODELS.md, PIPELINE.md, MODES.md |
+| [INTERCONNECT.md](INTERCONNECT.md) | — |
+| [CARRIER.md](CARRIER.md) | HARDWARE.md |
+| [SENSORS.md](SENSORS.md) | — |
+| [POWER.md](POWER.md) | — |
+| [ENCLOSURE.md](ENCLOSURE.md) | — |
 | [references/T4000.md](references/T4000.md) | — (Arrow DS-11945-001 v1.4) |
 
 Do not fork VISION / PIPELINE / MODES / MODELS. Cite them. Hardware notes and CAD land here.

@@ -1,4 +1,4 @@
-# Track docs/ only for now, plus tracker metadata.
+# Track docs/, openspec, tracker metadata.
 *
 !docs/
 !docs/**
@@ -6,6 +6,8 @@
 !AGENTS.md
 !.beads/
 !.beads/**
+!openspec/
+!openspec/**
 
 # Beads / Dolt files (added by bd init)
 .dolt/
