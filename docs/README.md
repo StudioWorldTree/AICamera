@@ -20,7 +20,7 @@ The SvelteKit app in that repo is the spatial viewer, not the EVF.
 | [ENCLOSURE.md](ENCLOSURE.md) | — |
 | [cad/](cad/) | STLs for Anycubic |
 | [SHOPPING.md](SHOPPING.md) | Camera + T4000 carrier buy brief |
-| [CAMERAS.md](CAMERAS.md) | CSI vs GMSL vs HDMI/SDI; widened camera list |
+| [CAMERAS.md](CAMERAS.md) | CSI vs GMSL vs HDMI/SDI; GMSL count; PoE H.265 sats; Thor-in-body |
 | [references/T4000.md](references/T4000.md) | — (Arrow DS-11945-001 v1.4) |
 
 Do not fork VISION / PIPELINE / MODES / MODELS. Cite them. Hardware notes and CAD land here.

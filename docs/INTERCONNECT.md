@@ -27,6 +27,7 @@ See [LENS.md](LENS.md).
 | USB-C | Not the satellite trunk (short, shared, no PoE) |
 | Encode split | Body = Thor NVENC. Sats = camera H.265 (T4000 HQ is 2× 4Kp30) |
 | Time | PTP on sats; GMSL/HW on body. SMPTE genlock unproven |
+| GMSL2 count | Honest **4× 4K30 RAW** (8× 2-lane/1080p) on one JCB022. 20 is HSB. Sats scale on PoE H.265, not more FAKRA. |
 | Lens | Cooke /i class from **every** camera, sidecar JSONL |
 
 ## Why HEVC

@@ -13,7 +13,10 @@ Wrap the **AGX Thor Developer Kit**, not the SOM:
 - Cable exits: 5GbE, QSFP, USB-C, power, body CSI/GMSL if present
 
 Production SOM lid (87 × 100 × 15.29 mm, 350 g) is a second print after
-TDG-12271-001.
+TDG-12271-001. Product shape is **Thor inside the camera body** (T4000
++ compact carrier + CSI sensor + active HS), not the AGX kit and not a
+PYXIS bolted onto a brick. Sats stay off-body PoE. See [CAMERAS.md](CAMERAS.md)
+(size/weight + body-integration).
 
 ## CAD (first article, 2026-09-01)
 

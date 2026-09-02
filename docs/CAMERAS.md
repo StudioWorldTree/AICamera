@@ -159,3 +159,184 @@ its own card. Three different pipes, one NAS sidecar format.
   payload). 4K30 RAW12 (~3 Gbps) is the honest sat.
 - Buy GMSL without picking the **deserializer + BSP** in the same PO
   as the cameras.
+
+---
+
+## How many GMSL2 cameras can Thor actually host?
+
+The brochure number is **8**. The honest 4K RAW number is **4**.
+**20 is not GMSL** — that is HSB / Camera-over-Ethernet.
+
+### The three ceilings (they are not the same)
+
+| Ceiling | Number | What it actually means |
+|---|---|---|
+| Catalog deser board | **8** | CTI **JCB022**: 4× MAX9296A, 8× GMSL2 coax, 16 CSI lanes out, 75×57 mm, 45 g, PoC. Mates CTI Rogue-T5 / Gauntlet camera header. FORECR GMSL add-on is the same 8-ch story. |
+| Thor NVCSI fabric | **16 lanes / 6 cameras / 32 VCs** | DS-11945 ch. 2.10 / 4.1. NVIDIA GMSL framework: **12 with ISP**, 16 VC with ISP / 24 without. T4000 has **one ISP**. |
+| 4K30 RAW12 on GMSL2 | **4 at 4-lane, 8 at 2-lane** | Payload ~3 Gbps/cam. GMSL2 6 Gbps/link fits 4K30 RAW12; **4K60 RAW12 (~6 Gbps) does not**. A 4K module wants 4 CSI lanes after deser. 16 lanes ÷ 4 = **4 cameras**. 8 cameras on JCB022 is 2-lane each — 1080p-class or a squeezed 4K. |
+| T4000 NVENC HQ | **2 × 4Kp30** | Even if 8 RAW streams arrive, Thor can HQ-encode two. The rest sit in DRAM or get UHP. |
+| T4000 NVDEC | **9 × 4Kp30 HEVC** | Only matters if the sats already encoded. |
+
+NVIDIA’s “up to 20 cameras” is **HSB / CoE** on Ethernet (FPGA bridge → MGBE), not FAKRA. Do not quote 20 as a GMSL2 count.
+
+**Working number for this kit:** 1 CSI body on the box + **up to 4 GMSL2 4K30 RAW sats** on one JCB022 if we ever want RAW into ISP. 8 GMSL2 is a 1080p/2-lane plant. Past that, Ethernet.
+
+Cable: **8–15 m** FAKRA + PoC. Not 100 m.
+
+---
+
+## GMSL2 RAW vs encode-on-camera then Ethernet
+
+This is the real fork. Same pixels can leave the sensor as Bayer on coax
+or as H.265 on Cat6. They are not interchangeable.
+
+```
+GMSL2:  sensor ──CSI──► MAX9295 ──6 Gbps coax 8–15 m──► MAX9296 ──CSI──► Thor ISP ──NVENC──► HEVC
+PoE:    sensor ──CSI──► RV1126 ISP+HEVC ──~80 Mbps Cat6 100 m──► switch ──► Thor NVDEC (AI) / remux (record)
+```
+
+| | **GMSL2 (RAW into Thor)** | **Inline 4K H.265 + Ethernet** |
+|---|---|---|
+| What Thor sees | Bayer / YUV, native NVCSI | Already-compressed RTSP/ONVIF |
+| Per-cam payload (4K30) | **~3 Gbps** RAW12 | **~40–80 Mbps** HEVC HQ |
+| Honest cam count on T4000 | **4** 4K RAW (8 at 1080p) | **Dozens** on 5GbE; **~9** if Thor must NVDEC every stream for AI |
+| Cable | 8–15 m 50 Ω coax, FAKRA, PoC | **100 m** Cat5e/6, PoE af/at |
+| Power | PoC 12 V on the same coax | PoE switch (Thor has **no** PoE) |
+| Sync | Hardware FSYNC through SerDes. This is why GMSL exists. | PTP / 802.1AS (Thor has it). Weaker than genlock. Fine for v1. |
+| Latency | ~1 frame + SerDes lock | Encoder GOP + network. Cheap IPC is **50–200 ms**. Not a live EVF. |
+| ISP / SLAM / NVENC on pixels | **Yes.** Thor ISP, cuVSLAM, NVENC HQ. | **No RAW.** Thor remuxes the take; NVDEC a proxy for AD/overlay. |
+| Cooke /i | Almost never on the module. Add a barrel reader. | Same. UART sidecar over Ethernet is actually easier. |
+| Bring-up | Device tree, I2C aliasing, SerDes lock, BSP. Weeks. | RTSP/ONVIF. Days. |
+| BOM, 2 sats | Cams $150–2k + deser $400–1.5k + FAKRA | **$50–200 / cam** turret + a PoE switch |
+| Failure | SerDes unlock, PoC current, DT | Network, GOP, ONVIF quirks |
+| Catalog | Common in auto/industrial. Not cine. See list above. | Every IP camera on earth. |
+
+**When GMSL2 is the right sat:** the sat is close (<15 m), you want RAW
+into Thor ISP (tracking, SLAM, your own NVENC look), and you will pay
+for FSYNC. Alvium GM2 / NileCAM81 / VC IMX585+GMSL adapter.
+
+**When encode-on-sat is the right sat:** anything across a stage,
+anything cheap, anything we already steered (hybrid fabric, T4000 HQ
+cannot encode 1+2). This is the bring-up plant.
+
+**Do both at the connector level, not as two products.** Body = CSI
+(or one GMSL hop if the sensor sits 1–2 m off the box). Sats = PoE
+H.265. Add a JCB022 later if a sat needs to become a RAW tracker.
+Do not make every sat GMSL — you will run out of CSI lanes, ISP, and
+NVENC before you run out of set.
+
+HSB/CoE is the third path (RAW-class over Ethernet, FPGA on the
+camera). Worth a later look; not cheap, not a $50 turret.
+
+---
+
+## Cheap hardware for Ethernet + hardware 4K H.265
+
+**Do not use a Raspberry Pi as the sat encoder.**
+
+| Board | HW encode | HW decode | Ethernet | Verdict |
+|---|---|---|---|---|
+| **Pi CM4** (BCM2711, 55×40 mm) | **H.264 1080p30 only** | HEVC 4Kp60 | GbE | Cannot 4K-encode. Wrong chip. |
+| **Pi CM5 / Pi 5** (BCM2712) | **none** (RPi engineer, 2025: no HW encoder; ARM MJPEG maybe) | HEVC 4Kp60 | GbE | Worse than CM4 for this job. |
+| **Rockchip RV1126** | **H.265/H.264 4K30** (+ 1080p30 second stream) | 4K30 | 100/1000 | **This is the sat SoC.** 4× A7, 2 TOPS NPU, ~5 W. |
+| **Rockchip RV1126B** | **H.265/H.264 4K30** (brochure 4K45 / 12 MP30, bitrate to 200 Mbps) | 4K30 | **GbE** | Newer: 4× A53, 3 TOPS, USB3. Buy this if the module exists in stock. |
+| HiSilicon Hi3519A | 4K60 H.265, better ISP | 4K | GbE | Classic IPC. Export-painful in the US. Skip unless a turret already has it. |
+| Ambarella CV2/CV5 | cinema-grade | — | — | Wrong price. |
+| RK3588 / Orange Pi 5 | 4K encode *and* a desktop | — | GbE | Overkill; power and size of a mini PC. |
+
+### What to actually buy (qty-1, 2026)
+
+| Item | Street | What you get |
+|---|---|---|
+| **RV1126 + IMX415** turret, PoE, ONVIF | **~$50–150** (Alibaba/Made-in-China Smartgiant etc.; complete camera) | 8 MP / 4K30 H.265, 802.3af, RTSP. Crack the shell, keep the board. This is the sat prototype. |
+| RV1126 IPC **dev board** + IMX415 | **$160–244** (ivcan.com Thinkcore / EVB) | SDK, serial, Ethernet. For bringing up our sidecar, not for hanging on a stand. |
+| RV1126 **core board** 38×38 mm | **~$90–135** 1-off | Sensor + PoE carrier separate. Path to a C-mount sat we own. |
+| RV1126B-P SoM (Boardcon MINI1126B-P) | quote | 2–4 GB LPDDR4, GbE PHY on module. Newer silicon. |
+| Firefly CQ38W-1126B | IP67, **no PoE** (12 V) | Rugged shell; 3/5 MP not 4K. Skip for picture sats. |
+
+A $60 PoE turret already is “ethernet + hardware-level 4K encode.”
+You do not need to invent a CM4 carrier. If we later want C-mount +
+/i on a sat: RV1126 core board + Alvium-class sensor is a custom
+PCB, not a Pi hat.
+
+**Pi CM4 is a fine GPIO/I2C sidecar** (Cooke /i UART → Ethernet
+bridge) bolted onto a real encoder. It is not the encoder.
+
+Bitrate we haul: ~80 Mbps/cam 4K30 (STREAM-BUDGET). 3 sats ≈
+0.24 Gbps. Gigabit PoE + Thor 5GbE is plenty. T4000 NVDEC 9× 4Kp30
+is the AI ceiling, not the NIC.
+
+---
+
+## How big / heavy is Thor — and should it live in the camera body?
+
+### The module (what production is)
+
+| | mm | g | W |
+|---|---|---|---|
+| **T4000 SOM** (DS-11945 §6.4) | **87.0 × 100.0 × 15.29** | **350 ±4%** | 70 default / 90 throttle |
+| ATS **passive** HS `ATS-NVP-3739` | 87 × 100.8 × **20** | **168** | 100 W @ 50 °C with airflow |
+| ATS **active** HS `ATS-NVA-3740` | 87 × 100.8 × **20** (fan in fins) | **104** | 95 W @ 50 °C |
+| ATS blower `ATS-NVA-3752` | 92 × 100.8 × 28.6 | 174 | 175 W — T5000-class, skip |
+| **SOM + active HS** | ~87 × 101 × **~36** | **~450** | still needs a carrier |
+
+TTP contact patch is 62.5 × 81.4 mm. Resin is not a heat sink.
+
+### The carrier (you cannot skip this)
+
+| | mm | g |
+|---|---|---|
+| CTI **Rogue-T5** AGX302 | **92 × 108** | **136** (product page; T4000 *and* T5000) |
+| FORECR **DSBOARD-THRMAX** | **140 × 125** | — |
+| NVIDIA **AGX Thor Dev Kit** | **243.19 × 112.40 × 56.88** | brick | 40–130 W, T5000. Lab only. |
+
+Rogue-T5 + T4000 + active HS is the smallest catalog stack:
+about **92 × 108 × 40–55 mm** plus connectors, **~0.7–1.0 kg**
+before battery, lens, NVMe. FORECR is a bigger rectangle with QSFP.
+
+### Against a cine body
+
+| | mm | kg | W (picture) |
+|---|---|---|---|
+| **PYXIS 6K** body | 119 × 106 × 151 | **1.5** | ~15–25 class |
+| T4000 + Rogue + HS (no lens, no batt) | ~92 × 108 × 50 | **~0.8–1.0** | **70** |
+| AGX kit in our resin shell | 243 × 112 × 57 (+ walls) | kit + resin | 40–130 |
+
+The SOM sandwich is **smaller in two axes than PYXIS and a lot
+hotter.** PYXIS depth is the PL mount + sensor stack. Ours would
+be: PL (or C) on the front, CSI flex 20 cm to Thor, heatsink
+exhaust, V-mount on the back.
+
+### Verdict: yes, Thor-in-body is the product — with the kit as lab
+
+**Coolest (and right) shape:** one box that *is* the camera.
+T4000 + compact carrier + CSI body sensor + PL /i reader + NVENC
++ 5/10GbE. Sats are cheap PoE H.265, not more Thors.
+
+**Do not put the AGX kit in a cine body.** 243 mm brick, 130 W,
+wrong envelope. The resin shell is a fit-check of the lab brick,
+not the product.
+
+**Do not put a Thor in every sat.** $2,749 + 70 W + 350 g per
+eyeball. Sats encode on RV1126.
+
+Constraints that will shape the body, in order:
+
+1. **Heat, not volume.** 70 W into a handheld cine envelope is a
+   fan, vents, and a TTP lid. PYXIS-class 20 W is silent; we will
+   not be. Active ATS HS (104 g, 20 mm) is the starting lid.
+2. **Battery.** 70 W + sensor + fan. A 98 Wh V-mount is ~1 hour at
+   full AI. Cine already lives on V-mount; handheld-without-brick
+   is a later SKU. Drop AI, never record, still helps here.
+3. **Carrier area.** Rogue-T5 92×108 mm is the board to design
+   around. FORECR 140×125 and the AGX kit are not.
+4. **Sensor is CSI, not PYXIS.** Bolting a 1.5 kg PYXIS onto a
+   Thor box is two cameras taped together. Fine as a /i + BRAW
+   hero *next to* the AI body. The product body is a CSI IMX585 /
+   Alvium (or a PL CSI box we build) with Thor inside.
+5. **Need TDG-12271-001** before promising sun-load or a sealed
+   magnesium shell. First print stays the AGX kit.
+
+So: **integrate Thor into the camera body for production.** Lab
+is the kit in resin with a camera clamped on the front. Those
+are two different objects; do not confuse the CAD.
