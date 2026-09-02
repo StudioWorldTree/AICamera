@@ -18,6 +18,7 @@ The SvelteKit app in that repo is the spatial viewer, not the EVF.
 | [LENS.md](LENS.md) | MODES.md (lens sidecar) |
 | [POWER.md](POWER.md) | — |
 | [ENCLOSURE.md](ENCLOSURE.md) | — |
+| [cad/](cad/) | STLs for Anycubic |
 | [references/T4000.md](references/T4000.md) | — (Arrow DS-11945-001 v1.4) |
 
 Do not fork VISION / PIPELINE / MODES / MODELS. Cite them. Hardware notes and CAD land here.

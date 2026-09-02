@@ -2,4 +2,4 @@
 
 - [x] Write `docs/SENSORS.md`
 - [x] Delta `hardware-kit` sensor requirements
-- [ ] Candidate SKUs wait on `add-datasheet-pack`
+- SKU shopping is later (classes live in `docs/SENSORS.md`; /i glass preferred)

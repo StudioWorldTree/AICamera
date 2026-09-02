@@ -15,15 +15,24 @@ Wrap the **AGX Thor Developer Kit**, not the SOM:
 Production SOM lid (87 × 100 × 15.29 mm, 350 g) is a second print after
 TDG-12271-001.
 
-## CAD
+## CAD (first article, 2026-09-01)
 
-Blender MCP was not connected in the session that opened this change.
-STL target: `docs/cad/` once modeled.
+Blender 5.0 via addon socket `:9876` (Grok MCP blender server was not
+in this session; same protocol). Script: [cad/build_agx_shell.py](cad/build_agx_shell.py).
 
-Resin is brittle and a poor heat sink. Fit-check only.
+| File | What | Span (mm) |
+|---|---|---|
+| [cad/agx_thor_shell.blend](cad/agx_thor_shell.blend) | Kit dummy + two halves | — |
+| [cad/agx_shell_front.stl](cad/agx_shell_front.stl) | Camera-boss half | **152.3 × 119.8 × 64.3** |
+| [cad/agx_shell_rear.stl](cad/agx_shell_rear.stl) | Cable-exit half | **130.3 × 119.8 × 64.3** |
+| [cad/preview.png](cad/preview.png) | Viewport | — |
 
-## Still blocked
+Wall 2.2 mm, 1.5 mm kit clearance. Front has a 32 mm OD / 18 mm bore
+boss. Rear has RJ45 / QSFP / DC cutouts. Top vent slots. Manifold.
 
-- Blender MCP
-- Kit STEP/STL from NVIDIA (not in the Arrow PDF; figures 6-1…6-5 are
-  SOM drawings, raster-only in the datasheet)
+**Print:** two parts so they fit a ~192 × 120 mm resin bed. Width **119.8 mm**
+is tight on a 120 mm vat — rotate or knock 0.5 mm off the walls if the
+slicer complains. Resin is a fit-check, not a heat sink. Leave the TTP
+path open.
+
+Production SOM lid (87 × 100 × 15.29 mm) is a later print.
