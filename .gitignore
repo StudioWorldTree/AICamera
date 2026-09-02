@@ -14,3 +14,6 @@
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# Blender autosave
+*.blend1
