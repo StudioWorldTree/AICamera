@@ -1,11 +1,3 @@
-## Project Configuration
-
-- **Language**: TypeScript
-- **Package Manager**: npm
-- **Add-ons**: none
-
----
-
 # AICamera (AllSystemsGo)
 
 Hardware home for the All Systems Go AI camera. Work on `main`. Repo currently tracks `docs/`, `AGENTS.md`, and beads.
