@@ -20,4 +20,7 @@ datasheet: `docs/references/` (DS-11945-001 v1.4 from Arrow).
 **Record path is HEVC** (Thor NVENC and/or camera-side H.265). Do not
 haul RAW over Ethernet. CSI RAW is the body sensor hop into NVENC.
 
+**Lens metadata is Cooke /i class** from every camera (body and sats),
+written as a JSONL sidecar 1:1 with picture. See `docs/LENS.md`.
+
 Issue tracking: `bd prime` / `bd ready`. Prefix `aicam`.

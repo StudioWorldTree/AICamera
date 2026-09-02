@@ -15,6 +15,7 @@ The SvelteKit app in that repo is the spatial viewer, not the EVF.
 | [INTERCONNECT.md](INTERCONNECT.md) | — |
 | [CARRIER.md](CARRIER.md) | HARDWARE.md |
 | [SENSORS.md](SENSORS.md) | — |
+| [LENS.md](LENS.md) | MODES.md (lens sidecar) |
 | [POWER.md](POWER.md) | — |
 | [ENCLOSURE.md](ENCLOSURE.md) | — |
 | [references/T4000.md](references/T4000.md) | — (Arrow DS-11945-001 v1.4) |
