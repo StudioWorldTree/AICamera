@@ -2,7 +2,9 @@
 
 Feeds `aicam-interconnect`. Does not pick the fabric; it says which links survive which payload.
 
-Bring-up row: **1 body + 2 satellites, 4K30**. 4-sat and 6-sat are tabled. Hybrid fabric (body CSI/GMSL, satellites PoE) is the working assumption.
+**Record path is HEVC, not RAW over the wire** (2026-09-01). Thor and/or the satellite cameras have hardware 4K H.265. CSI/GMSL RAW exists only as the body sensor → ISP → NVENC hop on the module. Do not budget 5–10 Gbps per satellite.
+
+Bring-up row: **1 body + 2 satellites, 4K30**. 4-sat and 6-sat are tabled. Hybrid fabric (body CSI/GMSL, satellites PoE HEVC) is the working assumption.
 
 ## Payload per stream (payload only, no protocol overhead)
 
@@ -14,7 +16,7 @@ Bring-up row: **1 body + 2 satellites, 4K30**. 4-sat and 6-sat are tabled. Hybri
 | HEVC contribution | UHD Forum 2160p50/60 Main10 | — | **50–80 Mbps** | Cinema proxy often 100–200 Mbps |
 | HEVC HQ on-set | working number | **40–80 Mbps** | **80–150 Mbps** | NVENC; not a distribution encode |
 
-Use **~5 Gbps** as “one uncompressed 4K30 10-bit 4:2:2” and **~100 Mbps** as “one HEVC 4K30 we would actually record.”
+Working number for **what we haul:** **~100 Mbps per 4K30 HEVC** (NVENC HQ on-set). The RAW/4:2:2 rows stay as a ceiling for a hero uncompressed sat or for CSI into the SoC — not the satellite plant.
 
 ## Thor encode (FACT, DS-11945-001 v1.4 tables 2-4 / 2-5)
 
@@ -27,9 +29,9 @@ YUV420 8-bit, indicative. NVENC shares the GPU rail. Local copy: [references/jet
 
 AGX Thor Developer Kit = **T5000 module**. There is no T4000 kit.
 
-**Implication:** T4000 HQ cannot Thor-encode 1 body + 2 sats at 4K30 (needs 3). Hybrid is the T4000-safe path: Thor encodes the body; satellites encode on camera (or a 10GbE GigE Vision sat is recorded compressed by the camera, not by NVENC).
+**Implication:** T4000 HQ cannot Thor-encode 1 body + 2 sats at 4K30 (needs 3). That is an **NVENC count** problem, not a cable problem. Hybrid: Thor NVENC on the body cam; satellites send H.265 they already made (or Thor remuxes). T5000 HQ can encode the trio on-module if we want.
 
-T5000 HQ can encode the bring-up trio. Six 4K60 on Thor is UHP, not a quality-master promise.
+Six 4K60 on Thor is UHP, not a quality-master promise. HEVC decode for AD/overlay is the other budget: T4000 1× NVDEC, 4× 4Kp60 HEVC Main10 — do not decode six 4K60 for the VLM.
 
 ## Links (usable, not wire-rate)
 
@@ -55,7 +57,7 @@ Payload = satellites + body. “Thor encode” is NVENC HQ 4K30 count.
 | 1+4 4K30 | ~25 Gbps | ~0.40 Gbps | T4000 HQ no. T5000 HQ maybe at HP. Hybrid: yes. | 5GbE | 25GbE / 2×25 |
 | 1+6 4K60 | ~70 Gbps | ~1.0 Gbps | T4000 no. T5000 UHP 6× 4Kp60, HQ only 2×. | 5GbE still yes for HEVC | **3× or 4× 25GbE** (not one 100G pipe) |
 
-USB-C is never the answer for the uncompressed column. Fiber or parallel 25GbE is the truck→NAS pipe once more than one uncompressed 4K exists. For HEVC satellites, **gigabit PoE + 5GbE/10GbE aggregation** is plenty.
+HEVC bring-up (1+2 at ~80 Mbps) is **~0.24 Gbps**. Gigabit PoE + the AGX **5GbE** jack covers it. 10/25GbE is headroom and NAS write, not a requirement to leave RAW behind. USB-C is still a bad satellite trunk (short, shared, no PoE); uncompressed columns are the exception path.
 
 ## Hybrid working plan
 
@@ -65,9 +67,9 @@ USB-C is never the answer for the uncompressed column. Fiber or parallel 25GbE i
 [sat 2]    --PoE HEVC--> PoE switch ----+--> Thor (decode for AI, remux to NAS)
 ```
 
-- Record: body master on Thor; satellite masters from camera encode (or Thor remux).
-- AI: Thor NVDEC the sat proxies (T4000 1× NVDEC — do not decode six 4K60 for AD).
-- If a hero satellite must be uncompressed: give **that one** 10/25GbE GigE Vision, not all of them.
+- Record: HEVC. Body master from Thor NVENC; satellite masters from camera H.265 (or Thor remux).
+- AI: Thor NVDEC sat proxies as needed (T4000 1× NVDEC).
+- RAW stays on the module (CSI → ISP → NVENC). A hero uncompressed sat is a later exception, not v1.
 
 ## PoE power (order of magnitude)
 

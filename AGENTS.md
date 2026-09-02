@@ -17,4 +17,7 @@ the T4000 SOM (1× NVENC, 64 GB, default 70 W / throttle 90 W,
 87 × 100 × 15.29 mm) unless satellite count forces T5000. Module
 datasheet: `docs/references/` (DS-11945-001 v1.4 from Arrow).
 
+**Record path is HEVC** (Thor NVENC and/or camera-side H.265). Do not
+haul RAW over Ethernet. CSI RAW is the body sensor hop into NVENC.
+
 Issue tracking: `bd prime` / `bd ready`. Prefix `aicam`.
