@@ -17,6 +17,11 @@ the T4000 SOM (1× NVENC, 64 GB, default 70 W / throttle 90 W,
 87 × 100 × 15.29 mm) unless satellite count forces T5000. Module
 datasheet: `docs/references/` (DS-11945-001 v1.4 from Arrow).
 
+**T4000 cloud sim** lives in web3d-space (`/gpu`, `sim/`). Current box:
+RunPod RTX PRO 4500 Blackwell, EU-RO-1, $0.72/hr, pod `lduog58vatxh44`.
+See `~/work/Family/web3d-space/docs/all-systems-go/GPU-SIM.md`. Auto-off
+30 min. Do not terminate negotiated training pods from that console.
+
 **Record path is HEVC** (Thor NVENC and/or camera-side H.265). Do not
 haul RAW over Ethernet. CSI RAW is the body sensor hop into NVENC.
 Sats: Rockchip **RV1126B** (or RV1126). Preferred carrier: **Rogue-T5**.
