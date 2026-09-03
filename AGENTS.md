@@ -34,4 +34,6 @@ https://studioworldtree.github.io/AICamera/
 
 BOM system lives in the sister tree `../daBOM` (SvelteKit + Hono REST +
 OpenAPI + Drizzle + a local PGLite file). That is a real server, not
-this Pages notebook. Every catalog item has a BOM there.
+this Pages notebook. Every catalog item has a BOM there. Spec is always
+at `/.well-known/openapi.json`; features land in the API first. Login is
+IdentiKey. Agent rules: `../daBOM/AGENTS.md`.
