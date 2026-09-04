@@ -8,7 +8,6 @@
 	let handle: ShellHandle | null = null;
 	let loader: Promise<typeof import('$lib/cad/mount-shell')> | null = null;
 
-	const poster = `${base}/media/cad-preview.png`;
 	const glb = `${base}/media/hero.glb`;
 	const decoderPath = `${base}/draco/`;
 	const stls = [`${base}/media/agx_shell_front.stl`, `${base}/media/agx_shell_rear.stl`];
@@ -52,23 +51,15 @@
 </script>
 
 <div class="stage">
-	{#if status !== 'live'}
-		<img
-			src={poster}
-			alt="All Systems Go camera body."
-			width="1600"
-			height="900"
-		/>
-	{/if}
 	<canvas
 		bind:this={canvas}
 		class:ready={status === 'live'}
 		aria-label="All Systems Go camera. Drag to orbit."
 	></canvas>
-	{#if status === 'loading'}
+	{#if status === 'loading' || status === 'idle'}
 		<p class="arm" aria-live="polite">Lighting the body…</p>
 	{:else if status === 'failed'}
-		<p class="arm">Couldn’t load WebGL. Static view stays.</p>
+		<p class="arm">Couldn’t load WebGL.</p>
 	{:else if status === 'live'}
 		<p class="hint">Drag to orbit</p>
 	{/if}
@@ -82,17 +73,10 @@
 		overflow: hidden;
 	}
 
-	img,
 	canvas {
 		display: block;
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
-	}
-
-	canvas {
-		position: absolute;
-		inset: 0;
 		opacity: 0;
 		pointer-events: none;
 	}
