@@ -57,7 +57,7 @@
 		aria-label="All Systems Go camera. Drag to orbit."
 	></canvas>
 	{#if status === 'loading' || status === 'idle'}
-		<p class="arm" aria-live="polite">Lighting the body…</p>
+		<p class="arm" aria-live="polite">Plotting the body…</p>
 	{:else if status === 'failed'}
 		<p class="arm">Couldn’t load WebGL.</p>
 	{/if}

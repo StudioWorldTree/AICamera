@@ -1,15 +1,15 @@
 import {
-	ACESFilmicToneMapping,
-	AmbientLight,
 	Box3,
-	DirectionalLight,
 	DoubleSide,
+	EdgesGeometry,
 	Group,
+	LineBasicMaterial,
+	LineSegments,
 	Mesh,
-	MeshStandardMaterial,
+	MeshBasicMaterial,
+	NoToneMapping,
 	Object3D,
 	PerspectiveCamera,
-	PMREMGenerator,
 	Scene,
 	SRGBColorSpace,
 	Vector3,
@@ -18,7 +18,6 @@ import {
 	type Texture
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
@@ -42,14 +41,53 @@ function disposeMaterial(mat: Material) {
 	mat.dispose();
 }
 
-function disposeObject(root: Object3D) {
+function disposeGeometries(root: Object3D) {
 	root.traverse((obj) => {
 		const mesh = obj as Mesh;
-		if (!mesh.isMesh) return;
-		mesh.geometry.dispose();
-		const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-		for (const mat of mats) disposeMaterial(mat);
+		if (mesh.isMesh) mesh.geometry.dispose();
+		const line = obj as LineSegments;
+		if (line.isLine) line.geometry.dispose();
 	});
+}
+
+/** Ghost fill + feature edges. Construction-line CAD, not a shaded product shot. */
+function restyleCad(root: Object3D, extras: Array<{ dispose: () => void }>) {
+	const ghost = new MeshBasicMaterial({
+		color: 0xe8eef6,
+		transparent: true,
+		opacity: 0.08,
+		depthWrite: false,
+		side: DoubleSide
+	});
+	const stroke = new LineBasicMaterial({
+		color: 0xffffff,
+		transparent: true,
+		opacity: 0.88,
+		depthWrite: false
+	});
+	extras.push(ghost, stroke);
+
+	const meshes: Mesh[] = [];
+	root.traverse((obj) => {
+		const mesh = obj as Mesh;
+		if (mesh.isMesh) meshes.push(mesh);
+	});
+
+	for (const mesh of meshes) {
+		const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+		for (const mat of mats) {
+			if (mat) disposeMaterial(mat);
+		}
+		mesh.material = ghost;
+		mesh.renderOrder = 0;
+
+		const edges = new EdgesGeometry(mesh.geometry, 18);
+		const lines = new LineSegments(edges, stroke);
+		lines.renderOrder = 1;
+		mesh.add(lines);
+	}
+
+	return { ghost, stroke };
 }
 
 export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource): Promise<ShellHandle> {
@@ -66,14 +104,7 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 	renderer.setClearColor(0x000000, 0);
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.outputColorSpace = SRGBColorSpace;
-	renderer.toneMapping = ACESFilmicToneMapping;
-	renderer.toneMappingExposure = 1.15;
-
-	const pmrem = new PMREMGenerator(renderer);
-	const envScene = new RoomEnvironment();
-	scene.environment = pmrem.fromScene(envScene, 0.04).texture;
-	scene.environmentIntensity = 0.72;
-	envScene.dispose();
+	renderer.toneMapping = NoToneMapping;
 
 	const group = new Group();
 	const extras: Array<{ dispose: () => void }> = [];
@@ -87,21 +118,15 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 		const gltf = await loader.loadAsync(source.glb);
 		group.add(gltf.scene);
 	} else {
-		const material = new MeshStandardMaterial({
-			color: 0xb7bec6,
-			metalness: 0.12,
-			roughness: 0.58,
-			side: DoubleSide
-		});
-		extras.push(material);
 		const loader = new STLLoader();
 		const geos = await Promise.all(source.stls.map((url) => loader.loadAsync(url)));
 		for (const geo of geos) {
 			geo.computeVertexNormals();
-			group.add(new Mesh(geo, material));
-			extras.push(geo);
+			group.add(new Mesh(geo));
 		}
 	}
+
+	const { ghost, stroke } = restyleCad(group, extras);
 	scene.add(group);
 
 	const box = new Box3().setFromObject(group);
@@ -110,15 +135,6 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 	group.position.sub(center);
 
 	const span = Math.max(size.x, size.y, size.z) || 1;
-
-	const ambient = new AmbientLight(0xc8bda8, 0.22);
-	const key = new DirectionalLight(0xffe1b0, 2.1);
-	key.position.set(span * 0.9, span * 1.35, span * 0.55);
-	const fill = new DirectionalLight(0x8ea4c4, 0.45);
-	fill.position.set(-span * 0.9, span * 0.25, span * 0.8);
-	const rim = new DirectionalLight(0xb7d0ff, 1.35);
-	rim.position.set(-span * 0.35, span * 0.7, -span * 1.1);
-	scene.add(ambient, key, fill, rim);
 
 	const isLight = () => {
 		const theme = document.documentElement.dataset.theme;
@@ -129,12 +145,10 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 
 	const applyTheme = () => {
 		const light = isLight();
-		scene.environmentIntensity = light ? 1.05 : 0.72;
-		renderer.toneMappingExposure = light ? 1.02 : 1.15;
-		ambient.intensity = light ? 0.42 : 0.22;
-		key.intensity = light ? 1.55 : 2.1;
-		fill.intensity = light ? 0.95 : 0.45;
-		rim.intensity = light ? 0.55 : 1.35;
+		ghost.color.set(light ? 0x1c222c : 0xe8eef6);
+		ghost.opacity = light ? 0.07 : 0.08;
+		stroke.color.set(light ? 0x1a1e26 : 0xffffff);
+		stroke.opacity = light ? 0.62 : 0.88;
 		requestRender();
 	};
 
@@ -192,10 +206,8 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 			themeWatch.disconnect();
 			scheme.removeEventListener('change', applyTheme);
 			controls.dispose();
-			disposeObject(group);
+			disposeGeometries(group);
 			extras.forEach((item) => item.dispose());
-			scene.environment?.dispose();
-			pmrem.dispose();
 			draco?.dispose();
 			renderer.dispose();
 		}
