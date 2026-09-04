@@ -8,6 +8,7 @@ node_modules
 /.svelte-kit
 /build
 static/media
+static/draco
 
 # OS
 .DS_Store

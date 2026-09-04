@@ -36,8 +36,7 @@
 	<figure>
 		<ShellViewer />
 		<figcaption>
-			First article: two-part resin wrap of the AGX Thor Developer Kit. Fit-check, not a heat sink.
-			Click, then drag to orbit. The canvas idles with no render loop.
+			Meshy camera body, lit in-browser. Drag to orbit. WebGL draws on demand, then idles.
 		</figcaption>
 	</figure>
 	<div class="kit">

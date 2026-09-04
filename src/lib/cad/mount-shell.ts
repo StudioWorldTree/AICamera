@@ -20,6 +20,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
@@ -27,7 +28,9 @@ export type ShellHandle = {
 	dispose: () => void;
 };
 
-export type ShellSource = { glb: string } | { stls: string[] };
+export type ShellSource =
+	| { glb: string; decoderPath: string; interactive?: boolean }
+	| { stls: string[]; interactive?: boolean };
 
 function disposeMaterial(mat: Material) {
 	const rec = mat as Material & Record<string, Texture | undefined>;
@@ -52,39 +55,36 @@ function disposeObject(root: Object3D) {
 
 export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource): Promise<ShellHandle> {
 	const scene = new Scene();
-	scene.background = new Color(0x1a1d24);
+	scene.background = new Color(0x14161c);
 
-	const camera = new PerspectiveCamera(32, 1, 1, 2000);
+	const camera = new PerspectiveCamera(28, 1, 0.01, 100);
 	const renderer = new WebGLRenderer({
 		canvas,
 		antialias: true,
 		alpha: false,
-		powerPreference: 'low-power'
+		powerPreference: 'high-performance'
 	});
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.outputColorSpace = SRGBColorSpace;
 	renderer.toneMapping = ACESFilmicToneMapping;
-	renderer.toneMappingExposure = 1.05;
+	renderer.toneMappingExposure = 1.15;
 
 	const pmrem = new PMREMGenerator(renderer);
 	const envScene = new RoomEnvironment();
 	scene.environment = pmrem.fromScene(envScene, 0.04).texture;
+	scene.environmentIntensity = 0.72;
 	envScene.dispose();
-
-	const lights = new Group();
-	lights.add(new AmbientLight(0xc8c2b4, 0.35));
-	const key = new DirectionalLight(0xffd7a0, 0.85);
-	key.position.set(180, 220, 140);
-	const fill = new DirectionalLight(0x8aa0c0, 0.28);
-	fill.position.set(-160, 40, -80);
-	lights.add(key, fill);
-	scene.add(lights);
 
 	const group = new Group();
 	const extras: Array<{ dispose: () => void }> = [];
+	let draco: DRACOLoader | null = null;
 
 	if ('glb' in source) {
-		const gltf = await new GLTFLoader().loadAsync(source.glb);
+		draco = new DRACOLoader();
+		draco.setDecoderPath(source.decoderPath.endsWith('/') ? source.decoderPath : source.decoderPath + '/');
+		const loader = new GLTFLoader();
+		loader.setDRACOLoader(draco);
+		const gltf = await loader.loadAsync(source.glb);
 		group.add(gltf.scene);
 	} else {
 		const material = new MeshStandardMaterial({
@@ -110,17 +110,32 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 	group.position.sub(center);
 
 	const span = Math.max(size.x, size.y, size.z) || 1;
-	camera.position.set(span * 0.85, span * 0.55, span * 1.15);
-	camera.near = span / 100;
-	camera.far = span * 20;
+
+	const lights = new Group();
+	lights.add(new AmbientLight(0xc8bda8, 0.22));
+	const key = new DirectionalLight(0xffe1b0, 2.1);
+	key.position.set(span * 0.9, span * 1.35, span * 0.55);
+	const fill = new DirectionalLight(0x8ea4c4, 0.45);
+	fill.position.set(-span * 0.9, span * 0.25, span * 0.8);
+	const rim = new DirectionalLight(0xb7d0ff, 1.35);
+	rim.position.set(-span * 0.35, span * 0.7, -span * 1.1);
+	lights.add(key, fill, rim);
+	scene.add(lights);
+
+	const dist = span * 1.55;
+	camera.position.set(dist * 0.62, dist * 0.28, dist * 0.78);
+	camera.near = span / 200;
+	camera.far = span * 30;
 	camera.updateProjectionMatrix();
 
 	const controls = new OrbitControls(camera, canvas);
 	controls.enableDamping = false;
 	controls.enablePan = false;
-	controls.minDistance = span * 0.6;
+	controls.enableZoom = true;
+	controls.minDistance = span * 0.7;
 	controls.maxDistance = span * 4;
 	controls.target.set(0, 0, 0);
+	controls.enabled = source.interactive !== false;
 	controls.update();
 
 	let frame = 0;
@@ -158,6 +173,7 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 			extras.forEach((item) => item.dispose());
 			scene.environment?.dispose();
 			pmrem.dispose();
+			draco?.dispose();
 			renderer.dispose();
 		}
 	};
