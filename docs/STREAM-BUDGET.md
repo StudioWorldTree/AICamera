@@ -1,3 +1,10 @@
+---
+title: "Stream budget"
+kicker: "Numbers"
+group: "hardware"
+summary: "Working haul is ~100 Mbps per 4K30 HEVC. T4000 HQ encodes 2× 4Kp30, not three. QSFP28 is independent 25G lanes, not aggregated 100G."
+---
+
 # Stream budget — 4K in, 4K out
 
 Feeds `aicam-interconnect`. Does not pick the fabric; it says which links survive which payload.

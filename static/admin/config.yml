@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+backend:
+  name: github
+  repo: StudioWorldTree/AICamera
+  branch: main
+  auth_methods: [token]
+
+site_url: https://studioworldtree.github.io/AICamera
+media_folder: static/media
+public_folder: /AICamera/media
+
+collections:
+  - name: catalog
+    label: Catalog chapters
+    editor:
+      preview: false
+    files:
+      - name: readme
+        label: Catalog overview
+        file: docs/README.md
+        create: false
+        format: yaml-frontmatter
+        fields: &markdown_fields
+          - { label: Title, name: title, widget: string }
+          - { label: Kicker, name: kicker, widget: string }
+          - label: Group
+            name: group
+            widget: select
+            options: [hardware, reference, meta]
+          - { label: Summary, name: summary, widget: text }
+          - { label: Body, name: body, widget: markdown }
+      - name: cameras
+        label: Cameras
+        file: docs/CAMERAS.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: carrier
+        label: Carrier
+        file: docs/CARRIER.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: enclosure
+        label: Enclosure
+        file: docs/ENCLOSURE.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: interconnect
+        label: Interconnect
+        file: docs/INTERCONNECT.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: lens
+        label: Lens
+        file: docs/LENS.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: model_map
+        label: Model map
+        file: docs/MODEL-MAP.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: power
+        label: Power
+        file: docs/POWER.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: sensors
+        label: Sensors
+        file: docs/SENSORS.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: shopping
+        label: Shopping
+        file: docs/SHOPPING.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: stream_budget
+        label: Stream budget
+        file: docs/STREAM-BUDGET.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: references_readme
+        label: References overview
+        file: docs/references/README.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: t4000
+        label: T4000 reference
+        file: docs/references/T4000.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+      - name: thermal
+        label: Thermal reference
+        file: docs/references/THERMAL.md
+        create: false
+        format: yaml-frontmatter
+        fields: *markdown_fields
+  - name: decisions
+    label: Open decisions
+    editor:
+      preview: false
+    files:
+      - name: open
+        label: Open decisions
+        file: docs/decisions/open.json
+        create: false
+        format: json
+        fields:
+          - label: Decisions
+            name: decisions
+            widget: list
+            root: true
+            fields:
+              - { label: ID, name: id, widget: string }
+              - { label: Status, name: status, widget: string }
+              - { label: Call, name: call, widget: string }
+              - { label: Detail, name: detail, widget: text }
+              - { label: Document, name: doc, widget: string }

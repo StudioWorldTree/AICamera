@@ -1,3 +1,10 @@
+---
+title: "References"
+kicker: "Sources"
+group: "reference"
+summary: "Where the Arrow datasheet lives, and how it was ingested (pdf2md, text-based, 59 pages)."
+---
+
 # References
 
 Vendor PDFs. Extracted facts go in sibling `.md` files. Do not treat a PDF as unread if `pdf2md` has not been run.

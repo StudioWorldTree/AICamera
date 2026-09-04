@@ -1,3 +1,10 @@
+---
+title: "Shopping"
+kicker: "Buy brief"
+group: "hardware"
+summary: "Not a spec. Blackmagic is a cinema body (path B), not a CSI science project. T4000 SOM, AGX kit, and carrier options with street prices as of 2026-09-01."
+---
+
 # Hardware shopping — cameras and T4000 breakout
 
 Prices checked 2026-09-01 (USD street unless noted). Confirm before you click.

@@ -1,3 +1,10 @@
+---
+title: "Cameras"
+kicker: "Pipes"
+group: "hardware"
+summary: "Thor speaks CSI-2, not GMSL. Body on the box is CSI. Sats are GMSL2, PoE H.265, or a cine HDMI/SDI body. Cable plant, not picture quality."
+---
+
 # CSI vs GMSL (and the rest of the camera pipes)
 
 Thor never “speaks GMSL.” It speaks **MIPI CSI-2**. GMSL is a long-haul

@@ -70,6 +70,11 @@ function summaryFromMarkdown(md: string) {
 		.slice(0, 280);
 }
 
+function metadataString(metadata: MdModule['metadata'], key: string) {
+	const value = metadata?.[key];
+	return typeof value === 'string' ? value : undefined;
+}
+
 function headingsFromMarkdown(md: string) {
 	const out: DocRecord['headings'] = [];
 	const slugger = new GithubSlugger();
@@ -109,14 +114,21 @@ function buildDocs(): DocRecord[] {
 		const markdown = rawFiles[key] ?? '';
 		const slug = pathToSlug(file);
 		const chapter = chapterByFile.get(file);
-		const { group, kicker } = classify(file);
+		const fallback = classify(file);
 		docs.push({
 			slug,
 			file,
-			title: chapter?.title ?? titleFromMarkdown(markdown, slug || file),
-			summary: chapter?.summary ?? summaryFromMarkdown(markdown),
-			group,
-			kicker,
+			title:
+				metadataString(mod.metadata, 'title') ??
+				chapter?.title ??
+				titleFromMarkdown(markdown, slug || file),
+			summary:
+				metadataString(mod.metadata, 'summary') ?? chapter?.summary ?? summaryFromMarkdown(markdown),
+			group:
+				(metadataString(mod.metadata, 'group') as DocRecord['group'] | undefined) ??
+				chapter?.group ??
+				fallback.group,
+			kicker: metadataString(mod.metadata, 'kicker') ?? chapter?.kicker ?? fallback.kicker,
 			component: mod.default,
 			markdown,
 			headings: headingsFromMarkdown(markdown)

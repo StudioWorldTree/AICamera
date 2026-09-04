@@ -1,3 +1,10 @@
+---
+title: "Sensors"
+kicker: "Glass + silicon"
+group: "hardware"
+summary: "Bring-up count is 1 body + 2 satellites at 4K30. Body is native CSI/GMSL. Sats are PoE H.265 with Cooke-class metadata, not P-iris stubs."
+---
+
 # Sensors and lenses
 
 Activated with `aicam-sensor-lens`. Spec: `openspec/changes/add-sensor-lens-kit/`.

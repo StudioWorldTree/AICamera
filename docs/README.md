@@ -1,3 +1,10 @@
+---
+title: "Hardware docs"
+kicker: "Index"
+group: "meta"
+summary: "This repo is the camera body. Product ground (vision, pipeline, modes, models) lives in web3d-space. Do not fork it."
+---
+
 # AICamera hardware docs
 
 This repo is the **camera body**: Thor carrier, sensors, interconnect, power, enclosures, datasheets.

@@ -1,3 +1,10 @@
+---
+title: "Power"
+kicker: "Watts"
+group: "hardware"
+summary: "T4000 default 70 W, throttle at 90 W. If power sags: drop AI, never record. Two PoE+ sats ≈ 60 W at the PSE. Do not power Thor from the switch."
+---
+
 # Power and thermal
 
 Activated with `aicam-thermal`. Spec: `openspec/changes/add-power-thermal/`.

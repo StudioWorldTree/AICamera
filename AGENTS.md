@@ -36,6 +36,7 @@ Issue tracking: `bd prime` / `bd ready`. Prefix `aicam`.
 
 Public notebook (SvelteKit SSG + mdsvex, GitHub Pages):
 https://studioworldtree.github.io/AICamera/
+Sveltia at `/admin/` edits `docs/*.md` and open decisions via git; locked calls stay out of the CMS.
 
 BOM system lives in the sister tree `../daBOM` (SvelteKit + Hono REST +
 OpenAPI + Drizzle + a local PGLite file). That is a real server, not

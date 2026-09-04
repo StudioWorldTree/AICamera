@@ -1,3 +1,5 @@
+import openJson from '../../docs/decisions/open.json';
+
 export type DecisionStatus = 'locked' | 'open' | 'lab';
 
 export type Decision = {
@@ -132,58 +134,7 @@ export const locked: Decision[] = [
 	}
 ];
 
-export const open: Decision[] = [
-	{
-		id: 'poe-sku',
-		status: 'open',
-		call: 'PoE switch SKU',
-		detail: 'at vs bt. Switch is a kit item — Thor has no PoE. Two cameras at 802.3at ≈ 60 W at the PSE.',
-		doc: 'interconnect'
-	},
-	{
-		id: 'time',
-		status: 'open',
-		call: 'Time domain',
-		detail: 'PTP on sats vs camera timecode vs slate clock. Product question, not a model question. SMPTE genlock unproven.',
-		doc: 'interconnect'
-	},
-	{
-		id: 'hero-raw',
-		status: 'open',
-		call: 'Hero uncompressed sat',
-		detail: 'Exception path, not v1. Uncompressed 4K30 10-bit is ~5 Gbps and is not the satellite budget.',
-		doc: 'stream-budget'
-	},
-	{
-		id: 'i-reader',
-		status: 'open',
-		call: '/i reader on the carrier',
-		detail: 'PL contacts vs barrel-only port. Industrial CSI/GMSL modules do not speak Cooke /i.',
-		doc: 'lens'
-	},
-	{
-		id: 'sensor-sku',
-		status: 'open',
-		call: 'Body module + two PoE cameras',
-		detail: 'Classes are picked (CSI/GMSL 4K body, cine /i PoE sats, industrial stub). Datasheets are the next pack.',
-		doc: 'sensors'
-	},
-	{
-		id: 'guides',
-		status: 'open',
-		call: 'Pick a heat path, then measure',
-		detail:
-			'TDG-12271-001 v1.3 is in tree. Ranked: (1) body as radiator ~40 W, (2) heatpipes to a V-mount radiator + one slow fan for 70 W AI, (3) remote radiator. Hold metal CAD until T4000 + Rogue-T5 + ATS is on a bench with a thermocouple on the TTP. Still need DG-12084-001 and the AGX kit PDF.',
-		doc: 'references/thermal'
-	},
-	{
-		id: 't5000-force',
-		status: 'open',
-		call: 'Does sat count force T5000?',
-		detail: 'Stay on T4000 unless encode or I/O forces the bigger SOM. Firefly 8× GMSL2 boards are T5000-class.',
-		doc: 'carrier'
-	}
-];
+export const open: Decision[] = openJson as Decision[];
 
 export const lab: Decision[] = [
 	{

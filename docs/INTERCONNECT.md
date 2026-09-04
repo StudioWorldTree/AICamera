@@ -1,3 +1,10 @@
+---
+title: "Interconnect"
+kicker: "Plant"
+group: "hardware"
+summary: "Hybrid fabric: body CSI/GMSL into NVENC, sats PoE H.265, lens /i as a second stream. HEVC bring-up fits 5GbE."
+---
+
 # Interconnect
 
 Activated with `aicam-interconnect`. Spec delta: `openspec/changes/add-camera-interconnect/`.

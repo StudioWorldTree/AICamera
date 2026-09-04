@@ -1,3 +1,10 @@
+---
+title: "Model map"
+kicker: "Stages 0–19"
+group: "hardware"
+summary: "Index of which job runs on Thor vs the 6000. Thor resident set stays ≤ ~40 GB. If the 6000 is off, stages 0–8 and 19 still complete."
+---
+
 # Model map — pipeline stages on this kit
 
 Index only. Canonical placement, licenses, and VRAM live in

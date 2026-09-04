@@ -1,3 +1,10 @@
+---
+title: "Enclosure"
+kicker: "Shell"
+group: "hardware"
+summary: "First article wraps the AGX kit, two-part resin for an Anycubic bed. Resin is a fit-check, not a heat sink. Production body is metal — the radiator."
+---
+
 # Enclosure
 
 Activated with `aicam-enclosure`. Spec: `openspec/changes/add-thor-enclosure/`.

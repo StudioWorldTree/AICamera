@@ -10,6 +10,8 @@
 			·
 			<a href="{base}/docs/">Docs</a>
 			·
+			<a href="{base}/admin/" rel="external">CMS</a>
+			·
 			<a href="{base}/media/thor-modules-ds.pdf">DS-11945-001 v1.4</a>
 		</p>
 		<p class="quiet">Work on main. Prefix <code>aicam</code>.</p>

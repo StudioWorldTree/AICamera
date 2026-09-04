@@ -1,3 +1,10 @@
+---
+title: "Thermal"
+kicker: "Heat"
+group: "hardware"
+summary: "TDG-12271-001 v1.3. TTP max 75 °C. 70 W fanless in a cine envelope is not honest. Body-as-radiator ~40 W still air; 70 W AI wants heatpipes to a real radiator and at most one slow fan. Measure TTP before metal CAD."
+---
+
 # T4000 thermal — facts from TDG-12271-001 v1.3
 
 Source: [jetson_thor_thermal_dg_tdg-12271-001v1.3.pdf](jetson_thor_thermal_dg_tdg-12271-001v1.3.pdf)

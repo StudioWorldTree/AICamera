@@ -1,3 +1,10 @@
+---
+title: "Lens metadata"
+kicker: "Cooke /i"
+group: "hardware"
+summary: "Frame-accurate /i (or LDS / XD / EF electronic) from every camera, written as JSONL next to picture. Maps live on the NAS, not per frame."
+---
+
 # Lens metadata — Cooke /i class
 
 Every camera, body and satellite, emits frame-accurate lens data next

@@ -1,3 +1,10 @@
+---
+title: "Carrier"
+kicker: "Compute"
+group: "hardware"
+summary: "Lab brick is the AGX Thor Developer Kit (T5000). Production ceiling is the T4000 SOM — 64 GB, 1× NVENC, 70 W default — unless satellite count forces T5000."
+---
+
 # Carrier
 
 Activated with `aicam-thor-carrier`. Spec: `openspec/changes/add-thor-carrier/`.
