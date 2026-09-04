@@ -16,6 +16,11 @@ function copyDocMedia() {
 	cpSync('docs/cad/preview.png', 'static/media/cad-preview.png');
 	cpSync('docs/cad/agx_shell_front.stl', 'static/media/agx_shell_front.stl');
 	cpSync('docs/cad/agx_shell_rear.stl', 'static/media/agx_shell_rear.stl');
+	try {
+		cpSync('docs/cad/hero.glb', 'static/media/hero.glb');
+	} catch {
+		// Drop a GLB at docs/cad/hero.glb to replace the STL assembly in the hero.
+	}
 	cpSync(
 		'docs/references/jetson_thor_series_modules_datasheet_ds-11945-001v1.4.pdf',
 		'static/media/thor-modules-ds.pdf'

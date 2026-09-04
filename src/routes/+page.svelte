@@ -37,7 +37,7 @@
 		<ShellViewer />
 		<figcaption>
 			First article: two-part resin wrap of the AGX Thor Developer Kit. Fit-check, not a heat sink.
-			WebGL loads on click; the canvas idles with no render loop.
+			Click, then drag to orbit. The canvas idles with no render loop.
 		</figcaption>
 	</figure>
 	<div class="kit">

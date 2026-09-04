@@ -6,17 +6,28 @@
 	let canvas = $state<HTMLCanvasElement>();
 	let status = $state<'idle' | 'loading' | 'live' | 'failed'>('idle');
 	let handle: ShellHandle | null = null;
+	let loader: Promise<typeof import('$lib/cad/mount-shell')> | null = null;
 
 	const poster = `${base}/media/cad-preview.png`;
+	const glb = `${base}/media/hero.glb`;
 	const stls = [`${base}/media/agx_shell_front.stl`, `${base}/media/agx_shell_rear.stl`];
+
+	function warm() {
+		loader ??= import('$lib/cad/mount-shell');
+	}
 
 	async function activate() {
 		if (status === 'loading' || status === 'live' || !canvas) return;
 		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		status = 'loading';
 		try {
-			const { mountShell } = await import('$lib/cad/mount-shell');
-			handle = await mountShell(canvas, stls);
+			warm();
+			const { mountShell } = await loader!;
+			try {
+				handle = await mountShell(canvas, { glb });
+			} catch {
+				handle = await mountShell(canvas, { stls });
+			}
 			status = 'live';
 		} catch (err) {
 			console.error(err);
@@ -32,6 +43,7 @@
 
 <div
 	class="stage"
+	onpointerenter={warm}
 	onclick={() => {
 		if (status === 'idle' || status === 'failed') activate();
 	}}
@@ -45,7 +57,7 @@
 >
 	<img
 		src={poster}
-		alt="Top view of the two-part AGX Thor resin shell, camera boss on the left, cable-exit half on the right."
+		alt="AGX Thor resin shell. Click to load the 3D model and drag to orbit."
 		width="1600"
 		height="900"
 		class:hidden={status === 'live'}
@@ -56,13 +68,13 @@
 		aria-label="Interactive AGX Thor shell. Drag to orbit."
 	></canvas>
 	{#if status !== 'live'}
-		<button type="button" class="arm" onclick={activate} aria-label="Load 3D shell and orbit">
+		<button type="button" class="arm" onclick={activate} aria-label="Load 3D model and orbit">
 			{#if status === 'loading'}
-				Loading shell…
+				Loading model…
 			{:else if status === 'failed'}
 				Couldn’t load WebGL. Static view stays.
 			{:else}
-				Click to orbit
+				Drag to orbit
 			{/if}
 		</button>
 	{/if}
