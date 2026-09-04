@@ -35,9 +35,6 @@
 <section class="split shell">
 	<figure>
 		<ShellViewer />
-		<figcaption>
-			Meshy camera body, lit in-browser. Drag to orbit. WebGL draws on demand, then idles.
-		</figcaption>
 	</figure>
 	<div class="kit">
 		<h2>Bring-up kit</h2>
@@ -161,12 +158,6 @@
 		margin: 0;
 		background: var(--bg-2);
 		border: 1px solid var(--line);
-	}
-
-	figcaption {
-		padding: 0.7rem 0.85rem 0.9rem;
-		font-size: 0.85rem;
-		color: var(--ink-3);
 	}
 
 	.kit {

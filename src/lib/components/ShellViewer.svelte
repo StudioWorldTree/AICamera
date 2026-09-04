@@ -60,8 +60,6 @@
 		<p class="arm" aria-live="polite">Lighting the body…</p>
 	{:else if status === 'failed'}
 		<p class="arm">Couldn’t load WebGL.</p>
-	{:else if status === 'live'}
-		<p class="hint">Drag to orbit</p>
 	{/if}
 </div>
 
@@ -91,8 +89,7 @@
 		cursor: grabbing;
 	}
 
-	.arm,
-	.hint {
+	.arm {
 		position: absolute;
 		right: 0.7rem;
 		bottom: 0.7rem;
@@ -113,9 +110,6 @@
 		canvas.ready {
 			cursor: default;
 			pointer-events: none;
-		}
-		.hint {
-			display: none;
 		}
 	}
 </style>
