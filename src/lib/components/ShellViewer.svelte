@@ -50,7 +50,7 @@
 	});
 </script>
 
-<div class="stage">
+<div class="stage paper-grid">
 	<canvas
 		bind:this={canvas}
 		class:ready={status === 'live'}
@@ -67,7 +67,6 @@
 	.stage {
 		position: relative;
 		aspect-ratio: 16 / 9;
-		background: #14161c;
 		overflow: hidden;
 	}
 

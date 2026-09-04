@@ -156,7 +156,6 @@
 
 	figure {
 		margin: 0;
-		background: var(--bg-2);
 		border: 1px solid var(--line);
 	}
 

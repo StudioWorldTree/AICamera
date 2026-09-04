@@ -2,7 +2,6 @@ import {
 	ACESFilmicToneMapping,
 	AmbientLight,
 	Box3,
-	Color,
 	DirectionalLight,
 	DoubleSide,
 	Group,
@@ -55,15 +54,16 @@ function disposeObject(root: Object3D) {
 
 export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource): Promise<ShellHandle> {
 	const scene = new Scene();
-	scene.background = new Color(0x14161c);
+	scene.background = null;
 
 	const camera = new PerspectiveCamera(28, 1, 0.01, 100);
 	const renderer = new WebGLRenderer({
 		canvas,
 		antialias: true,
-		alpha: false,
+		alpha: true,
 		powerPreference: 'high-performance'
 	});
+	renderer.setClearColor(0x000000, 0);
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 	renderer.outputColorSpace = SRGBColorSpace;
 	renderer.toneMapping = ACESFilmicToneMapping;
@@ -111,16 +111,32 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 
 	const span = Math.max(size.x, size.y, size.z) || 1;
 
-	const lights = new Group();
-	lights.add(new AmbientLight(0xc8bda8, 0.22));
+	const ambient = new AmbientLight(0xc8bda8, 0.22);
 	const key = new DirectionalLight(0xffe1b0, 2.1);
 	key.position.set(span * 0.9, span * 1.35, span * 0.55);
 	const fill = new DirectionalLight(0x8ea4c4, 0.45);
 	fill.position.set(-span * 0.9, span * 0.25, span * 0.8);
 	const rim = new DirectionalLight(0xb7d0ff, 1.35);
 	rim.position.set(-span * 0.35, span * 0.7, -span * 1.1);
-	lights.add(key, fill, rim);
-	scene.add(lights);
+	scene.add(ambient, key, fill, rim);
+
+	const isLight = () => {
+		const theme = document.documentElement.dataset.theme;
+		if (theme === 'light') return true;
+		if (theme === 'dark') return false;
+		return window.matchMedia('(prefers-color-scheme: light)').matches;
+	};
+
+	const applyTheme = () => {
+		const light = isLight();
+		scene.environmentIntensity = light ? 1.05 : 0.72;
+		renderer.toneMappingExposure = light ? 1.02 : 1.15;
+		ambient.intensity = light ? 0.42 : 0.22;
+		key.intensity = light ? 1.55 : 2.1;
+		fill.intensity = light ? 0.95 : 0.45;
+		rim.intensity = light ? 0.55 : 1.35;
+		requestRender();
+	};
 
 	const dist = span * 2.25;
 	camera.position.set(dist * 0.62, dist * 0.28, dist * 0.78);
@@ -162,12 +178,19 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 	const ro = new ResizeObserver(resize);
 	ro.observe(canvas);
 	controls.addEventListener('change', requestRender);
+	const themeWatch = new MutationObserver(applyTheme);
+	themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+	const scheme = window.matchMedia('(prefers-color-scheme: light)');
+	scheme.addEventListener('change', applyTheme);
 	resize();
+	applyTheme();
 
 	return {
 		dispose() {
 			if (frame) cancelAnimationFrame(frame);
 			ro.disconnect();
+			themeWatch.disconnect();
+			scheme.removeEventListener('change', applyTheme);
 			controls.dispose();
 			disposeObject(group);
 			extras.forEach((item) => item.dispose());
