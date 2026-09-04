@@ -122,7 +122,7 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 	lights.add(key, fill, rim);
 	scene.add(lights);
 
-	const dist = span * 1.55;
+	const dist = span * 2.25;
 	camera.position.set(dist * 0.62, dist * 0.28, dist * 0.78);
 	camera.near = span / 200;
 	camera.far = span * 30;
@@ -132,8 +132,8 @@ export async function mountShell(canvas: HTMLCanvasElement, source: ShellSource)
 	controls.enableDamping = false;
 	controls.enablePan = false;
 	controls.enableZoom = true;
-	controls.minDistance = span * 0.7;
-	controls.maxDistance = span * 4;
+	controls.minDistance = span * 1.1;
+	controls.maxDistance = span * 5;
 	controls.target.set(0, 0, 0);
 	controls.enabled = source.interactive !== false;
 	controls.update();
