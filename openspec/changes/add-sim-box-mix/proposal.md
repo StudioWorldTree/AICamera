@@ -1,6 +1,8 @@
 # add-sim-box-mix
 
-> **PENDING**
+> **ACTIVE BUILD**
+
+**Rigor:** architecture
 
 ## Why
 

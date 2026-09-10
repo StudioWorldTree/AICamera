@@ -1,5 +1,6 @@
 # Tasks
 
+- [ ] Advise reader (other family) on this architecture change
 - [ ] Catalog schema: id, kind, shelf, exclusive tags, costs per box (3090 / t4000 / 6000)
 - [ ] Seed always-on (nvenc-hevc, cuvslam), slottable (filters, sam2-tiny, clip, klein-4b, qwen-9b if absent marked), never-on-thor (flux-dev, wan-14b, h3, …)
 - [ ] Exclusive tags: klein-27b, sam2-maxine-4k

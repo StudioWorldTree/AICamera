@@ -1,6 +1,8 @@
 # add-cartridge-model
 
-> **PENDING**
+> **ACTIVE BUILD**
+
+**Rigor:** architecture
 
 ## Why
 
