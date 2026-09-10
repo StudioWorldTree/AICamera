@@ -4,9 +4,10 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 
 	let { children } = $props();
-	const bay = $derived(page.url.pathname.includes('/bay'));
+	const bay = $derived(page.url.pathname.startsWith(`${base}/bay`) || page.url.pathname === `${base}/bay/`);
 </script>
 
 <svelte:head>

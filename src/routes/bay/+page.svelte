@@ -2,9 +2,11 @@
 	import { onMount } from 'svelte';
 	import { base } from '$app/paths';
 	import plate from '$lib/bay/last-plate.json';
-	import type { BayView } from '$lib/bay/types';
+	import { BANDWIDTH_K, FILTER_K } from '$lib/bay/t4000';
+	import type { BayPlate, BayView } from '$lib/bay/types';
 
-	let view = $state<BayView>({ ...(plate as BayView), live: false });
+	const plateView: BayView = { ...(plate as BayPlate), feed: 'plate' };
+	let view = $state<BayView>(plateView);
 	let tick = $state(0);
 
 	const magName: Record<string, string> = {
@@ -14,14 +16,17 @@
 	};
 
 	async function pull() {
-		if (!import.meta.env.DEV) return;
+		if (!import.meta.env.DEV) {
+			view = plateView;
+			return;
+		}
 		try {
 			const r = await fetch('/bay-api/loadout.json', { signal: AbortSignal.timeout(2500) });
-			if (!r.ok) return;
-			const data = (await r.json()) as BayView;
-			view = { ...data, live: true };
+			if (!r.ok) throw new Error(String(r.status));
+			const data = (await r.json()) as BayPlate;
+			view = { ...data, feed: 'live' };
 		} catch {
-			view = { ...(plate as BayView), live: false };
+			view = { ...plateView, feed: 'dark' };
 		}
 	}
 
@@ -40,8 +45,11 @@
 	const ramPct = $derived(
 		view.ram.total_gb ? (100 * (view.ram.total_gb - view.ram.avail_gb)) / view.ram.total_gb : 0
 	);
-	const hot = $derived(
-		view.gpu.util_pct > 2 || view.stack.some((s) => s.resident) || view.gpu.power_w > 80
+	const hot = $derived(view.gpu.util_pct > 2 || view.ai_on_tube || view.gpu.power_w > 80);
+	const cap = $derived(view.gpu.power_limit_w || 0);
+	const plateDay = $derived((view.ts || '').slice(0, 10));
+	const slate = $derived(
+		view.feed === 'live' ? 'LIVE' : view.feed === 'dark' ? 'BRICK DARK' : `PLATE ${plateDay}`
 	);
 	const vramGb = $derived((view.gpu.vram_used_mib / 1024).toFixed(2));
 	const vramTot = $derived((view.gpu.vram_total_mib / 1024).toFixed(1));
@@ -70,7 +78,7 @@
 		<div class="slate">
 			<span class="tally" class:lit={hot} title={hot ? 'compute' : 'idle'}></span>
 			<span class="mode">{hot ? 'ROLLING' : 'HOLD'}</span>
-			<span class="feed">{view.live ? 'LIVE' : 'PLATE'}</span>
+			<span class="feed">{slate}</span>
 		</div>
 	</header>
 
@@ -83,7 +91,7 @@
 		<div class="readout watts">
 			<p class="kicker">DRAW</p>
 			<p class="digits">{view.gpu.power_w.toFixed(1)}<span class="unit"> W</span></p>
-			<p class="sub">cap 420 · persist {view.gpu.persistence ? 'on' : 'off'}</p>
+			<p class="sub">cap {cap.toFixed(0)} · persist {view.gpu.persistence ? 'on' : 'off'}</p>
 		</div>
 		<div class="wave" aria-label="VRAM waveform {vramPct.toFixed(0)} percent">
 			<div class="fill" style="width: {Math.min(100, vramPct)}%"></div>
@@ -99,14 +107,16 @@
 				<li class:in={mag.resident}>
 					<span class="slot">{magName[mag.id] ?? mag.id}</span>
 					<span class="role">{mag.role}</span>
-					<span class="state">{mag.resident ? 'RESIDENT' : 'ON CART'}</span>
+					<span class="state">ON CART</span>
 					<span class="size"
 						>{mag.weights_gb ? mag.weights_gb.toFixed(1) : mag.cache_gb.toFixed(1)} GB</span
 					>
 				</li>
 			{/each}
 		</ul>
-		<p class="note">One mag in the gate. 16 GB host — unload before klein.</p>
+		<p class="note">
+			{view.ai_on_tube ? 'AI on the tube — process-level, not per mag.' : 'One mag in the gate. 16 GB host — unload before klein.'}
+		</p>
 	</section>
 
 	<section class="meters">
@@ -150,10 +160,12 @@
 			{view.gpu.name || 'RTX 3090'} · {view.kernel} · {view.ts}
 		</p>
 		<p>
-			T4000 read · filters ×{view.t4000_read.filter_k} · SAM2/LLM ×{view.t4000_read.bandwidth_k} · {view.live
-				? 'tailnet live'
-				: 'last plate'}
-			{#if tick > 0 && view.live}
+			T4000 read · filters ×{FILTER_K} · SAM2/LLM ×{BANDWIDTH_K} · {view.feed === 'live'
+				? 'vite live'
+				: view.feed === 'dark'
+					? 'brick dark'
+					: 'last plate'}
+			{#if tick > 0 && view.feed === 'live'}
 				· {tick}
 			{/if}
 		</p>

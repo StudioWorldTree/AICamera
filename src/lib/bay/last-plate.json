@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-10T09:48:44Z",
+  "ts": "2026-09-10T10:14:08Z",
   "host": "fractal1",
   "kernel": "7.2.3-arch1-2",
   "gpu": {
@@ -7,7 +7,8 @@
     "vram_used_mib": 319,
     "vram_total_mib": 24576,
     "util_pct": 0,
-    "power_w": 25.7,
+    "power_w": 26.3,
+    "power_limit_w": 420.0,
     "persistence": true,
     "procs": [
       {
@@ -32,7 +33,7 @@
   "swap": {
     "disk_used_mb": 7.3,
     "disk_size_gb": 16.0,
-    "zram_used_mb": 108.7,
+    "zram_used_mb": 108.6,
     "zram_size_gb": 7.7
   },
   "stack": [
@@ -63,9 +64,6 @@
       "weights_ok": true
     }
   ],
-  "t4000_read": {
-    "filter_k": 0.13,
-    "bandwidth_k": 0.3
-  },
+  "ai_on_tube": false,
   "source": "fractal1"
 }

@@ -3,12 +3,27 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
-BIND = "100.103.147.70"
 PORT = 8745
+
+
+def bind_ip() -> str:
+    env = os.environ.get("TAILSCALE_IP", "").strip()
+    if env:
+        return env
+    try:
+        out = subprocess.check_output(["tailscale", "ip", "-4"], text=True)
+        ip = out.strip().splitlines()[0].strip()
+        if ip:
+            return ip
+    except (subprocess.CalledProcessError, FileNotFoundError, IndexError):
+        pass
+    return "100.103.147.70"
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from snapshot import snapshot  # noqa: E402
@@ -34,8 +49,9 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    httpd = HTTPServer((BIND, PORT), Handler)
-    print(f"bay-feed http://{BIND}:{PORT}/loadout.json", flush=True)
+    ip = bind_ip()
+    httpd = HTTPServer((ip, PORT), Handler)
+    print(f"bay-feed http://{ip}:{PORT}/loadout.json", flush=True)
     httpd.serve_forever()
 
 

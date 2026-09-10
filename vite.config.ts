@@ -74,7 +74,7 @@ export default defineConfig({
 		},
 		proxy: {
 			'/bay-api': {
-				target: 'http://100.103.147.70:8745',
+				target: 'http://fractal1:8745',
 				changeOrigin: true,
 				rewrite: (p) => p.replace(/^\/bay-api/, '')
 			}

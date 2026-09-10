@@ -26,6 +26,7 @@ export type BayPlate = {
 		vram_total_mib: number;
 		util_pct: number;
 		power_w: number;
+		power_limit_w: number;
 		persistence: boolean;
 		procs: BayProc[];
 	};
@@ -37,8 +38,10 @@ export type BayPlate = {
 		zram_size_gb: number;
 	};
 	stack: BayMag[];
-	t4000_read: { filter_k: number; bandwidth_k: number };
+	ai_on_tube: boolean;
 	source: string;
 };
 
-export type BayView = BayPlate & { live: boolean };
+export type BayFeed = "live" | "dark" | "plate";
+
+export type BayView = BayPlate & { feed: BayFeed };

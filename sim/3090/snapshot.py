@@ -63,14 +63,14 @@ def gpu() -> dict:
     q = _sh(
         [
             "nvidia-smi",
-            "--query-gpu=name,memory.used,memory.total,utilization.gpu,power.draw,persistence_mode",
+            "--query-gpu=name,memory.used,memory.total,utilization.gpu,power.draw,power.limit,persistence_mode",
             "--format=csv,noheader,nounits",
         ]
     )
     parts = [x.strip() for x in q.split(",")]
-    if len(parts) < 6:
-        parts = ["", "0", "0", "0", "0", "Disabled"]
-    name, used, total, util, power, pers = parts[:6]
+    if len(parts) < 7:
+        parts = ["", "0", "0", "0", "0", "0", "Disabled"]
+    name, used, total, util, power, limit, pers = parts[:7]
     procs: list[dict] = []
     smi = _sh(["nvidia-smi"])
     grab = False
@@ -99,6 +99,7 @@ def gpu() -> dict:
         "vram_total_mib": int(float(total or 0)),
         "util_pct": int(float(util or 0)),
         "power_w": round(float(power or 0), 1),
+        "power_limit_w": round(float(limit or 0), 1),
         "persistence": pers.lower() in {"enabled", "on"},
         "procs": procs,
     }
@@ -135,10 +136,7 @@ def python_resident() -> bool:
     return False
 
 
-def stack(g: dict) -> list[dict]:
-    compute = any(p.get("kind") == "C" for p in g.get("procs", []))
-    py = python_resident()
-    resident_ai = compute or py
+def stack(_g: dict) -> list[dict]:
     rows = []
     catalog = [
         ("sam2-tiny", "segment", "facebook--sam2.1-hiera-tiny", 2.5),
@@ -154,7 +152,7 @@ def stack(g: dict) -> list[dict]:
                 "cache_gb": cache,
                 "incomplete_gb": inc,
                 "peak_vram_gb": peak,
-                "resident": bool(resident_ai and sid != "flux2-klein-4b" and py),
+                "resident": False,
             }
         )
     # klein weights
@@ -170,11 +168,6 @@ def stack(g: dict) -> list[dict]:
         if r["id"] == "flux2-klein-4b":
             r["weights_gb"] = round(wsum / 1e9, 2)
             r["weights_ok"] = ok
-            r["resident"] = bool(resident_ai and py)
-    # Idle compositor is never "AI resident"
-    if not py and not compute:
-        for r in rows:
-            r["resident"] = False
     return rows
 
 
@@ -193,7 +186,8 @@ def snapshot() -> dict:
         },
         "swap": swap(),
         "stack": stack(g),
-        "t4000_read": {"filter_k": 0.13, "bandwidth_k": 0.30},
+        "ai_on_tube": python_resident()
+        or any(p.get("kind") == "C" for p in g.get("procs", [])),
         "source": "fractal1",
     }
 
