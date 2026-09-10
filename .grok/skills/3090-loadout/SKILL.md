@@ -37,8 +37,10 @@ Live sizes come from the script. Expected complete weights:
 | SAM2.1 Hiera-tiny | ~149 MB | **2.0–3.0 GB**, ~400 W | unload before klein |
 | CLIP ViT-B/32 | HF snapshot ~2.3 GB | ~1.8–2.4 GB | unload before klein |
 | FLUX.2 klein 4B | **~16.0 GB weights** (text enc 8.05 + transformer 7.75 + VAE 0.17). Cache may be larger (`.incomplete` junk) | cpu_offload; wall ~43 s t2i / 36 s i2i at 768² | snap profile; unloads the rest |
+| Qwen3.8-27B GGUF (UD-Q4_K_XL) | `~/models/Qwen3.8-27B-GGUF/` **~17 GB** | llama-server, Tailscale `:8020`, user unit `qwen38-llama.service`. **FACT 2026-09-10: 17784 MiB** process / **18189 MiB** GPU | **unload before klein / SAM2 / CLIP**. Buzz model id `qwen3.8-27b` |
 | Qwen3.5-9B | not installed | — | AD profile; not this box yet |
 | compositor | — | niri ~98 MB + ghostty ~153 MB | always |
+| Parakeet TDT 0.6B v3 ASR | `~/aicam/parakeet-cpu/` (onnx-asr 0.12 + ORT CPU). FP32 ONNX 2.4 G; INT8 from Hub | **CPU only.** INT8 FACT 2026-09-10: 7.4 s clip **19.9×** RTFx @ 4 threads, RSS **1.57 GB**, GPU stayed 319 MiB / 0%. Do not give ASR a CUDA context — 3090 is for 30 fps plugins. No NPU/iGPU on the 14600KF. | yes, with INT8 + 4 threads; not with klein |
 
 Peaks and T4000 derates live in `docs/3090-SIM.md` (one home). Quote them from there, not from memory.
 
@@ -46,4 +48,4 @@ Peaks and T4000 derates live in `docs/3090-SIM.md` (one home). Quote them from t
 
 Lead with **now** (resident VRAM, RAM avail, disk-swap MB), then **on disk**, then **junk** (incomplete HF blobs). If disk_swapfile_used is tens of MB and zram is the rest, say we are **not** swapping to disk. If klein is loading and disk_swapfile_used climbs, that is the 16 GB host hitting the swapfile.
 
-Idle box is normal: GPU ~320 MB compositor, no python, disk swap a few MB leftover from yesterday's klein offload.
+Idle camera harness is normal (no python). The 3090 is **not** empty while Buzz is wired: `llama-server` holds Qwen3.8-27B on Tailscale `:8020`. Compositor is extra (~320 MB). Disk swap a few MB leftover from yesterday's klein offload is not "swapping to disk."
