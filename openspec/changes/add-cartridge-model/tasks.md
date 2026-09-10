@@ -7,3 +7,16 @@
 - [ ] Mode presets as arrays of cartridge ids (master-capture, snap, ad, ar, talent-tracking)
 - [ ] Envelope ids: `3090` (fractal1 live), `t4000` (second scale), `6000`
 - [ ] Point names at MODELS.md / MODES.md; FACT costs at 3090-SIM.md — do not fork product ground
+
+## From advise 2026-09-10 (agt-fable-5-1-arch-review)
+
+- [ ] Spec: pack semantics on a `swap` envelope (`3090` = one slot at a time; max-of-peaks or stated rule). Cite add-sim-box-mix
+- [ ] Spec: `sam2-maxine-4k` vs talent-tracking preset — resolution-variant cart ids, or drop the tag this pass
+- [ ] Spec: null scenario — always-on with null cost on target envelope is `absent` and logged; slottable with null cost cannot seat
+- [ ] Record: `t4000` cost is unified (`unified_gb`), or state the sum rule; do not carry a 3090 host/VRAM split onto Thor
+- [ ] Record: `latency` (LIVE/NEAR/MIN from MODELS.md) or `pack` (SMALL/LARGE from sim-box-mix), or state that this pack is memory-and-power only
+- [ ] Record: `job` per cart pointing at the MODELS.md row (ids are models, MODELS.md rows are jobs)
+- [ ] Record: each cost carries `src` (3090-SIM anchor + date) or `fact: false`; the design's klein `vram_gb: 16.0` is disk weight size, not a measured VRAM peak
+- [ ] Spec note: `never-on-thor` shelf is an override that wins over any measured cost (policy, e.g. H3)
+- [ ] Envelope ceilings (VRAM / host or unified / watts / NVENC sessions) for `3090`, `t4000`, `6000` — owned here or by add-sim-box-mix `hardware-kit`; one of the two must
+- [ ] Acceptance: every seeded preset seats on its home envelope under the spec's own rules (catches the three spec pins before a packer exists)
