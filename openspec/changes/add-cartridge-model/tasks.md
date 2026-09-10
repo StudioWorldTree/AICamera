@@ -25,3 +25,9 @@
 
 - [x] Spec: power axis — watts is a record and sag (hardware-kit) enforces power, so strike `watts` as a pack axis from "Latency vs pack" and "Envelope ceilings"
 - [x] Spec: swap formula — Σ(always-on) + max(slottable) against the ceiling, not max over the whole set (always-on carts are resident beside the loaded slot)
+
+## From re-advise 2 2026-09-10 (fable-5-1-arch-review)
+
+- [x] Advise: accept (`reviews/2026-09-10-re2-advise.md`). Both re-advise sentences closed; acceptance exits 0
+- [ ] Fold note: rewrite the three `add-sim-box-mix` cites in the delta to hardware-kit "Resident 30 fps design target" (change folded at 860bae4); refresh design.md "max-of-peaks" sentence from the spec
+- [ ] add-cartridge-pack: checker docstring says max-of-peaks; checker raises when no cart seats; 4K-pair refusal and 3090 swap-set scenarios are not in `main()`
