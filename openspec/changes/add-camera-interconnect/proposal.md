@@ -11,7 +11,10 @@ PoE satellites, and the NAS. The wrong fabric buys the wrong cameras.
 
 - Hybrid fabric: body CSI/GMSL on the Thor box; satellites PoE carrying H.265
 - Record path is HEVC, not RAW over the wire
-- Truck uplink: 5GbE is enough for bring-up HEVC; MGBE lanes stay independent
+- T4000 1+2: satellite-side H.265; Thor NVENC owns the body only
+- PoE powers sats; an external switch is a kit item; PoE class ≠ link bitrate
+- QSFP/MGBE lanes stay independent (not aggregated 100GbE)
+- Record-first: drop AI, never record
 - Capability: `hardware-kit`
 
 ## Impact
