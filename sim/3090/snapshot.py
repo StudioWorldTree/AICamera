@@ -126,8 +126,49 @@ def swap() -> dict:
     }
 
 
+HUB_SLUG = {
+    "sam2-tiny": "facebook--sam2.1-hiera-tiny",
+    "clip": "openai--clip-vit-base-patch32",
+    "klein-4b": "black-forest-labs--FLUX.2-klein-4B",
+}
+
+RESIDENT_HINT = (
+    ("sam2-tiny", r"sam2|hiera-tiny"),
+    ("clip", r"clip-vit|openai/clip"),
+    ("klein-4b", r"klein|FLUX\.2"),
+    ("filters", r"pipeline\.py.*filters|--stage filters"),
+    ("qwen-9b", r"qwen.*9b"),
+    ("da-s", r"depth.?anything|da-v2"),
+)
+
+
+def python_cmds() -> str:
+    return _sh(["ps", "-eo", "args"])
+
+
+def resident_ids(g: dict, cmds: str) -> set[str]:
+    ids: set[str] = set()
+    lines = [
+        ln
+        for ln in cmds.splitlines()
+        if "snapshot.py" not in ln and "serve.py" not in ln
+    ]
+    blob = "\n".join(lines).lower()
+    for sid, pat in RESIDENT_HINT:
+        if re.search(pat, blob, re.I):
+            ids.add(sid)
+    for p in g.get("procs") or []:
+        if p.get("kind") != "C":
+            continue
+        n = str(p.get("name") or "").lower()
+        for sid, pat in RESIDENT_HINT:
+            if re.search(pat, n, re.I):
+                ids.add(sid)
+    return ids
+
+
 def python_resident() -> bool:
-    ps = _sh(["ps", "-eo", "args"])
+    ps = python_cmds()
     for line in ps.splitlines():
         if "snapshot.py" in line or "serve.py" in line:
             continue
@@ -136,15 +177,19 @@ def python_resident() -> bool:
     return False
 
 
-def stack(_g: dict) -> list[dict]:
+def stack(g: dict) -> list[dict]:
+    cmds = python_cmds()
+    gated = resident_ids(g, cmds)
     rows = []
     catalog = [
-        ("sam2-tiny", "segment", "facebook--sam2.1-hiera-tiny", 2.5),
-        ("clip-vit-b32", "region", "openai--clip-vit-base-patch32", 2.0),
-        ("flux2-klein-4b", "snap", "black-forest-labs--FLUX.2-klein-4B", 13.0),
+        ("sam2-tiny", "segment", 2.5),
+        ("clip", "region", 2.0),
+        ("klein-4b", "snap", 13.0),
+        ("filters", "look", 0.7),
     ]
-    for sid, role, slug, peak in catalog:
-        cache, inc = dir_sizes(HUB / f"models--{slug}")
+    for sid, role, peak in catalog:
+        slug = HUB_SLUG.get(sid)
+        cache, inc = dir_sizes(HUB / f"models--{slug}") if slug else (0.0, 0.0)
         rows.append(
             {
                 "id": sid,
@@ -152,10 +197,9 @@ def stack(_g: dict) -> list[dict]:
                 "cache_gb": cache,
                 "incomplete_gb": inc,
                 "peak_vram_gb": peak,
-                "resident": False,
+                "resident": sid in gated,
             }
         )
-    # klein weights
     klein = HUB / "models--black-forest-labs--FLUX.2-klein-4B" / "blobs"
     wsum = 0
     ok = True
@@ -165,7 +209,7 @@ def stack(_g: dict) -> list[dict]:
         wsum += got
         ok = ok and got == exp
     for r in rows:
-        if r["id"] == "flux2-klein-4b":
+        if r["id"] == "klein-4b":
             r["weights_gb"] = round(wsum / 1e9, 2)
             r["weights_ok"] = ok
     return rows

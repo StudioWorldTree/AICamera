@@ -46,7 +46,7 @@
       "resident": false
     },
     {
-      "id": "clip-vit-b32",
+      "id": "clip",
       "role": "region",
       "cache_gb": 4.85,
       "incomplete_gb": 0.0,
@@ -54,7 +54,7 @@
       "resident": false
     },
     {
-      "id": "flux2-klein-4b",
+      "id": "klein-4b",
       "role": "snap",
       "cache_gb": 52.53,
       "incomplete_gb": 5.05,

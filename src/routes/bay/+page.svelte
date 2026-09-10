@@ -3,17 +3,16 @@
 	import { base } from '$app/paths';
 	import plate from '$lib/bay/last-plate.json';
 	import { BANDWIDTH_K, FILTER_K } from '$lib/bay/t4000';
+	import { magRack, seatWord } from '$lib/bay/rack';
+	import { BayTracker } from '$lib/bay/tracker';
+	import VaporGrid from '$lib/components/VaporGrid.svelte';
 	import type { BayPlate, BayView } from '$lib/bay/types';
 
 	const plateView: BayView = { ...(plate as BayPlate), feed: 'plate' };
 	let view = $state<BayView>(plateView);
 	let tick = $state(0);
-
-	const magName: Record<string, string> = {
-		'sam2-tiny': 'SAM2',
-		'clip-vit-b32': 'CLIP',
-		'flux2-klein-4b': 'KLEIN'
-	};
+	let armed = $state(false);
+	const tracker = new BayTracker();
 
 	async function pull() {
 		if (!import.meta.env.DEV) {
@@ -36,8 +35,21 @@
 			tick += 1;
 			pull();
 		}, 3000);
-		return () => clearInterval(id);
+		return () => {
+			clearInterval(id);
+			tracker.dispose();
+		};
 	});
+
+	async function armSound() {
+		if (armed) {
+			tracker.mute();
+			armed = false;
+			return;
+		}
+		await tracker.arm();
+		armed = true;
+	}
 
 	const vramPct = $derived(
 		view.gpu.vram_total_mib ? (100 * view.gpu.vram_used_mib) / view.gpu.vram_total_mib : 0
@@ -53,6 +65,22 @@
 	);
 	const vramGb = $derived((view.gpu.vram_used_mib / 1024).toFixed(2));
 	const vramTot = $derived((view.gpu.vram_total_mib / 1024).toFixed(1));
+	const rack = $derived(
+		magRack(view.stack, {
+			vramUsedMib: view.gpu.vram_used_mib,
+			procs: view.gpu.procs
+		})
+	);
+	const vaporSpeed = $derived(0.28 + (view.gpu.util_pct / 100) * 2.4 + (hot ? 0.7 : 0));
+	const gated = $derived(rack.filter((m) => m.seat === 'gate').map((m) => m.label));
+
+	$effect(() => {
+		tracker.setLoad({
+			util: view.gpu.util_pct,
+			power: view.gpu.power_w,
+			hot
+		});
+	});
 </script>
 
 <svelte:head>
@@ -94,28 +122,36 @@
 			<p class="sub">cap {cap.toFixed(0)} · persist {view.gpu.persistence ? 'on' : 'off'}</p>
 		</div>
 		<div class="wave" aria-label="VRAM waveform {vramPct.toFixed(0)} percent">
+			<VaporGrid speed={vaporSpeed} {hot} />
 			<div class="fill" style="width: {Math.min(100, vramPct)}%"></div>
 			<div class="ticks" aria-hidden="true"></div>
 			<p class="wave-lab">{vramPct.toFixed(1)}% · util {view.gpu.util_pct}%</p>
+			<button type="button" class="arm" onclick={armSound} aria-pressed={armed}>
+				{armed ? 'MUTE TRACKER' : 'ARM TRACKER'}
+			</button>
 		</div>
 	</section>
 
 	<section class="mags">
 		<h2>Mag rack</h2>
 		<ul>
-			{#each view.stack as mag (mag.id)}
-				<li class:in={mag.resident} data-mag={mag.id}>
-					<span class="slot">{magName[mag.id] ?? mag.id}</span>
-					<span class="role">{mag.role}</span>
-					<span class="state">ON CART</span>
-					<span class="size"
-						>{mag.weights_gb ? mag.weights_gb.toFixed(1) : mag.cache_gb.toFixed(1)} GB</span
-					>
+			{#each rack as mag (mag.id)}
+				<li class:in={mag.seat === 'gate'} data-mag={mag.id} data-seat={mag.seat}>
+					<span class="slot">{mag.label}</span>
+					<span class="role">{mag.job}</span>
+					<span class="state">{seatWord(mag.seat)}</span>
+					<span class="size">{mag.sizeGb != null ? `${mag.sizeGb.toFixed(1)} GB` : '—'}</span>
 				</li>
 			{/each}
 		</ul>
 		<p class="note">
-			{view.ai_on_tube ? 'AI on the tube — process-level, not per mag.' : 'One mag in the gate. 16 GB host — unload before klein.'}
+			{#if gated.length}
+				In the gate: {gated.join(', ')}. Swap brick — one slottable mag at a time.
+			{:else if view.gpu.procs.some((p) => p.kind === 'C')}
+				Compute on the tube ({view.gpu.procs.filter((p) => p.kind === 'C').map((p) => p.name).join(', ')}), not a catalog mag.
+			{:else}
+				Nothing in the gate. ON CART is weights on disk. ABSENT has no 3090 cost.
+			{/if}
 		</p>
 	</section>
 
@@ -311,18 +347,22 @@
 	.fill {
 		position: absolute;
 		inset: 0 auto 0 0;
-		background: linear-gradient(90deg, #6a3a12, #e2a45a);
-		opacity: 0.85;
+		background: linear-gradient(90deg, #6a3a12cc, #e2a45acc);
+		opacity: 0.72;
+		z-index: 1;
+		mix-blend-mode: screen;
 	}
 
 	.ticks {
 		position: absolute;
 		inset: 0;
+		z-index: 1;
 		background: repeating-linear-gradient(
 			90deg,
 			transparent 0 9%,
-			rgba(9, 8, 7, 0.55) 9% 10%
+			rgba(9, 8, 7, 0.45) 9% 10%
 		);
+		pointer-events: none;
 	}
 
 	.wave-lab {
@@ -334,7 +374,28 @@
 		font-size: 0.8rem;
 		letter-spacing: 0.08em;
 		color: #efe6d6;
-		z-index: 1;
+		z-index: 2;
+	}
+
+	.arm {
+		position: absolute;
+		left: 0.6rem;
+		bottom: 0.35rem;
+		z-index: 2;
+		border: 1px solid #3a3228;
+		background: #12100ecc;
+		color: #c4b49a;
+		font-family: 'Tactic Sans', sans-serif;
+		font-size: 0.68rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		padding: 0.28rem 0.5rem;
+		cursor: pointer;
+	}
+
+	.arm[aria-pressed='true'] {
+		color: #d23c2a;
+		border-color: #d23c2a;
 	}
 
 	.mags,
@@ -404,6 +465,19 @@
 	}
 
 	.in .slot {
+		color: #e2a45a;
+	}
+
+	li[data-seat='empty'] .slot,
+	li[data-seat='absent'] .slot {
+		color: #6a5e50;
+	}
+
+	li[data-seat='absent'] .state {
+		color: #5a4e42;
+	}
+
+	li[data-seat='cart'] .state {
 		color: #e2a45a;
 	}
 
@@ -508,13 +582,13 @@
 			color: #3ef0ff;
 			text-shadow: 0 0 12px #3ef0ff;
 		}
-		.mags li[data-mag='clip-vit-b32']:hover .slot,
-		.mags li[data-mag='clip-vit-b32']:hover .size {
+		.mags li[data-mag='clip']:hover .slot,
+		.mags li[data-mag='clip']:hover .size {
 			color: #ff3ec8;
 			text-shadow: 0 0 12px #ff3ec8;
 		}
-		.mags li[data-mag='flux2-klein-4b']:hover .slot,
-		.mags li[data-mag='flux2-klein-4b']:hover .size {
+		.mags li[data-mag='klein-4b']:hover .slot,
+		.mags li[data-mag='klein-4b']:hover .size {
 			color: #b8ff3e;
 			text-shadow: 0 0 12px #b8ff3e;
 		}
@@ -552,6 +626,9 @@
 	@media (prefers-reduced-motion: reduce) {
 		.tally.lit {
 			animation: none;
+		}
+		.arm {
+			display: none;
 		}
 		.readout:hover .digits,
 		.mags li:hover .slot,
