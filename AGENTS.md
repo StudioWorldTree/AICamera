@@ -39,10 +39,9 @@ https://studioworldtree.github.io/AICamera/
 Sveltia at `/admin/` edits `docs/*.md` and open decisions via git; locked calls stay out of the CMS.
 
 BOM / crib work is **not this repo**. Sister tree `../daBOM` (local
-SvelteKit + Hono, PGLite `data/dabom/`). When asked to add a kit or
-SKU, ingest SHOPPING.md / a datasheet, explode a BOM, or refresh a
-quote: read `../daBOM/AGENTS.md`, start `npm run dev` there if
-localhost:5173 is down, then `GET http://localhost:5173/.well-known/openapi.json`.
-Ingest: `../daBOM/skills/ingest-hardware/SKILL.md`. Quotes:
-`../daBOM/skills/price-quote/SKILL.md`. Never SQL the PGLite file.
-This Pages notebook stays product facts (Thor, HEVC, /i).
+SvelteKit + Hono, PGLite `data/dabom/`). Grok user skill `dabom`
+(`~/.grok/skills/dabom`) finds it from any cwd. When asked to add a
+kit or SKU, ingest SHOPPING.md / a datasheet, explode a BOM, or
+refresh a quote: follow that skill, then `../daBOM/AGENTS.md`. Never
+SQL the PGLite file. This Pages notebook stays product facts
+(Thor, HEVC, /i).
