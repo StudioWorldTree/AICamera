@@ -4,4 +4,4 @@
 - [ ] `ARCHITECTURE.md` note: Bun ASR process beside Pages SSG (owed at fold; draft in design.md)
 - [ ] Advise accept before engine/hono writes
 - [x] Advise send-back 2026-09-10: strike resample; health op; sidecar no-listener; CUDA_VISIBLE_DEVICES + ≤4 threads + CPU scenario; servers `/api/v1`; NDJSON stream
-- [ ] Re-advise after send-back amend
+- [x] Re-advise 2026-09-10: accept (`reviews/2026-09-10-re-advise.md`); notes to hono/stream nodes, none blocking
