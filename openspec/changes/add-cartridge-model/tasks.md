@@ -19,4 +19,9 @@
 - [x] Record: each cost carries `src` (3090-SIM anchor + date) or `fact: false`; the design's klein `vram_gb: 16.0` is disk weight size, not a measured VRAM peak
 - [x] Spec note: `never-on-thor` shelf is an override that wins over any measured cost (policy, e.g. H3)
 - [x] Envelope ceilings (VRAM / host or unified / watts / NVENC sessions) for `3090`, `t4000`, `6000` — owned here or by add-sim-box-mix `hardware-kit`; one of the two must
-- [x] Acceptance: every seeded preset seats on its home envelope under the spec's own rules (catches the three spec pins before a packer exists)
+- [ ] Acceptance: every seeded preset seats on its home envelope under the spec's own rules (catches the three spec pins before a packer exists) — re-advise 2026-09-10: checker is memory + NVENC only; under the spec's watts rule snap / ar / talent-tracking exceed 70 W on t4000. True again once the power-axis pin below lands
+
+## From re-advise 2026-09-10 (fable-5-1-arch-review)
+
+- [ ] Spec: power axis — watts is a record and sag (hardware-kit) enforces power, so strike `watts` as a pack axis from "Latency vs pack" and "Envelope ceilings"; OR keep it, define `watts` as increment-over-idle, fix seed rows over ceiling (sam2-tiny 3090 400 > 350; t4000 sums), and make `check_catalog.py` enforce it
+- [ ] Spec: swap formula — Σ(always-on) + max(slottable) against the ceiling, not max over the whole set (always-on carts are resident beside the loaded slot)
