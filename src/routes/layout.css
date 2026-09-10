@@ -1,10 +1,37 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@font-face {
+	font-family: 'Space Age';
+	src: url('/fonts/space-age.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Tactic ExtExd Black';
+	src: url('/fonts/TacticSansExtExd-Blk.otf') format('opentype');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Tactic Sans';
+	src: url('/fonts/TacticSans-Reg.otf') format('opentype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 @theme {
 	--font-ui: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
 	--font-serif: 'Source Serif 4', ui-serif, Georgia, serif;
 	--font-mono: 'Red Hat Mono', ui-monospace, monospace;
+	--font-lock: 'Space Age', ui-sans-serif, sans-serif;
+	--font-hud: 'Tactic ExtExd Black', ui-sans-serif, sans-serif;
+	--font-hud-ui: 'Tactic Sans', ui-sans-serif, sans-serif;
 }
 
 :root {
@@ -271,4 +298,38 @@ a {
 		animation: none !important;
 		transition: none !important;
 	}
+}
+
+/* /bay — dark-locked EVF, ignores site light theme */
+.bay-lock {
+	color-scheme: dark;
+	--bg: #090807;
+	--bg-2: #12100e;
+	--bg-3: #1b1814;
+	--ink: #efe6d6;
+	--ink-2: #c4b49a;
+	--ink-3: #8a7d68;
+	--line: #3a3228;
+	--tungsten: #e2a45a;
+	--tungsten-dim: #a56b2c;
+	--tally: #d23c2a;
+	--ok: #9dbe72;
+	--warn: #d4a84b;
+	--focus: #e2a45a;
+	background: var(--bg);
+	color: var(--ink);
+	min-height: 100vh;
+}
+
+.bay-lock .site-header {
+	background: #090807;
+	border-bottom-color: #3a3228;
+}
+
+.bay-main {
+	background: transparent;
+	background-image: none;
+	max-width: none;
+	padding: 0;
+	margin: 0;
 }

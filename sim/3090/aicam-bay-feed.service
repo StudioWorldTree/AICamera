@@ -1,0 +1,15 @@
+[Unit]
+Description=AICamera bay loadout feed (Tailscale only)
+After=network-online.target tailscaled.service
+Wants=tailscaled.service
+
+[Service]
+Type=simple
+User=dorje
+WorkingDirectory=/home/dorje/aicam
+ExecStart=/usr/bin/python /home/dorje/aicam/serve.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

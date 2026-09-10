@@ -1,0 +1,71 @@
+{
+  "ts": "2026-09-10T09:48:44Z",
+  "host": "fractal1",
+  "kernel": "7.2.3-arch1-2",
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3090",
+    "vram_used_mib": 319,
+    "vram_total_mib": 24576,
+    "util_pct": 0,
+    "power_w": 25.7,
+    "persistence": true,
+    "procs": [
+      {
+        "pid": 1624,
+        "kind": "G",
+        "name": "niri",
+        "mib": 98
+      },
+      {
+        "pid": 1870,
+        "kind": "G",
+        "name": "ghostty",
+        "mib": 153
+      }
+    ]
+  },
+  "ram": {
+    "total_gb": 15.4,
+    "avail_gb": 13.61,
+    "committed_gb": 1.62
+  },
+  "swap": {
+    "disk_used_mb": 7.3,
+    "disk_size_gb": 16.0,
+    "zram_used_mb": 108.7,
+    "zram_size_gb": 7.7
+  },
+  "stack": [
+    {
+      "id": "sam2-tiny",
+      "role": "segment",
+      "cache_gb": 0.31,
+      "incomplete_gb": 0.0,
+      "peak_vram_gb": 2.5,
+      "resident": false
+    },
+    {
+      "id": "clip-vit-b32",
+      "role": "region",
+      "cache_gb": 4.85,
+      "incomplete_gb": 0.0,
+      "peak_vram_gb": 2.0,
+      "resident": false
+    },
+    {
+      "id": "flux2-klein-4b",
+      "role": "snap",
+      "cache_gb": 52.53,
+      "incomplete_gb": 5.05,
+      "peak_vram_gb": 13.0,
+      "resident": false,
+      "weights_gb": 15.96,
+      "weights_ok": true
+    }
+  ],
+  "t4000_read": {
+    "filter_k": 0.13,
+    "bandwidth_k": 0.3
+  },
+  "source": "fractal1"
+}

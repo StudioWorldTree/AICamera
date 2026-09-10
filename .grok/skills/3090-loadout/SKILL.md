@@ -11,7 +11,10 @@ Run the script first. Do not guess resident memory from the last chat.
 
 ```
 bash .grok/skills/3090-loadout/scripts/loadout.sh
+curl -sf --max-time 3 http://100.103.147.70:8745/loadout.json
 ```
+
+Glass: `/bay` (vite live via `/bay-api`, Pages last plate). Feed unit `aicam-bay-feed` binds Tailscale only.
 
 (`FRACTAL1_HOST` overrides the SSH alias.)
 

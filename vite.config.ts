@@ -71,6 +71,13 @@ export default defineConfig({
 	server: {
 		fs: {
 			allow: [path.resolve('.')]
+		},
+		proxy: {
+			'/bay-api': {
+				target: 'http://100.103.147.70:8745',
+				changeOrigin: true,
+				rewrite: (p) => p.replace(/^\/bay-api/, '')
+			}
 		}
 	}
 });

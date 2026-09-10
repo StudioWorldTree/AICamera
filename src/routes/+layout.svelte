@@ -3,8 +3,10 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import { page } from '$app/state';
 
 	let { children } = $props();
+	const bay = $derived(page.url.pathname.includes('/bay'));
 </script>
 
 <svelte:head>
@@ -18,8 +20,12 @@
 </svelte:head>
 
 <a class="skip" href="#main">Skip to content</a>
-<Header />
-<main id="main">
-	{@render children()}
-</main>
-<Footer />
+<div class:bay-lock={bay}>
+	<Header />
+	<main id="main" class:bay-main={bay}>
+		{@render children()}
+	</main>
+	{#if !bay}
+		<Footer />
+	{/if}
+</div>
