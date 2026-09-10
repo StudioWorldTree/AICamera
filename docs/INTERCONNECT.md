@@ -32,7 +32,7 @@ See [LENS.md](LENS.md).
 | Uplink | HEVC bring-up fits **5GbE**. 10/25GbE is NAS/headroom |
 | QSFP28 | Independent MGBE lanes, not aggregated 100G |
 | USB-C | Not the satellite trunk (short, shared, no PoE) |
-| Encode split | Body = Thor NVENC. Sats = camera H.265 (T4000 HQ is 2× 4Kp30) |
+| Encode split | Body = Thor NVENC. Sats = camera H.265, Thor remux to NAS (no re-encode). T4000 HQ is 2× 4Kp30 |
 | Time | PTP on sats; GMSL/HW on body. SMPTE genlock unproven |
 | GMSL2 count | Honest **4× 4K30 RAW** (8× 2-lane/1080p) on one JCB022. 20 is HSB. Sats scale on PoE H.265, not more FAKRA. |
 | Sat SoC | **RV1126B** (RV1126 ok). Turret = encode mule; module = product (UART for /i + 1D ToF). |

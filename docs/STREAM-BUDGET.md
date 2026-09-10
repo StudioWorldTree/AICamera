@@ -36,7 +36,7 @@ YUV420 8-bit, indicative. NVENC shares the GPU rail. Local copy: [references/jet
 
 AGX Thor Developer Kit = **T5000 module**. There is no T4000 kit.
 
-**Implication:** T4000 HQ cannot Thor-encode 1 body + 2 sats at 4K30 (needs 3). That is an **NVENC count** problem, not a cable problem. Hybrid: Thor NVENC on the body cam; satellites send H.265 they already made (or Thor remuxes). T5000 HQ can encode the trio on-module if we want.
+**Implication:** T4000 HQ cannot Thor-encode 1 body + 2 sats at 4K30 (needs 3). That is an **NVENC count** problem, not a cable problem. Hybrid: Thor NVENC on the body cam; satellites encode H.265 on camera; Thor remuxes those streams to the NAS (no re-encode). T5000 HQ can encode the trio on-module if we want.
 
 Six 4K60 on Thor is UHP, not a quality-master promise. HEVC decode for AD/overlay is the other budget: T4000 1× NVDEC, 4× 4Kp60 HEVC Main10 — do not decode six 4K60 for the VLM.
 
@@ -74,7 +74,7 @@ HEVC bring-up (1+2 at ~80 Mbps) is **~0.24 Gbps**. Gigabit PoE + the AGX **5GbE*
 [sat 2]    --PoE HEVC--> PoE switch ----+--> Thor (decode for AI, remux to NAS)
 ```
 
-- Record: HEVC. Body master from Thor NVENC; satellite masters from camera H.265 (or Thor remux).
+- Record: HEVC. Body master from Thor NVENC; satellite masters are camera-side H.265 remuxed by Thor to the NAS.
 - AI: Thor NVDEC sat proxies as needed (T4000 1× NVDEC).
 - RAW stays on the module (CSI → ISP → NVENC). A hero uncompressed sat is a later exception, not v1.
 

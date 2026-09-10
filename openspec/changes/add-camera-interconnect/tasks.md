@@ -10,4 +10,4 @@
 - [x] Add a record-first scenario in which AI decode/overlay can drop without interrupting HEVC plus sidecars
 
 - [x] Re-advise 2026-09-10 (fable): Thor-in-the-loop — sat H.265 remuxed by Thor to NAS; remux is record, not in the AI drop set
-- [ ] Re2-advise 2026-09-10 (fable, docs only, not gating): strike "or Thor remux" in `docs/STREAM-BUDGET.md:77` and "Sats = camera H.265" in `docs/INTERCONNECT.md` so the docs say Thor remux writes the sat master, matching the SHALL
+- [x] Re2-advise 2026-09-10 (fable, docs only, not gating): strike "or Thor remux" in `docs/STREAM-BUDGET.md:77` and "Sats = camera H.265" in `docs/INTERCONNECT.md` so the docs say Thor remux writes the sat master, matching the SHALL
