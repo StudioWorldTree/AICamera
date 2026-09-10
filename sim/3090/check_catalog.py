@@ -34,7 +34,8 @@ def pack(ids: list[str], env: str) -> tuple[bool, str]:
     env_spec = CAT["envelopes"][env]
     swap = env_spec.get("residency") == "swap"
     seen_tags: dict[str, str] = {}
-    mem_a = mem_b = nv = 0.0
+    always_a = always_b = always_n = 0.0
+    slot_a = slot_b = slot_n = 0.0
     seated: list[str] = []
     for cid in ids:
         c = carts[cid]
@@ -51,13 +52,20 @@ def pack(ids: list[str], env: str) -> tuple[bool, str]:
             seen_tags[tag] = cid
         a, b, n = peak_pair(cost, env)
         if swap:
-            mem_a = max(mem_a, a)
-            mem_b = max(mem_b, b)
-            nv = max(nv, n)
+            if c["shelf"] == "always-on":
+                always_a += a
+                always_b += b
+                always_n += n
+            else:
+                slot_a = max(slot_a, a)
+                slot_b = max(slot_b, b)
+                slot_n = max(slot_n, n)
+            mem_a, mem_b, nv = always_a + slot_a, always_b + slot_b, always_n + slot_n
         else:
-            mem_a += a
-            mem_b += b
-            nv += n
+            always_a += a
+            always_b += b
+            always_n += n
+            mem_a, mem_b, nv = always_a, always_b, always_n
         seated.append(cid)
     if env == "3090":
         if mem_a > env_spec["vram_gb"] + 1e-6:
