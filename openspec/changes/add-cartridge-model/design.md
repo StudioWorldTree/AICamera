@@ -18,8 +18,9 @@ Seed file: `sim/3090/catalog.json`. 3090 FACT from `docs/3090-SIM.md`
 Measured (2026-09-09). klein 16 GB is **disk weights**, not a VRAM peak —
 that cost is `fact: false`. T4000 uses `unified_gb`. Null is unmeasured.
 
-On `3090` the packer uses max-of-peaks (swap). On `t4000` / `6000` it
-sums. Exclusive tags: `klein-27b`; `sam2-maxine-4k` only on 4K-class ids.
+On `3090` the packer uses Σ(always-on) + max(slottable). On `t4000` /
+`6000` it sums. Exclusive tags: `klein-27b`; `sam2-maxine-4k` only on
+4K-class ids.
 
 ## Source of truth
 

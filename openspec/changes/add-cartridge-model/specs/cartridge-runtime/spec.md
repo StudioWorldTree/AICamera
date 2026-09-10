@@ -62,7 +62,8 @@ are legal if they fit the envelope.
   `sam2-maxine-4k` SHALL NOT
 
 ### Requirement: Swap envelope pack
-On envelope `3090`, residency is swap (`add-sim-box-mix`): one slottable
+On envelope `3090`, residency is swap (hardware-kit Resident 30 fps
+design target): one slottable
 slot loaded at a time beside always-on. A pack on a swap envelope SHALL
 compare **Σ(always-on) + max(slottable)** against the envelope ceiling,
 not the max over the whole set and not the sum of all peaks.
@@ -102,8 +103,8 @@ Each cartridge SHALL record `latency` (`LIVE` / `NEAR` / `MIN` / `NIGHT`)
 from MODELS.md. This packer SHALL be memory, host/unified RAM, and
 NVENC only. Watts SHALL be recorded per cost and per envelope; power
 enforcement is sag (`hardware-kit`), not seat/bounce. 30 fps residency
-is `add-sim-box-mix` (`pack` SMALL/LARGE and `resident`/`swap`); it is a
-gauge, not a seat/bounce on this catalog.
+is hardware-kit Resident 30 fps design target (`pack` SMALL/LARGE and
+`resident`/`swap`); it is a gauge, not a seat/bounce on this catalog.
 
 #### Scenario: 9B + SAM2
 - GIVEN qwen-9b (NEAR) and sam2-tiny (LIVE) both fit memory on `t4000`
@@ -114,8 +115,8 @@ gauge, not a seat/bounce on this catalog.
 The catalog SHALL list ceilings per envelope: on `3090`, VRAM GB, host
 RAM GB, NVENC sessions; on `t4000` and `6000`, unified GB, NVENC
 sessions. Watts may be recorded on the envelope but SHALL NOT be a pack
-axis. This change owns those ceilings. `add-sim-box-mix` owns which box
-is which and swap vs resident.
+axis. This change owns those ceilings. hardware-kit Resident 30 fps
+design target owns which box is which and swap vs resident.
 
 #### Scenario: refuse over ceiling
 - GIVEN envelope `3090` ceilings 24 GB VRAM / 16 GB host / 1 NVENC

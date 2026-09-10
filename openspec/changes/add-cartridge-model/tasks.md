@@ -29,5 +29,5 @@
 ## From re-advise 2 2026-09-10 (fable-5-1-arch-review)
 
 - [x] Advise: accept (`reviews/2026-09-10-re2-advise.md`). Both re-advise sentences closed; acceptance exits 0
-- [ ] Fold note: rewrite the three `add-sim-box-mix` cites in the delta to hardware-kit "Resident 30 fps design target" (change folded at 860bae4); refresh design.md "max-of-peaks" sentence from the spec
-- [ ] add-cartridge-pack: checker docstring says max-of-peaks; checker raises when no cart seats; 4K-pair refusal and 3090 swap-set scenarios are not in `main()`
+- [x] Fold note: rewrite the three `add-sim-box-mix` cites in the delta to hardware-kit "Resident 30 fps design target" (change folded at 860bae4); refresh design.md "max-of-peaks" sentence from the spec
+- add-cartridge-pack: checker 4K-pair refusal and 3090 swap-set scenarios in `main()` (tracked as `add-cartridge-pack`)

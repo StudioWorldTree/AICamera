@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Seat every seeded preset on 3090 (swap, max-of-peaks) and t4000 (sum)."""
+"""Seat every seeded preset on 3090 (swap: always-on + max slottable) and t4000 (sum)."""
 from __future__ import annotations
 
 import json
