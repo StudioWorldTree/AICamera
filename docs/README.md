@@ -30,6 +30,7 @@ The SvelteKit app in that repo is the spatial viewer, not the EVF.
 | [CAMERAS.md](CAMERAS.md) | CSI vs GMSL vs PoE H.265; turret vs module; lidar; Thor-in-body hold |
 | [references/THERMAL.md](references/THERMAL.md) | TDG-12271-001 v1.3: TTP 75 °C, θpa, radiators not lots of fans |
 | [references/T4000.md](references/T4000.md) | — (Arrow DS-11945-001 v1.4) |
+| [3090-SIM.md](3090-SIM.md) | fractal1 RTX 3090 → T4000 translation; next RunPod SKU |
 
 Do not fork VISION / PIPELINE / MODES / MODELS. Cite them. Hardware notes and CAD land here.
 
