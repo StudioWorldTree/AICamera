@@ -6,8 +6,25 @@ Living spec for the All Systems Go camera body. In-flight deltas:
 ## Purpose
 
 CAD and buys use envelopes and URLs from `docs/references/`, not folklore.
+The kit crib (SKUs, BOM lines, quotes) is sister repo `daBOM`. Preferred
+production kit is SKU `kit-prod` (Cart T). Lab brick is `kit-lab`. Hybrid
+1+2 plant is `kit-hybrid-plant`. Explode with
+`GET /api/v1/items/{sku}/bom?explode=true`. This markdown is capability
+SHALLs, not the parts list.
 
 ## Requirements
+
+### Requirement: Kit crib
+The preferred production kit SHALL be the daBOM item `kit-prod` (Cart T —
+T4000 + Rogue-T5). Lab bring-up SHALL be `kit-lab`. The 1 body + 2 sat
+plant SHALL be `kit-hybrid-plant`. SKUs, BOM lines, and quotes SHALL be
+read from daBOM, not copied into this spec.
+
+#### Scenario: explode production kit
+- GIVEN daBOM is running
+- WHEN `GET /api/v1/items/kit-prod/bom?explode=true`
+- THEN the tree includes the T4000 SOM, Rogue-T5, and satellite encode
+  mules, not a handwritten parts list in this file
 
 ### Requirement: Datasheet manifest
 Every steered SKU SHALL have a PDF or URL, fetch date, and mechanical
