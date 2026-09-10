@@ -14,27 +14,12 @@ are preset arrays of cartridge ids, not a second exclusive runtime.
 
 ## Catalog record
 
-```json
-{
-  "id": "klein-4b",
-  "kind": "model",
-  "shelf": "slottable",
-  "exclusive": ["klein-27b"],
-  "costs": {
-    "3090": { "vram_gb": 16.0, "host_ram_gb": 8.0, "watts": 350, "nvenc": 0 },
-    "t4000": { "vram_gb": null, "host_ram_gb": null, "watts": null, "nvenc": 0 },
-    "6000": { "vram_gb": null, "host_ram_gb": null, "watts": null, "nvenc": 0 }
-  }
-}
-```
+Seed file: `sim/3090/catalog.json`. 3090 FACT from `docs/3090-SIM.md`
+Measured (2026-09-09). klein 16 GB is **disk weights**, not a VRAM peak —
+that cost is `fact: false`. T4000 uses `unified_gb`. Null is unmeasured.
 
-3090 numbers are FACT when measured (`docs/3090-SIM.md`, loadout). T4000
-and 6000 may be null until measured; null is not zero. The packer
-(`add-cartridge-pack`) refuses a seat when the live-brick envelope is
-exceeded or an exclusive tag collides. T4000 pack is a second call for
-the gauge, not what seats on fractal1.
-
-Exclusive tags this pass: `klein-27b`, `sam2-maxine-4k`.
+On `3090` the packer uses max-of-peaks (swap). On `t4000` / `6000` it
+sums. Exclusive tags: `klein-27b`; `sam2-maxine-4k` only on 4K-class ids.
 
 ## Source of truth
 

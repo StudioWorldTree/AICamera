@@ -94,3 +94,35 @@ and SHALL NOT be reported as seated on the 3090.
 - WHEN a cart is seated
 - THEN the packer uses envelope `3090`; a T4000-only fit is a gauge,
   not a seated cart
+
+### Requirement: Latency vs pack
+Each cartridge SHALL record `latency` (`LIVE` / `NEAR` / `MIN` / `NIGHT`)
+from MODELS.md. This packer SHALL be memory, host/unified RAM, watts,
+and NVENC only. 30 fps residency is `add-sim-box-mix` (`pack` SMALL/LARGE
+and `resident`/`swap`); it is a gauge, not a seat/bounce on this catalog.
+
+#### Scenario: 9B + SAM2
+- GIVEN qwen-9b (NEAR) and sam2-tiny (LIVE) both fit memory on `t4000`
+- WHEN this packer runs
+- THEN both seat; LIVE-slot count is not a refusal here
+
+### Requirement: Envelope ceilings
+The catalog SHALL list ceilings per envelope: on `3090`, VRAM GB, host
+RAM GB, watts, NVENC sessions; on `t4000` and `6000`, unified GB, watts,
+NVENC sessions. This change owns those ceilings. `add-sim-box-mix` owns
+which box is which and swap vs resident.
+
+#### Scenario: refuse over ceiling
+- GIVEN envelope `3090` ceilings 24 GB VRAM / 16 GB host / 1 NVENC
+- WHEN a single cart's 3090 peak exceeds 24 GB VRAM
+- THEN it does not seat, even on a swap envelope
+
+### Requirement: Cost provenance
+Each cost record SHALL carry `src` (3090-SIM or MODELS.md anchor plus
+date) or `fact: false`. Disk weight size SHALL NOT be recorded as a
+VRAM peak.
+
+#### Scenario: klein
+- GIVEN klein-4b 3090 cost
+- WHEN the catalog is read
+- THEN `fact` is false or `src` does not claim 16 GB weights as VRAM peak

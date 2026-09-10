@@ -1,0 +1,221 @@
+{
+  "schema": "cartridge-runtime/v0",
+  "envelopes": {
+    "3090": {
+      "residency": "swap",
+      "vram_gb": 24,
+      "host_ram_gb": 16,
+      "watts": 350,
+      "nvenc": 1,
+      "src": "docs/3090-SIM.md fractal1 brick"
+    },
+    "t4000": {
+      "residency": "resident",
+      "unified_gb": 64,
+      "watts": 70,
+      "nvenc": 1,
+      "src": "docs/references/T4000.md DS-11945-001 v1.4"
+    },
+    "6000": {
+      "residency": "resident",
+      "unified_gb": 96,
+      "watts": 300,
+      "nvenc": 1,
+      "src": "add-sim-box-mix RunPod RTX PRO 6000 Blackwell Server 96 GB"
+    }
+  },
+  "cartridges": [
+    {
+      "id": "nvenc-hevc",
+      "kind": "plugin",
+      "job": "Record / proxy",
+      "shelf": "always-on",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": { "vram_gb": 0.3, "host_ram_gb": 0.2, "watts": 20, "nvenc": 1, "fact": false, "src": "compositor+encode order-of-magnitude; not a 3090-SIM stage" },
+        "t4000": { "unified_gb": 1, "watts": 15, "nvenc": 1, "fact": false, "src": "T4000 1x NVENC body master; SPEC" }
+      }
+    },
+    {
+      "id": "cuvslam",
+      "kind": "plugin",
+      "job": "Pose / VO",
+      "shelf": "always-on",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 1, "watts": 10, "nvenc": 0, "fact": false, "src": "MODELS.md Pose/VO small; Isaac ROS, not on fractal1" }
+      }
+    },
+    {
+      "id": "filters",
+      "kind": "plugin",
+      "job": "Look / grade preview",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": { "vram_gb": 0.7, "host_ram_gb": 0.5, "watts": 50, "nvenc": 0, "fact": true, "src": "docs/3090-SIM.md Measured 2026-09-09 CUDA-core look-dev ~700 MB 44-59 W" },
+        "t4000": { "unified_gb": 0.7, "watts": 8, "nvenc": 0, "fact": false, "src": "3090 FACT x0.13 watts derate; VRAM SPEC copy" }
+      }
+    },
+    {
+      "id": "sam2-tiny",
+      "kind": "model",
+      "job": "Segment / track",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": { "vram_gb": 2.5, "host_ram_gb": 1.0, "watts": 400, "nvenc": 0, "fact": true, "src": "docs/3090-SIM.md Measured 2026-09-09 SAM2.1 Hiera-tiny 2.0-3.0 GB ~390-407 W" },
+        "t4000": { "unified_gb": 3, "watts": 70, "nvenc": 0, "fact": false, "src": "3090 FACT x0.30 bandwidth derate for fps; VRAM SPEC" }
+      }
+    },
+    {
+      "id": "sam2-4k",
+      "kind": "model",
+      "job": "Segment / track",
+      "shelf": "slottable",
+      "exclusive": ["sam2-maxine-4k"],
+      "latency": "LIVE",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 4, "watts": 70, "nvenc": 0, "fact": false, "src": "MODELS.md SAM2 1-4 GB + bank; 4K class unmeasured on 3090" }
+      }
+    },
+    {
+      "id": "maxine",
+      "kind": "plugin",
+      "job": "Face / body",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 1, "watts": 15, "nvenc": 0, "fact": false, "src": "MODELS.md Maxine AR small" }
+      }
+    },
+    {
+      "id": "maxine-4k",
+      "kind": "plugin",
+      "job": "Face / body",
+      "shelf": "slottable",
+      "exclusive": ["sam2-maxine-4k"],
+      "latency": "LIVE",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 2, "watts": 25, "nvenc": 0, "fact": false, "src": "MODELS.md Maxine many streams; 4K class" }
+      }
+    },
+    {
+      "id": "clip",
+      "kind": "model",
+      "job": "Named instances",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": { "vram_gb": 2.1, "host_ram_gb": 0.5, "watts": 80, "nvenc": 0, "fact": true, "src": "docs/3090-SIM.md Measured 2026-09-09 CLIP ViT-B/32 4-7 ms; loadout ~1.8-2.4 GB" },
+        "t4000": { "unified_gb": 2.1, "watts": 24, "nvenc": 0, "fact": false, "src": "3090 FACT copy; bandwidth-bound" }
+      }
+    },
+    {
+      "id": "da-s",
+      "kind": "model",
+      "job": "Depth (mono)",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 2, "watts": 20, "nvenc": 0, "fact": false, "src": "MODELS.md DA-V2-S <1-2 GB" }
+      }
+    },
+    {
+      "id": "klein-4b",
+      "kind": "model",
+      "job": "On-set snap",
+      "shelf": "slottable",
+      "exclusive": ["klein-27b"],
+      "latency": "NEAR",
+      "costs": {
+        "3090": { "vram_gb": 10, "host_ram_gb": 8, "watts": 350, "nvenc": 0, "fact": false, "src": "MODELS.md snap 8-13 GB SPEC; 3090-SIM t2i 43 s cpu_offload — 16 GB is disk weights not VRAM peak" },
+        "t4000": { "unified_gb": 13, "watts": 70, "nvenc": 0, "fact": false, "src": "MODELS.md On-set snap 8-13 GB" }
+      }
+    },
+    {
+      "id": "qwen-9b",
+      "kind": "model",
+      "job": "Shot-calling",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "NEAR",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 12, "watts": 40, "nvenc": 0, "fact": false, "src": "MODELS.md Qwen3.5-9B ~7-12 GB; not installed on fractal1" }
+      }
+    },
+    {
+      "id": "qwen-27b",
+      "kind": "model",
+      "job": "AD heavy",
+      "shelf": "slottable",
+      "exclusive": ["klein-27b"],
+      "latency": "NEAR",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 23, "watts": 70, "nvenc": 0, "fact": false, "src": "MODELS.md Qwen3.5-27B ~23 GB" }
+      }
+    },
+    {
+      "id": "ar-overlay",
+      "kind": "plugin",
+      "job": "Live AR / virtual scene overlay",
+      "shelf": "slottable",
+      "exclusive": [],
+      "latency": "LIVE",
+      "costs": {
+        "3090": null,
+        "t4000": { "unified_gb": 4, "watts": 25, "nvenc": 0, "fact": false, "src": "MODELS.md mesh + low splat; SPEC" }
+      }
+    },
+    {
+      "id": "flux-dev",
+      "kind": "model",
+      "job": "Quality still / multi-ref",
+      "shelf": "never-on-thor",
+      "exclusive": [],
+      "latency": "NEAR",
+      "costs": {
+        "6000": { "unified_gb": 64, "watts": 300, "nvenc": 0, "fact": false, "src": "MODELS.md FLUX.2 [dev] 32B ~19 GB Q4 … 64 GB BF16" }
+      }
+    },
+    {
+      "id": "wan-14b",
+      "kind": "model",
+      "job": "Video gen / transfer",
+      "shelf": "never-on-thor",
+      "exclusive": [],
+      "latency": "MIN",
+      "costs": {}
+    },
+    {
+      "id": "h3",
+      "kind": "model",
+      "job": "Video gen / transfer",
+      "shelf": "never-on-thor",
+      "exclusive": [],
+      "latency": "MIN",
+      "costs": {}
+    }
+  ],
+  "presets": {
+    "master-capture": ["nvenc-hevc", "cuvslam"],
+    "snap": ["nvenc-hevc", "cuvslam", "klein-4b"],
+    "ad": ["nvenc-hevc", "cuvslam", "qwen-9b"],
+    "ar": ["nvenc-hevc", "cuvslam", "ar-overlay", "qwen-9b"],
+    "talent-tracking": ["nvenc-hevc", "cuvslam", "sam2-tiny", "maxine"]
+  }
+}
