@@ -104,7 +104,7 @@
 		<h2>Mag rack</h2>
 		<ul>
 			{#each view.stack as mag (mag.id)}
-				<li class:in={mag.resident}>
+				<li class:in={mag.resident} data-mag={mag.id}>
 					<span class="slot">{magName[mag.id] ?? mag.id}</span>
 					<span class="role">{mag.role}</span>
 					<span class="state">ON CART</span>
@@ -305,6 +305,7 @@
 		border: 1px solid #3a3228;
 		background: #12100e;
 		overflow: hidden;
+		transition: border-color 0.18s ease, box-shadow 0.18s ease;
 	}
 
 	.fill {
@@ -369,6 +370,11 @@
 		padding: 0.7rem 0;
 		border-bottom: 1px solid #3a3228;
 		font-size: 0.9rem;
+		cursor: default;
+		transition:
+			color 0.18s ease,
+			text-shadow 0.18s ease,
+			border-color 0.18s ease;
 	}
 
 	.slot {
@@ -423,6 +429,9 @@
 		border: 1px solid #3a3228;
 		padding: 0.9rem 1rem 1rem;
 		background: #12100e;
+		transition:
+			border-color 0.18s ease,
+			box-shadow 0.18s ease;
 	}
 
 	.bar {
@@ -478,9 +487,77 @@
 		}
 	}
 
+	@media (hover: hover) and (pointer: fine) {
+		.readout:hover .digits {
+			color: #3ef0ff;
+			text-shadow: 0 0 18px #3ef0ff;
+		}
+		.readout.watts:hover .digits {
+			color: #ff3ec8;
+			text-shadow: 0 0 18px #ff3ec8;
+		}
+		.wave:hover {
+			border-color: #3ef0ff;
+			box-shadow: 0 0 22px #3ef0ff55;
+		}
+		.wave:hover .fill {
+			background: linear-gradient(90deg, #ff3ec8, #3ef0ff);
+		}
+		.mags li[data-mag='sam2-tiny']:hover .slot,
+		.mags li[data-mag='sam2-tiny']:hover .size {
+			color: #3ef0ff;
+			text-shadow: 0 0 12px #3ef0ff;
+		}
+		.mags li[data-mag='clip-vit-b32']:hover .slot,
+		.mags li[data-mag='clip-vit-b32']:hover .size {
+			color: #ff3ec8;
+			text-shadow: 0 0 12px #ff3ec8;
+		}
+		.mags li[data-mag='flux2-klein-4b']:hover .slot,
+		.mags li[data-mag='flux2-klein-4b']:hover .size {
+			color: #b8ff3e;
+			text-shadow: 0 0 12px #b8ff3e;
+		}
+		.meters .card:nth-child(1):hover {
+			border-color: #3ef0ff;
+			box-shadow: 0 0 18px #3ef0ff44;
+		}
+		.meters .card:nth-child(1):hover .digits {
+			color: #3ef0ff;
+			text-shadow: 0 0 14px #3ef0ff;
+		}
+		.meters .card:nth-child(2):hover {
+			border-color: #ff3ec8;
+			box-shadow: 0 0 18px #ff3ec844;
+		}
+		.meters .card:nth-child(2):hover .digits {
+			color: #ff3ec8;
+			text-shadow: 0 0 14px #ff3ec8;
+		}
+		.meters .card:nth-child(3):hover {
+			border-color: #b8ff3e;
+			box-shadow: 0 0 18px #b8ff3e44;
+		}
+		.meters .card:nth-child(3):hover .digits {
+			color: #b8ff3e;
+			text-shadow: 0 0 14px #b8ff3e;
+		}
+		.procs li:hover .nm,
+		.procs li:hover .mib {
+			color: #3ef0ff;
+			text-shadow: 0 0 10px #3ef0ff;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.tally.lit {
 			animation: none;
+		}
+		.readout:hover .digits,
+		.mags li:hover .slot,
+		.card:hover .digits,
+		.procs li:hover .nm {
+			text-shadow: none;
 		}
 	}
 </style>

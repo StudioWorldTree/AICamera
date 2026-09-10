@@ -117,6 +117,25 @@
 		text-decoration: none;
 		color: var(--ink-2);
 		font-size: 0.95rem;
+		transition: color 0.15s ease, text-shadow 0.15s ease;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.desk a:hover,
+		.mobile a:hover {
+			color: #3ef0ff;
+			text-shadow: 0 0 10px #3ef0ff;
+		}
+		.desk a[href$='/bay/']:hover,
+		.mobile a[href$='/bay/']:hover {
+			color: #ff3ec8;
+			text-shadow: 0 0 10px #ff3ec8;
+		}
+		.ghost:hover {
+			border-color: #b8ff3e;
+			color: #b8ff3e;
+			box-shadow: 0 0 12px #b8ff3e55;
+		}
 	}
 
 	.desk a[aria-current='page'],
