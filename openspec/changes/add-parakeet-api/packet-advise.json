@@ -1,0 +1,35 @@
+{
+  "id": "pkt-advise-add-parakeet-api",
+  "node_id": "aicam-parakeet-shape",
+  "change_id": "add-parakeet-api",
+  "capability": "parakeet-asr",
+  "goal": "Advise add-parakeet-api. Why: 3090 stays on 30fps plugins; Parakeet on 14600KF CPU; agents need a generated OpenAPI 3.1 document at GET /.well-known/openapi.json (same bytes as /api/v1/openapi.json) plus RFC 9727 /.well-known/api-catalog; this repo is adapter-static Pages today so the API is a new Bun process, Tailscale-only :8750. Living spec: none yet (capability ADDED at fold). Change spec: openspec/changes/add-parakeet-api/specs/parakeet-asr/spec.md. Cited: daBOM src/lib/server/api/root.ts well-known trio; daBOM src/lib/server/api/app.ts app.doc31; Papyrus morphist-asr src/runtime/backend.rs recommend_for_asr CPU-when-AVX2 (do not vendor); AICamera sim/3090/serve.py Tailscale bind not 0.0.0.0; AICamera package.json adapter-static. Write openspec/changes/add-parakeet-api/reviews/2026-09-10-advise.md. BLIND PASS first. Do not open design.md or tasks.md until the take is written.",
+  "assignee": {
+    "id": "agt-fable-5-1-arch-review",
+    "kind": "model",
+    "harness": "claude",
+    "interface": "fable-5.1",
+    "effort": "high",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-fable-5-1-arch-review" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": [
+      "openspec/changes/add-parakeet-api/reviews",
+      "openspec/changes/add-parakeet-api/tasks.md"
+    ],
+    "do_not": ["fold", "act", "implement", "flip banner"]
+  },
+  "acceptance": { "kind": "none" },
+  "load_class": "structure-clear",
+  "rigor": "architecture",
+  "density": "standard",
+  "surface": "skill-host",
+  "role": "reader"
+}
