@@ -9,4 +9,4 @@
 - [x] Add a testable clock/metadata capability contract while leaving the exact product clock source open
 - [x] Add a record-first scenario in which AI decode/overlay can drop without interrupting HEVC plus sidecars
 
-- [ ] Re-advise 2026-09-10 (fable): state the satellite master path to storage and remove remux from the record-first drop set (or pin sat-direct-to-NAS with switch/NAS + sat network-write constraints)
+- [x] Re-advise 2026-09-10 (fable): Thor-in-the-loop — sat H.265 remuxed by Thor to NAS; remux is record, not in the AI drop set
