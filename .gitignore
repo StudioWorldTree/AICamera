@@ -9,6 +9,7 @@ node_modules
 /build
 static/media
 static/draco
+static/tracker
 
 # OS
 .DS_Store

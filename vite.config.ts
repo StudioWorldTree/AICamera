@@ -23,6 +23,9 @@ function copyDocMedia() {
 	}
 	mkdirSync('static/draco', { recursive: true });
 	cpSync('node_modules/three/examples/jsm/libs/draco/gltf', 'static/draco', { recursive: true });
+	mkdirSync('static/tracker', { recursive: true });
+	cpSync('node_modules/chiptune3/chiptune3.worklet.js', 'static/tracker/chiptune3.worklet.js');
+	cpSync('node_modules/chiptune3/libopenmpt.worklet.js', 'static/tracker/libopenmpt.worklet.js');
 	cpSync(
 		'docs/references/jetson_thor_series_modules_datasheet_ds-11945-001v1.4.pdf',
 		'static/media/thor-modules-ds.pdf'

@@ -4,7 +4,12 @@
 	import plate from '$lib/bay/last-plate.json';
 	import { BANDWIDTH_K, FILTER_K } from '$lib/bay/t4000';
 	import { filterRack, magRack, seatWord, sizeHint, type MagFilter } from '$lib/bay/rack';
-	import { BayTracker, type Lead } from '$lib/bay/tracker';
+	import {
+		BayTracker,
+		TRACKER_ACCEPT,
+		looksLikeTracker,
+		type Lead
+	} from '$lib/bay/tracker';
 	import VaporGrid from '$lib/components/VaporGrid.svelte';
 	import type { BayPlate, BayView } from '$lib/bay/types';
 
@@ -13,12 +18,17 @@
 	let tick = $state(0);
 	let armed = $state(false);
 	let lead = $state<Lead>('hall');
+	let modName = $state<string | null>(null);
+	let modErr = $state<string | null>(null);
 	let magFilter = $state<MagFilter>('ready');
 	let openMag = $state<string | null>(null);
 	let busy = $state<Record<string, 'pull' | 'eject'>>({});
-	const tracker = new BayTracker();
+	const tracker = new BayTracker(`${base}/tracker/chiptune3.worklet.js`);
 	tracker.onLead = (next) => {
 		lead = next;
+	};
+	tracker.onMod = (name) => {
+		modName = name;
 	};
 
 	async function pull() {
@@ -77,6 +87,35 @@
 			busy = next;
 			await pull();
 		}
+	}
+
+	async function loadTrackerFile(file: File) {
+		if (!looksLikeTracker(file)) {
+			modErr = 'Need a tracker module (.mod .xm .s3m .it …)';
+			return;
+		}
+		if (file.size > 32 * 1024 * 1024) {
+			modErr = 'Module too large (32 MB cap)';
+			return;
+		}
+		modErr = null;
+		const buf = await file.arrayBuffer();
+		try {
+			await tracker.loadModule(buf, file.name);
+			armed = true;
+		} catch (e) {
+			modErr = e instanceof Error ? e.message : 'Could not play module';
+		}
+	}
+
+	function onTrackerFiles(files: FileList | null) {
+		const file = files?.[0];
+		if (file) void loadTrackerFile(file);
+	}
+
+	function onHeroDrop(e: DragEvent) {
+		e.preventDefault();
+		onTrackerFiles(e.dataTransfer?.files ?? null);
 	}
 
 	async function armSound() {
@@ -163,13 +202,31 @@
 			<p class="digits">{view.gpu.power_w.toFixed(1)}<span class="unit"> W</span></p>
 			<p class="sub">cap {cap.toFixed(0)} · persist {view.gpu.persistence ? 'on' : 'off'}</p>
 		</div>
-		<div class="wave" aria-label="VRAM waveform {vramPct.toFixed(0)} percent">
+		<div
+			class="wave"
+			role="group"
+			aria-label="VRAM waveform. Drop a .mod to play."
+			ondragover={(e) => e.preventDefault()}
+			ondrop={onHeroDrop}
+		>
 			<div class="fill" style="width: {Math.min(100, vramPct)}%"></div>
 			<div class="ticks" aria-hidden="true"></div>
-			<p class="wave-lab">{vramPct.toFixed(1)}% · util {view.gpu.util_pct}%</p>
+			<p class="wave-lab">
+				{modErr ? modErr : `${vramPct.toFixed(1)}% · util ${view.gpu.util_pct}%`}
+			</p>
 			<button type="button" class="arm" onclick={armSound} aria-pressed={armed}>
-				{armed ? `MUTE · ${lead === 'hall' ? 'HALL' : 'SAIL'}` : 'ARM TRACKER'}
+				{armed
+					? `MUTE · ${modName ? modName.slice(0, 18) : lead === 'hall' ? 'HALL' : 'SAIL'}`
+					: 'ARM TRACKER'}
 			</button>
+			<label class="arm load">
+				LOAD MOD
+				<input
+					type="file"
+					accept={TRACKER_ACCEPT}
+					onchange={(e) => onTrackerFiles(e.currentTarget.files)}
+				/>
+			</label>
 		</div>
 	</section>
 
@@ -510,6 +567,20 @@
 	.arm[aria-pressed='true'] {
 		color: #d23c2a;
 		border-color: #d23c2a;
+	}
+
+	.arm.load {
+		left: 8.7rem;
+		position: absolute;
+		display: inline-block;
+		cursor: pointer;
+	}
+
+	.arm.load input {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		cursor: pointer;
 	}
 
 	.mags,

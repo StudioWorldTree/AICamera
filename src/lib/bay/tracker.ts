@@ -15,10 +15,21 @@ function heatOf(load: Load) {
 	return clamp(load.util / 100, 0, 1) * 0.7 + (load.hot ? 0.3 : 0);
 }
 
+export const TRACKER_ACCEPT =
+	'.mod,.xm,.s3m,.it,.mptm,.med,.okt,.stm,.mtm,.669,.ptm,.mo3,.umx';
+
+export function looksLikeTracker(file: File): boolean {
+	const n = file.name.toLowerCase();
+	if (/^(mod|xm|it|s3m|mptm)\./.test(n)) return true;
+	return /\.(mod|xm|s3m|it|mptm|med|okt|stm|mtm|669|ptm|mo3|umx)$/.test(n);
+}
+
 export class BayTracker {
 	ctx: AudioContext | null = null;
 	onLead: ((lead: Lead) => void) | null = null;
+	onMod: ((name: string | null) => void) | null = null;
 	lead: Lead = 'hall';
+	modName: string | null = null;
 	muted = true;
 	bpm = 72;
 
@@ -29,6 +40,13 @@ export class BayTracker {
 	private step = 0;
 	private load: Load = { util: 0, power: 26, hot: false };
 	private lastHeat = 0;
+	private workletUrl: string;
+	private modNode: AudioWorkletNode | null = null;
+	private modWorkletReady = false;
+
+	constructor(workletUrl = '/tracker/chiptune3.worklet.js') {
+		this.workletUrl = workletUrl;
+	}
 
 	get running() {
 		return Boolean(this.ctx && this.ctx.state === 'running' && !this.muted);
@@ -63,18 +81,47 @@ export class BayTracker {
 		if (this.ctx.state === 'suspended') await this.ctx.resume();
 		this.muted = false;
 		if (this.master) this.master.gain.setTargetAtTime(0.11, this.ctx.currentTime, 0.05);
+		if (this.modNode && this.modName) {
+			this.modNode.port.postMessage({ cmd: 'unpause' });
+			this.stopSynth();
+			return;
+		}
 		if (!this.timer) this.tick();
 	}
 
 	mute() {
 		this.muted = true;
-		if (this.timer) {
-			clearTimeout(this.timer);
-			this.timer = 0;
-		}
+		this.stopSynth();
+		this.modNode?.port.postMessage({ cmd: 'pause' });
 		if (this.master && this.ctx) {
 			this.master.gain.setTargetAtTime(0, this.ctx.currentTime, 0.05);
 		}
+	}
+
+	async loadModule(buf: ArrayBuffer, name: string) {
+		await this.ensureGraph();
+		if (this.ctx!.state === 'suspended') await this.ctx!.resume();
+		await this.ensureModNode();
+		this.stopSynth();
+		this.modName = name;
+		this.onMod?.(name);
+		this.modNode!.port.postMessage({
+			cmd: 'config',
+			val: { repeatCount: -1, stereoSeparation: 100, interpolationFilter: 0 }
+		});
+		this.modNode!.port.postMessage({ cmd: 'play', val: buf });
+		this.muted = false;
+		if (this.master && this.ctx) {
+			this.master.gain.setTargetAtTime(0.12, this.ctx.currentTime, 0.05);
+		}
+		this.applyTempo();
+	}
+
+	clearModule() {
+		this.modNode?.port.postMessage({ cmd: 'stop' });
+		this.modName = null;
+		this.onMod?.(null);
+		if (!this.muted && this.ctx) this.tick();
 	}
 
 	setLoad(load: Load) {
@@ -90,6 +137,7 @@ export class BayTracker {
 		}
 		this.lastHeat = heat;
 		this.bpm = heat < 0.28 ? 58 + heat * 40 : 84 + heat * 72;
+		this.applyTempo();
 		if (this.filter && this.ctx) {
 			const f = 640 + heat * 2600 + clamp(load.power / 400, 0, 1) * 700;
 			this.filter.frequency.setTargetAtTime(f, this.ctx.currentTime, 0.25);
@@ -99,8 +147,52 @@ export class BayTracker {
 		}
 	}
 
+	private applyTempo() {
+		if (!this.modNode || !this.modName) return;
+		const heat = heatOf(this.load);
+		const factor = (0.8 + heat * 0.55).toFixed(3);
+		this.modNode.port.postMessage({
+			cmd: 'setCtl',
+			val: { name: 'play.tempo_factor', val: factor }
+		});
+	}
+
+	private stopSynth() {
+		if (this.timer) {
+			clearTimeout(this.timer);
+			this.timer = 0;
+		}
+	}
+
+	private async ensureGraph() {
+		if (this.ctx) return;
+		await this.arm();
+		this.stopSynth();
+	}
+
+	private async ensureModNode() {
+		if (this.modWorkletReady && this.modNode) return;
+		if (!this.ctx) throw new Error('no audio');
+		await this.ctx.audioWorklet.addModule(this.workletUrl);
+		const node = new AudioWorkletNode(this.ctx, 'libopenmpt-processor', {
+			numberOfInputs: 0,
+			numberOfOutputs: 1,
+			outputChannelCount: [2]
+		});
+		node.port.onmessage = (ev: MessageEvent) => {
+			if (ev.data?.cmd === 'err') {
+				this.modName = null;
+				this.onMod?.(null);
+			}
+		};
+		if (this.filter) node.connect(this.filter);
+		this.modNode = node;
+		this.modWorkletReady = true;
+		await new Promise((r) => setTimeout(r, 400));
+	}
+
 	private tick = () => {
-		if (!this.ctx || this.muted) return;
+		if (!this.ctx || this.muted || this.modName) return;
 		const t = this.ctx.currentTime;
 		const s = this.step % 16;
 		this.voice(s, t);
@@ -223,6 +315,9 @@ export class BayTracker {
 
 	dispose() {
 		this.mute();
+		this.modNode?.port.postMessage({ cmd: 'stop' });
+		this.modNode?.disconnect();
+		this.modNode = null;
 		void this.ctx?.close();
 		this.ctx = null;
 	}
