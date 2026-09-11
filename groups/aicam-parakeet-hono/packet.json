@@ -1,0 +1,35 @@
+{
+  "id": "pkt-act-add-parakeet-hono",
+  "node_id": "aicam-parakeet-hono",
+  "change_id": "add-parakeet-hono",
+  "capability": "parakeet-asr",
+  "goal": "Land Bun + Hono + @hono/zod-openapi under asr/server/ (own package.json, NOT the repo root). Copy daBOM discovery: GET /.well-known/openapi.json same bytes as GET /api/v1/openapi.json; GET /.well-known/api-catalog RFC 9727; app.doc31 with servers: [{url:'/api/v1'}]; paths /transcribe and /health relative to that base. POST /api/v1/transcribe 16 kHz mono WAV/PCM; 422 wrong shape; 415 non-audio; 503 sidecar down. GET /api/v1/health 200 always with sidecar warm|cold|down, provider CPUExecutionProvider, model id. Bind helper like sim/3090/serve.py bind_ip(): env TAILSCALE_IP, else tailscale ip -4, else 100.103.147.70:8750 — never 0.0.0.0. Spawn sidecar as child at ../engine/sidecar.py (sibling writes asr/engine; do not edit that tree). JSONL protocol: stdin {id, op, wav_path|pcm_f32, sample_rate}; stdout {id, ok, text?, error?, http?, state?, provider?, model?}. bun test via app.request: well-known equals versioned spec, servers /api/v1, health 200, transcribe 415/422/503. Cite daBOM src/lib/server/api/root.ts and app.ts doc31 servers. OpenSpec: openspec/changes/add-parakeet-hono and add-parakeet-api well-known + clip + bind requirements.",
+  "assignee": {
+    "id": "agt-grok-4.6",
+    "kind": "model",
+    "harness": "grok",
+    "interface": "grok-4.6",
+    "effort": "medium",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-grok-4.6" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": ["asr/server"],
+    "do_not": ["fold", "push", "0.0.0.0", "root package.json"]
+  },
+  "acceptance": {
+    "kind": "command",
+    "command": "cd asr/server && bun test"
+  },
+  "load_class": "structure-clear",
+  "rigor": "change",
+  "density": "standard",
+  "surface": "packet-only",
+  "role": "worker"
+}

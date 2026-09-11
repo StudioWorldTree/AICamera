@@ -1,0 +1,19 @@
+{
+	"name": "aicam-parakeet-hono",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"description": "Tailnet Parakeet ASR HTTP: Hono + OpenAPI 3.1. Own lockfile; not the Pages app.",
+	"scripts": {
+		"start": "bun src/index.ts",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"@hono/zod-openapi": "^1.6.2",
+		"hono": "^4.13.5",
+		"zod": "^4.5.4"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	}
+}
