@@ -227,6 +227,13 @@
 					onchange={(e) => onTrackerFiles(e.currentTarget.files)}
 				/>
 			</label>
+			<a
+				class="archive"
+				href="https://modarchive.org/"
+				target="_blank"
+				rel="noreferrer"
+				>modarchive</a
+			>
 		</div>
 	</section>
 
@@ -581,6 +588,30 @@
 		inset: 0;
 		opacity: 0;
 		cursor: pointer;
+	}
+
+	.archive {
+		position: absolute;
+		left: 16.1rem;
+		bottom: 0.48rem;
+		z-index: 2;
+		color: #7a6e5c;
+		font-family: 'Tactic Sans', sans-serif;
+		font-size: 0.62rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		text-decoration: none;
+	}
+
+	.archive:hover,
+	.archive:focus-visible {
+		color: #ead9b8;
+	}
+
+	@media (max-width: 520px) {
+		.archive {
+			display: none;
+		}
 	}
 
 	.mags,
