@@ -1,0 +1,35 @@
+{
+  "id": "pkt-act-add-parakeet-engine",
+  "node_id": "aicam-parakeet-engine",
+  "change_id": "add-parakeet-engine",
+  "capability": "parakeet-asr",
+  "goal": "Land a warm CPU-only Parakeet TDT 0.6B v3 INT8 sidecar under asr/engine/. JSONL stdin/stdout. No TCP/UDP listener. CUDA_VISIBLE_DEVICES empty, ONNX Runtime CPUExecutionProvider, intra-op threads <= 4. Weights: fractal1 ~/aicam/parakeet-cpu INT8 (onnx-asr nemo-parakeet-tdt-0.6b-v3). Do not vendor Papyrus morphist-asr. Do not install onnxruntime-gpu. Wrong shape -> error http 422. Protocol (pin, hono sibling uses this): stdin JSONL {id, op?: 'transcribe'|'health', wav_path?: string, pcm_f32?: number[], sample_rate?: 16000}; stdout JSONL {id, ok, text?, error?, http?, state?, provider?, model?}. health reports warm|cold|down, CPUExecutionProvider, model id. --once FILE.wav for CLI. Second transcribe must not reload weights. Cite: openspec/changes/add-parakeet-engine/specs/parakeet-asr/spec.md and add-parakeet-api CPU-only + sidecar-no-port requirements.",
+  "assignee": {
+    "id": "agt-grok-4.6",
+    "kind": "model",
+    "harness": "grok",
+    "interface": "grok-4.6",
+    "effort": "medium",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-grok-4.6" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": ["asr/engine"],
+    "do_not": ["fold", "push", "0.0.0.0", "onnxruntime-gpu", "cuda"]
+  },
+  "acceptance": {
+    "kind": "command",
+    "command": "test -f asr/engine/sidecar.py && python3 -m py_compile asr/engine/sidecar.py && grep -q CPUExecutionProvider asr/engine/sidecar.py && grep -q CUDA_VISIBLE_DEVICES asr/engine/sidecar.py"
+  },
+  "load_class": "structure-clear",
+  "rigor": "change",
+  "density": "standard",
+  "surface": "packet-only",
+  "role": "worker"
+}
