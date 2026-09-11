@@ -40,6 +40,7 @@ export type BayPlate = {
 	stack: BayMag[];
 	ai_on_tube: boolean;
 	source: string;
+	pulling?: string[];
 };
 
 export type BayFeed = "live" | "dark" | "plate";

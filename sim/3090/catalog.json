@@ -66,6 +66,7 @@
       "kind": "model",
       "job": "Segment / track",
       "shelf": "slottable",
+      "hub": "facebook/sam2.1-hiera-tiny",
       "exclusive": [],
       "latency": "LIVE",
       "costs": {
@@ -114,6 +115,7 @@
       "kind": "model",
       "job": "Named instances",
       "shelf": "slottable",
+      "hub": "openai/clip-vit-base-patch32",
       "exclusive": [],
       "latency": "LIVE",
       "costs": {
@@ -138,6 +140,7 @@
       "kind": "model",
       "job": "On-set snap",
       "shelf": "slottable",
+      "hub": "black-forest-labs/FLUX.2-klein-4B",
       "exclusive": ["klein-27b"],
       "latency": "NEAR",
       "costs": {

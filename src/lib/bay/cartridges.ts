@@ -27,5 +27,6 @@ export type Cartridge = {
 	shelf: Shelf;
 	exclusive: string[];
 	latency: Latency;
+	hub?: string;
 	costs: Record<string, SplitCost | UnifiedCost | null>;
 };

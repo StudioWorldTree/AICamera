@@ -3,7 +3,7 @@
 	import { base } from '$app/paths';
 	import plate from '$lib/bay/last-plate.json';
 	import { BANDWIDTH_K, FILTER_K } from '$lib/bay/t4000';
-	import { magRack, seatWord } from '$lib/bay/rack';
+	import { filterRack, magRack, seatWord, sizeHint, type MagFilter } from '$lib/bay/rack';
 	import { BayTracker } from '$lib/bay/tracker';
 	import VaporGrid from '$lib/components/VaporGrid.svelte';
 	import type { BayPlate, BayView } from '$lib/bay/types';
@@ -12,6 +12,9 @@
 	let view = $state<BayView>(plateView);
 	let tick = $state(0);
 	let armed = $state(false);
+	let magFilter = $state<MagFilter>('ready');
+	let openMag = $state<string | null>(null);
+	let busy = $state<Record<string, 'pull' | 'eject'>>({});
 	const tracker = new BayTracker();
 
 	async function pull() {
@@ -41,6 +44,37 @@
 		};
 	});
 
+	async function magPull(id: string) {
+		if (!liveBrick) return;
+		busy = { ...busy, [id]: 'pull' };
+		try {
+			await fetch(`/bay-api/mags/${id}/pull`, { method: 'POST' });
+		} finally {
+			const next = { ...busy };
+			delete next[id];
+			busy = next;
+			await pull();
+		}
+	}
+
+	async function magEject(id: string) {
+		if (!liveBrick) return;
+		if (!confirm(`Eject ${id} from disk on fractal1?`)) return;
+		busy = { ...busy, [id]: 'eject' };
+		try {
+			const r = await fetch(`/bay-api/mags/${id}`, { method: 'DELETE' });
+			if (!r.ok) {
+				const j = (await r.json().catch(() => ({}))) as { error?: string };
+				alert(j.error || `eject failed (${r.status})`);
+			}
+		} finally {
+			const next = { ...busy };
+			delete next[id];
+			busy = next;
+			await pull();
+		}
+	}
+
 	async function armSound() {
 		if (armed) {
 			tracker.mute();
@@ -68,9 +102,12 @@
 	const rack = $derived(
 		magRack(view.stack, {
 			vramUsedMib: view.gpu.vram_used_mib,
-			procs: view.gpu.procs
+			procs: view.gpu.procs,
+			pulling: view.pulling
 		})
 	);
+	const shown = $derived(filterRack(rack, magFilter));
+	const liveBrick = $derived(view.feed === 'live');
 	const vaporSpeed = $derived(0.28 + (view.gpu.util_pct / 100) * 2.4 + (hot ? 0.7 : 0));
 	const gated = $derived(rack.filter((m) => m.seat === 'gate').map((m) => m.label));
 
@@ -133,14 +170,63 @@
 	</section>
 
 	<section class="mags">
-		<h2>Mag rack</h2>
+		<div class="mags-head">
+			<h2>Mag rack</h2>
+			<div class="filt" role="group" aria-label="Mag filter">
+				<button type="button" class:on={magFilter === 'ready'} onclick={() => (magFilter = 'ready')}
+					>READY</button
+				>
+				<button type="button" class:on={magFilter === 'all'} onclick={() => (magFilter = 'all')}
+					>ALL</button
+				>
+			</div>
+		</div>
 		<ul>
-			{#each rack as mag (mag.id)}
-				<li class:in={mag.seat === 'gate'} data-mag={mag.id} data-seat={mag.seat}>
-					<span class="slot">{mag.label}</span>
-					<span class="role">{mag.job}</span>
-					<span class="state">{seatWord(mag.seat)}</span>
-					<span class="size">{mag.sizeGb != null ? `${mag.sizeGb.toFixed(1)} GB` : '—'}</span>
+			{#each shown as mag (mag.id)}
+				<li
+					class:in={mag.seat === 'gate'}
+					class:open={openMag === mag.id}
+					data-mag={mag.id}
+					data-seat={mag.seat}
+					title={sizeHint(mag)}
+				>
+					<button type="button" class="mag-hit" onclick={() => (openMag = openMag === mag.id ? null : mag.id)}>
+						<span class="slot">{mag.label}</span>
+						<span class="role">{mag.job}</span>
+						<span class="state">{mag.pulling ? 'PULLING' : seatWord(mag.seat)}</span>
+						<span class="size">{mag.sizeGb != null ? `${mag.sizeGb.toFixed(1)} GB` : '—'}</span>
+					</button>
+					<span class="acts">
+						{#if mag.hub && mag.seat === 'empty'}
+							<button
+								type="button"
+								class="act pull"
+								disabled={!liveBrick || Boolean(busy[mag.id]) || mag.pulling}
+								onclick={(e) => {
+									e.stopPropagation();
+									magPull(mag.id);
+								}}
+							>
+								{busy[mag.id] === 'pull' || mag.pulling ? '…' : 'PULL'}
+							</button>
+						{/if}
+						{#if mag.hub && mag.seat === 'cart'}
+							<button
+								type="button"
+								class="act eject"
+								disabled={!liveBrick || Boolean(busy[mag.id])}
+								onclick={(e) => {
+									e.stopPropagation();
+									magEject(mag.id);
+								}}
+							>
+								{busy[mag.id] === 'eject' ? '…' : 'EJECT'}
+							</button>
+						{/if}
+					</span>
+					{#if openMag === mag.id}
+						<p class="drill">{sizeHint(mag)}{mag.hub ? ` · ${mag.hub}` : ''}</p>
+					{/if}
 				</li>
 			{/each}
 		</ul>
@@ -439,6 +525,40 @@
 		color: #c4b49a;
 	}
 
+	.mags-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.6rem 1rem;
+		margin-bottom: 0.7rem;
+	}
+
+	.mags-head h2 {
+		margin: 0;
+	}
+
+	.filt {
+		display: flex;
+		gap: 0.35rem;
+	}
+
+	.filt button {
+		border: 1px solid #3a3228;
+		background: transparent;
+		color: #8a7d68;
+		font-family: 'Tactic Sans', sans-serif;
+		font-size: 0.68rem;
+		letter-spacing: 0.16em;
+		padding: 0.25rem 0.55rem;
+		cursor: pointer;
+	}
+
+	.filt button.on {
+		color: #e2a45a;
+		border-color: #c98a3a;
+	}
+
 	.mags ul,
 	.procs ul {
 		list-style: none;
@@ -450,7 +570,7 @@
 	.mags li,
 	.procs li {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 1fr auto;
 		gap: 0.2rem 0.8rem;
 		padding: 0.7rem 0;
 		border-bottom: 1px solid #3a3228;
@@ -460,6 +580,58 @@
 			color 0.18s ease,
 			text-shadow 0.18s ease,
 			border-color 0.18s ease;
+	}
+
+	.mag-hit {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.2rem 0.8rem;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: inherit;
+		font: inherit;
+		text-align: inherit;
+		cursor: pointer;
+	}
+
+	.acts {
+		align-self: center;
+	}
+
+	.act {
+		font-family: 'Tactic Sans', sans-serif;
+		font-size: 0.65rem;
+		letter-spacing: 0.14em;
+		padding: 0.22rem 0.45rem;
+		border: 1px solid;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.act.pull {
+		color: #e2a45a;
+		border-color: #c98a3a;
+	}
+
+	.act.eject {
+		color: #d23c2a;
+		border-color: #8a3a32;
+	}
+
+	.act:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	.drill {
+		grid-column: 1 / -1;
+		margin: 0.15rem 0 0;
+		color: #ead9b8;
+		font-size: 0.8rem;
+		letter-spacing: 0.02em;
 	}
 
 	.slot {
@@ -579,8 +751,11 @@
 			grid-template-columns: repeat(3, 1fr);
 		}
 		.mags li {
-			grid-template-columns: 7rem 6rem 1fr 6rem;
+			grid-template-columns: 1fr auto;
 			align-items: baseline;
+		}
+		.mag-hit {
+			grid-template-columns: 7rem 1fr 7rem 5.5rem;
 		}
 		.role,
 		.state {
