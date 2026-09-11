@@ -4,7 +4,7 @@
 	import plate from '$lib/bay/last-plate.json';
 	import { BANDWIDTH_K, FILTER_K } from '$lib/bay/t4000';
 	import { filterRack, magRack, seatWord, sizeHint, type MagFilter } from '$lib/bay/rack';
-	import { BayTracker } from '$lib/bay/tracker';
+	import { BayTracker, type Lead } from '$lib/bay/tracker';
 	import VaporGrid from '$lib/components/VaporGrid.svelte';
 	import type { BayPlate, BayView } from '$lib/bay/types';
 
@@ -12,10 +12,14 @@
 	let view = $state<BayView>(plateView);
 	let tick = $state(0);
 	let armed = $state(false);
+	let lead = $state<Lead>('hall');
 	let magFilter = $state<MagFilter>('ready');
 	let openMag = $state<string | null>(null);
 	let busy = $state<Record<string, 'pull' | 'eject'>>({});
 	const tracker = new BayTracker();
+	tracker.onLead = (next) => {
+		lead = next;
+	};
 
 	async function pull() {
 		if (!import.meta.env.DEV) {
@@ -164,7 +168,7 @@
 			<div class="ticks" aria-hidden="true"></div>
 			<p class="wave-lab">{vramPct.toFixed(1)}% · util {view.gpu.util_pct}%</p>
 			<button type="button" class="arm" onclick={armSound} aria-pressed={armed}>
-				{armed ? 'MUTE TRACKER' : 'ARM TRACKER'}
+				{armed ? `MUTE · ${lead === 'hall' ? 'HALL' : 'SAIL'}` : 'ARM TRACKER'}
 			</button>
 		</div>
 	</section>
