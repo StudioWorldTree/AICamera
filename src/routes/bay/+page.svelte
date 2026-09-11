@@ -11,6 +11,9 @@
 		type Lead
 	} from '$lib/bay/tracker';
 	import VaporGrid from '$lib/components/VaporGrid.svelte';
+	import ModCart from '$lib/components/ModCart.svelte';
+	import AetherDeck from '$lib/components/AetherDeck.svelte';
+	import { CART_MIME, delMod, getMod, listMods, putMod, type StoredMod } from '$lib/bay/modlib';
 	import type { BayPlate, BayView } from '$lib/bay/types';
 
 	const plateView: BayView = { ...(plate as BayPlate), feed: 'plate' };
@@ -20,6 +23,8 @@
 	let lead = $state<Lead>('hall');
 	let modName = $state<string | null>(null);
 	let modErr = $state<string | null>(null);
+	let library = $state<StoredMod[]>([]);
+	let seatedId = $state<string | null>(null);
 	let magFilter = $state<MagFilter>('ready');
 	let openMag = $state<string | null>(null);
 	let busy = $state<Record<string, 'pull' | 'eject'>>({});
@@ -48,6 +53,7 @@
 
 	onMount(() => {
 		pull();
+		void refreshLibrary();
 		const id = setInterval(() => {
 			tick += 1;
 			pull();
@@ -57,6 +63,14 @@
 			tracker.dispose();
 		};
 	});
+
+	async function refreshLibrary() {
+		try {
+			library = await listMods();
+		} catch {
+			library = [];
+		}
+	}
 
 	async function magPull(id: string) {
 		if (!liveBrick) return;
@@ -89,7 +103,7 @@
 		}
 	}
 
-	async function loadTrackerFile(file: File) {
+	async function loadTrackerFile(file: File, seat = true) {
 		if (!looksLikeTracker(file)) {
 			modErr = 'Need a tracker module (.mod .xm .s3m .it …)';
 			return;
@@ -100,22 +114,53 @@
 		}
 		modErr = null;
 		const buf = await file.arrayBuffer();
+		const rec = await putMod(file, buf);
+		await refreshLibrary();
+		if (seat) await seatCart(rec.id);
+	}
+
+	async function seatCart(id: string) {
+		const rec = await getMod(id);
+		if (!rec) return;
 		try {
-			await tracker.loadModule(buf, file.name);
+			await tracker.loadModule(rec.bytes.slice(0), rec.name);
+			seatedId = id;
 			armed = true;
+			modErr = null;
 		} catch (e) {
 			modErr = e instanceof Error ? e.message : 'Could not play module';
 		}
 	}
 
-	function onTrackerFiles(files: FileList | null) {
+	function ejectCart() {
+		tracker.clearModule();
+		seatedId = null;
+	}
+
+	async function dumpCart(id: string) {
+		if (seatedId === id) ejectCart();
+		await delMod(id);
+		await refreshLibrary();
+	}
+
+	function onTrackerFiles(files: FileList | null, seat = true) {
 		const file = files?.[0];
-		if (file) void loadTrackerFile(file);
+		if (file) void loadTrackerFile(file, seat);
 	}
 
 	function onHeroDrop(e: DragEvent) {
 		e.preventDefault();
-		onTrackerFiles(e.dataTransfer?.files ?? null);
+		const id = e.dataTransfer?.getData(CART_MIME);
+		if (id) {
+			void seatCart(id);
+			return;
+		}
+		onTrackerFiles(e.dataTransfer?.files ?? null, true);
+	}
+
+	function onShelfDrop(e: DragEvent) {
+		e.preventDefault();
+		onTrackerFiles(e.dataTransfer?.files ?? null, false);
 	}
 
 	async function armSound() {
@@ -153,6 +198,8 @@
 	const liveBrick = $derived(view.feed === 'live');
 	const vaporSpeed = $derived(0.28 + (view.gpu.util_pct / 100) * 2.4 + (hot ? 0.7 : 0));
 	const gated = $derived(rack.filter((m) => m.seat === 'gate').map((m) => m.label));
+	const seated = $derived(library.find((m) => m.id === seatedId) ?? null);
+	const shelf = $derived(library.filter((m) => m.id !== seatedId));
 
 	$effect(() => {
 		tracker.setLoad({
@@ -235,6 +282,34 @@
 				>modarchive</a
 			>
 		</div>
+	</section>
+
+	<section class="tapes">
+		<div
+			class="shelf"
+			role="group"
+			aria-label="Cartridge shelf. Drop a module to store it."
+			ondragover={(e) => e.preventDefault()}
+			ondrop={onShelfDrop}
+		>
+			<div class="shelf-head">
+				<h2>Carts</h2>
+				<p class="shelf-note">Straight lacquer. Drag into the well to play.</p>
+			</div>
+			<div class="rail">
+				{#if shelf.length}
+					{#each shelf as mod (mod.id)}
+						<div class="cell">
+							<ModCart {mod} />
+							<button type="button" class="dump" onclick={() => dumpCart(mod.id)}>DUMP</button>
+						</div>
+					{/each}
+				{:else}
+					<p class="empty-rail">No carts on the shelf. LOAD MOD or drop a file here.</p>
+				{/if}
+			</div>
+		</div>
+		<AetherDeck {seated} {hot} onSeat={seatCart} onEject={ejectCart} />
 	</section>
 
 	<section class="mags">
@@ -614,6 +689,79 @@
 		}
 	}
 
+	.tapes {
+		position: relative;
+		z-index: 3;
+		display: grid;
+		gap: 1rem;
+		margin-bottom: 1.75rem;
+	}
+
+	.shelf {
+		border: 1px solid #3a3228;
+		padding: 0.85rem 0.9rem 1rem;
+		background: oklch(0.11 0.012 55 / 0.88);
+	}
+
+	.shelf-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.4rem 1rem;
+		margin-bottom: 0.7rem;
+	}
+
+	.shelf-head h2 {
+		margin: 0;
+	}
+
+	.shelf-note {
+		margin: 0;
+		color: #7a6e5c;
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+	}
+
+	.rail {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem 0.85rem;
+		min-height: 7.2rem;
+		align-items: flex-end;
+	}
+
+	.cell {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.3rem;
+	}
+
+	.dump {
+		border: 0;
+		background: none;
+		color: #6a5e50;
+		font-family: 'Tactic Sans', sans-serif;
+		font-size: 0.55rem;
+		letter-spacing: 0.14em;
+		cursor: pointer;
+		padding: 0;
+	}
+
+	.dump:hover,
+	.dump:focus-visible {
+		color: #d23c2a;
+	}
+
+	.empty-rail {
+		margin: 0;
+		color: #6a5e50;
+		font-size: 0.8rem;
+		letter-spacing: 0.06em;
+		align-self: center;
+	}
+
 	.mags,
 	.meters,
 	.procs {
@@ -852,6 +1000,10 @@
 		.wave {
 			grid-column: 1 / -1;
 			grid-row: 3;
+		}
+		.tapes {
+			grid-template-columns: 1fr 13rem;
+			align-items: stretch;
 		}
 		.meters {
 			grid-template-columns: repeat(3, 1fr);
