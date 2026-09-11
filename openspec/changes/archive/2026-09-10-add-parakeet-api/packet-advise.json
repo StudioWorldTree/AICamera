@@ -1,0 +1,35 @@
+{
+  "id": "pkt-advise-add-parakeet-api-re",
+  "node_id": "aicam-parakeet-shape",
+  "change_id": "add-parakeet-api",
+  "capability": "parakeet-asr",
+  "goal": "Re-advise add-parakeet-api after send-back amend (4194d0f). Prior review: openspec/changes/add-parakeet-api/reviews/2026-09-10-advise.md (send-back). Why unchanged: well-known OpenAPI 3.1 at GET /.well-known/openapi.json, same bytes as /api/v1/openapi.json, RFC 9727 catalog; Bun process Tailscale :8750; CPU INT8 Parakeet. Change spec now: servers /api/v1; GET /health; sidecar no network listener (stdin/IPC); CUDA_VISIBLE_DEVICES empty + intra-op <=4 + 30fps CPU scenario; NDJSON stream with final; 422 shape / 415 content-type; no resample. Cited: specs/parakeet-asr/spec.md, daBOM app.ts servers url /api/v1. Write openspec/changes/add-parakeet-api/reviews/2026-09-10-re-advise.md. BLIND PASS on the spec first. Do not open design.md or tasks.md until the take is written.",
+  "assignee": {
+    "id": "agt-fable-5-1-arch-review",
+    "kind": "model",
+    "harness": "claude",
+    "interface": "fable-5.1",
+    "effort": "high",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-fable-5-1-arch-review" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": [
+      "openspec/changes/add-parakeet-api/reviews",
+      "openspec/changes/add-parakeet-api/tasks.md"
+    ],
+    "do_not": ["fold", "act", "implement", "flip banner"]
+  },
+  "acceptance": { "kind": "none" },
+  "load_class": "structure-clear",
+  "rigor": "architecture",
+  "density": "standard",
+  "surface": "skill-host",
+  "role": "reader"
+}
