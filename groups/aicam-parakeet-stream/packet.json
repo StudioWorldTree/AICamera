@@ -1,0 +1,35 @@
+{
+  "id": "pkt-act-add-parakeet-stream",
+  "node_id": "aicam-parakeet-stream",
+  "change_id": "add-parakeet-stream",
+  "capability": "parakeet-asr",
+  "goal": "Add the PCM stream pipe to asr/server. POST /api/v1/stream (or the path named in OpenAPI) accepts 16 kHz mono PCM (application/octet-stream or audio/L16) and responds application/x-ndjson lines {text, t0, t1, final}. Windowed TDT: buffer N-second windows (default 4s) and call the existing sidecar transcribe RPC per window; last event final:true after request body ends (half-close). v1 clients are non-browser. List the operation in app.doc31 so GET /.well-known/openapi.json includes it. bun test: spec lists /stream; a fake sidecar yields two NDJSON events then final. Do not edit asr/engine. Cite openspec/changes/add-parakeet-stream and add-parakeet-api Audio stream pipe.",
+  "assignee": {
+    "id": "agt-grok-4.6",
+    "kind": "model",
+    "harness": "grok",
+    "interface": "grok-4.6",
+    "effort": "medium",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-grok-4.6" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": ["asr/server", "openspec/changes/add-parakeet-stream"],
+    "do_not": ["fold", "push", "asr/engine"]
+  },
+  "acceptance": {
+    "kind": "command",
+    "command": "cd asr/server && bun test"
+  },
+  "load_class": "structure-clear",
+  "rigor": "change",
+  "density": "explicit",
+  "surface": "packet-only",
+  "role": "worker"
+}

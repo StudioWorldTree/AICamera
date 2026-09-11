@@ -20,3 +20,12 @@ export const TranscribeSchema = z
 		text: z.string()
 	})
 	.openapi('Transcript');
+
+export const StreamEventSchema = z
+	.object({
+		text: z.string(),
+		t0: z.number(),
+		t1: z.number(),
+		final: z.boolean()
+	})
+	.openapi('StreamEvent');

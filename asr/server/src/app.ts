@@ -1,6 +1,8 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
-import { ErrorSchema, HealthSchema, TranscribeSchema } from './schemas';
+import { stream } from 'hono/streaming';
+import { ErrorSchema, HealthSchema, StreamEventSchema, TranscribeSchema } from './schemas';
 import { MODEL_ID, PROVIDER, SidecarDownError, type Sidecar } from './sidecar';
+import { requestChunks, windowedTranscribe } from './stream';
 import { parseContentType, parseL16, parseWav, SAMPLE_RATE, ShapeError } from './wav';
 
 const json = <T>(schema: T, description: string) => ({
@@ -13,11 +15,19 @@ function err(status: 415 | 422 | 503, description: string) {
 }
 
 const AUDIO_TYPES = new Set(['audio/wav', 'audio/wave', 'audio/x-wav', 'audio/l16', 'audio/pcm']);
+const STREAM_TYPES = new Set(['application/octet-stream', 'audio/l16']);
 
 const BinaryAudio = z.string().openapi({
 	type: 'string',
 	format: 'binary',
 	description: '16 kHz mono WAV or audio/L16 PCM. No resample.'
+});
+
+const BinaryPcm = z.string().openapi({
+	type: 'string',
+	format: 'binary',
+	description:
+		'16 kHz mono PCM. application/octet-stream is s16le; audio/L16 is s16be. No resample.'
 });
 
 export function createApi(sidecar: Sidecar) {
@@ -113,6 +123,76 @@ export function createApi(sidecar: Sidecar) {
 		}
 	);
 
+	// PCM stream pipe: openspec/changes/add-parakeet-stream and add-parakeet-api Audio stream pipe.
+	app.openapi(
+		createRoute({
+			method: 'post',
+			path: '/stream',
+			tags: ['ASR'],
+			summary: 'PCM stream pipe',
+			description: [
+				'16 kHz mono PCM in (application/octet-stream s16le or audio/L16 s16be).',
+				'Windowed TDT: 4 s windows via sidecar.transcribe.',
+				'NDJSON {text, t0, t1, final}. Last event final:true after request body ends (half-close).',
+				'v1 clients are non-browser.'
+			].join(' '),
+			middleware: [
+				async (c, next) => {
+					const { type } = parseContentType(c.req.header('content-type'));
+					if (!STREAM_TYPES.has(type)) {
+						return c.json({ error: 'unsupported media type', details: type || null }, 415);
+					}
+					await next();
+				}
+			],
+			request: {
+				body: {
+					required: true,
+					content: {
+						'application/octet-stream': { schema: BinaryPcm },
+						'audio/L16': { schema: BinaryPcm }
+					}
+				}
+			},
+			responses: {
+				200: {
+					content: { 'application/x-ndjson': { schema: StreamEventSchema } },
+					description: 'NDJSON segments; last event final:true'
+				},
+				...err(415, 'Non-audio content-type'),
+				...err(422, 'Wrong sample shape (not 16 kHz mono)'),
+				...err(503, 'Sidecar unavailable')
+			}
+		}),
+		async (c) => {
+			const { type, params } = parseContentType(c.req.header('content-type'));
+			const rate = params.rate ? Number(params.rate) : SAMPLE_RATE;
+			const channels = params.channels ? Number(params.channels) : 1;
+			if (rate !== SAMPLE_RATE || channels !== 1) {
+				throw new ShapeError('expected 16 kHz mono');
+			}
+			const info = await sidecar.health();
+			if (info.state === 'down') throw new SidecarDownError();
+
+			c.header('Content-Type', 'application/x-ndjson');
+			const littleEndian = type === 'application/octet-stream';
+			return stream(c, async (out) => {
+				for await (const ev of windowedTranscribe(requestChunks(c.req.raw), {
+					littleEndian,
+					transcribe: async (pcm) => {
+						const result = await sidecar.transcribe({
+							pcm_f32: pcm,
+							sample_rate: SAMPLE_RATE
+						});
+						return result.text;
+					}
+				})) {
+					await out.writeln(JSON.stringify(ev));
+				}
+			});
+		}
+	);
+
 	// daBOM src/lib/server/api/app.ts: servers [{ url: '/api/v1' }] so path keys are relative.
 	app.doc31('/openapi.json', {
 		openapi: '3.1.0',
@@ -122,7 +202,7 @@ export function createApi(sidecar: Sidecar) {
 			description: [
 				'CPU-only Parakeet TDT 0.6B v3 INT8 on the tailnet.',
 				'Canonical discovery: /.well-known/openapi.json',
-				'servers /api/v1; paths /transcribe and /health are relative to that base.'
+				'servers /api/v1; paths /transcribe, /health, and /stream are relative to that base.'
 			].join('\n')
 		},
 		servers: [{ url: '/api/v1', description: 'Versioned REST' }],

@@ -100,6 +100,20 @@ function decodePcm(data: Uint8Array, format: number, bits: number): number[] {
 	throw new ShapeError('expected 16-bit pcm or 32-bit float wav');
 }
 
+export const BYTES_PER_SAMPLE = 2;
+
+/** Signed 16-bit PCM to f32. `littleEndian` true is s16le (octet-stream); false is s16be (L16). */
+export function decodePcm16(bytes: Uint8Array, littleEndian: boolean): number[] {
+	if (bytes.byteLength === 0 || bytes.byteLength % 2 !== 0) {
+		throw new ShapeError('truncated pcm');
+	}
+	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+	const n = bytes.byteLength / 2;
+	const pcm = new Array<number>(n);
+	for (let i = 0; i < n; i++) pcm[i] = view.getInt16(i * 2, littleEndian) / 32768;
+	return pcm;
+}
+
 /** RFC 2586 audio/L16: signed 16-bit PCM, network (big) endian. */
 export function parseL16(
 	bytes: Uint8Array,
@@ -108,14 +122,7 @@ export function parseL16(
 	const rate = opts.rate ?? SAMPLE_RATE;
 	const channels = opts.channels ?? 1;
 	if (rate !== SAMPLE_RATE || channels !== 1) throw new ShapeError('expected 16 kHz mono');
-	if (bytes.byteLength === 0 || bytes.byteLength % 2 !== 0) {
-		throw new ShapeError('truncated pcm');
-	}
-	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-	const n = bytes.byteLength / 2;
-	const pcm = new Array<number>(n);
-	for (let i = 0; i < n; i++) pcm[i] = view.getInt16(i * 2, false) / 32768;
-	return pcm;
+	return decodePcm16(bytes, false);
 }
 
 export function writeWavPcm16(
