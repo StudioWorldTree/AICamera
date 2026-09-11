@@ -111,6 +111,7 @@
 	</header>
 
 	<section class="hero">
+		<VaporGrid speed={vaporSpeed} {hot} />
 		<div class="readout">
 			<p class="kicker">VRAM</p>
 			<p class="digits">{vramGb}<span class="unit"> / {vramTot}</span></p>
@@ -122,7 +123,6 @@
 			<p class="sub">cap {cap.toFixed(0)} · persist {view.gpu.persistence ? 'on' : 'off'}</p>
 		</div>
 		<div class="wave" aria-label="VRAM waveform {vramPct.toFixed(0)} percent">
-			<VaporGrid speed={vaporSpeed} {hot} />
 			<div class="fill" style="width: {Math.min(100, vramPct)}%"></div>
 			<div class="ticks" aria-hidden="true"></div>
 			<p class="wave-lab">{vramPct.toFixed(1)}% · util {view.gpu.util_pct}%</p>
@@ -298,14 +298,35 @@
 		gap: 1.25rem;
 		margin-bottom: 2rem;
 		position: relative;
+		isolation: isolate;
+		overflow: hidden;
 		z-index: 3;
+		min-height: 28rem;
+		grid-template-columns: 1fr;
+		grid-template-rows: auto auto 1fr auto;
+		padding: 1.15rem 1.1rem 1.15rem;
+		border: 1px solid #3a3228;
+		background: #09080c;
+	}
+
+	.hero :global(.vapor) {
+		z-index: 0;
+	}
+
+	.readout {
+		position: relative;
+		z-index: 2;
+		padding: 0.7rem 0.9rem 0.85rem;
+		background: oklch(0.1 0.012 55 / 0.92);
+		border: 1px solid oklch(0.38 0.04 70 / 0.95);
+		box-shadow: 0 0 0 1px oklch(0.05 0.01 55 / 0.6);
 	}
 
 	.kicker {
 		font-size: 0.68rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		color: #8a7d68;
+		color: #e6d5b8;
 		margin: 0 0 0.2rem;
 	}
 
@@ -314,8 +335,9 @@
 		font-size: clamp(2.6rem, 10vw, 5rem);
 		line-height: 0.92;
 		letter-spacing: -0.03em;
-		color: #efe6d6;
+		color: #f7f1e6;
 		margin: 0;
+		text-shadow: 0 1px 0 #050403;
 	}
 
 	.digits.sm {
@@ -326,20 +348,22 @@
 		margin-left: 0.22em;
 		font-size: 0.38em;
 		letter-spacing: 0.08em;
-		color: #c4b49a;
+		color: #ead9b8;
 	}
 
 	.sub {
 		margin: 0.35rem 0 0;
-		color: #8a7d68;
+		color: #e0d0b4;
 		font-size: 0.85rem;
 	}
 
 	.wave {
 		position: relative;
+		z-index: 2;
+		grid-row: 4;
 		height: 4.2rem;
-		border: 1px solid #3a3228;
-		background: #12100e;
+		border: 1px solid oklch(0.38 0.04 70 / 0.95);
+		background: oklch(0.1 0.012 55 / 0.38);
 		overflow: hidden;
 		transition: border-color 0.18s ease, box-shadow 0.18s ease;
 	}
@@ -347,10 +371,9 @@
 	.fill {
 		position: absolute;
 		inset: 0 auto 0 0;
-		background: linear-gradient(90deg, #6a3a12cc, #e2a45acc);
-		opacity: 0.72;
+		background: #c98a3a;
+		opacity: 0.92;
 		z-index: 1;
-		mix-blend-mode: screen;
 	}
 
 	.ticks {
@@ -373,8 +396,9 @@
 		font-family: 'Tactic ExtExd Black', sans-serif;
 		font-size: 0.8rem;
 		letter-spacing: 0.08em;
-		color: #efe6d6;
+		color: #f7f1e6;
 		z-index: 2;
+		text-shadow: 0 1px 0 #050403;
 	}
 
 	.arm {
@@ -382,9 +406,9 @@
 		left: 0.6rem;
 		bottom: 0.35rem;
 		z-index: 2;
-		border: 1px solid #3a3228;
-		background: #12100ecc;
-		color: #c4b49a;
+		border: 1px solid oklch(0.38 0.04 70);
+		background: oklch(0.1 0.012 55 / 0.94);
+		color: #ead9b8;
 		font-family: 'Tactic Sans', sans-serif;
 		font-size: 0.68rem;
 		letter-spacing: 0.16em;
@@ -541,9 +565,15 @@
 	@media (min-width: 720px) {
 		.hero {
 			grid-template-columns: 1fr 1fr;
+			grid-template-rows: auto 1fr auto;
+			min-height: 32rem;
+		}
+		.readout {
+			grid-row: 1;
 		}
 		.wave {
 			grid-column: 1 / -1;
+			grid-row: 3;
 		}
 		.meters {
 			grid-template-columns: repeat(3, 1fr);

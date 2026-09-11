@@ -46,9 +46,9 @@
 	}
 
 	function sun(ctx: CanvasRenderingContext2D, w: number, h: number, lit: boolean) {
-		const cx = w * 0.78;
-		const cy = h * 0.42;
-		const r = Math.min(w, h) * 0.38;
+		const cx = w * 0.82;
+		const cy = h * 0.34;
+		const r = Math.min(w, h) * 0.32;
 		const g = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r);
 		g.addColorStop(0, lit ? '#ffd08a' : '#e2a45a');
 		g.addColorStop(0.45, '#ff3ec8');
@@ -70,7 +70,7 @@
 	}
 
 	function grid(ctx: CanvasRenderingContext2D, w: number, h: number, phase: number, lit: boolean) {
-		const horizon = h * 0.52;
+		const horizon = h * 0.48;
 		ctx.strokeStyle = lit ? 'rgba(62,240,255,0.45)' : 'rgba(226,164,90,0.22)';
 		ctx.lineWidth = Math.max(1, devicePixelRatio);
 		const rows = 14;
