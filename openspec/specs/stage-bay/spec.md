@@ -48,9 +48,10 @@ to Kit and Docs, not a mdsvex docs chapter.
 - THEN the bay surface stays dark (tungsten, tally, near-black)
 
 ### Requirement: Live on the tailnet, plate on Pages
-Live metrics SHALL be fetched only from a same-origin vite proxy or a
-Tailscale-bound HTTP feed. GitHub Pages SHALL display a committed last
-plate. The feed SHALL NOT listen on `0.0.0.0`.
+Live metrics SHALL be fetched only from a same-origin proxy (vite dev, or
+the fractal1 nginx build with `VITE_BAY_LIVE=1`) onto the Tailscale-bound
+feed. GitHub Pages SHALL display a committed last plate. Neither the feed
+nor the fractal1 site SHALL listen on `0.0.0.0`.
 
 #### Scenario: Pages visitor
 - GIVEN a public Pages build
@@ -61,6 +62,11 @@ plate. The feed SHALL NOT listen on `0.0.0.0`.
 - GIVEN `npm run dev` and fractal1 reachable
 - WHEN `/bay` loads
 - THEN the glass updates from `/bay-api/loadout.json`
+
+#### Scenario: fractal1-hosted site
+- GIVEN `aicam-site-build` has published `main` and nginx is active
+- WHEN a tailnet browser opens `https://fractal1.<tailnet>.ts.net/bay`
+- THEN the glass updates from same-origin `/bay-api/loadout.json`
 
 ### Requirement: Swap split
 The glass SHALL distinguish zram (compressed RAM) from the disk swapfile.

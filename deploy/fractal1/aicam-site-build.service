@@ -1,0 +1,13 @@
+[Unit]
+Description=AICamera notebook: pull main, build SSG, publish to /srv/aicam/site
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=dorje
+Group=dorje
+Environment=HOME=/home/dorje
+ExecStart=/home/dorje/src/AICamera/deploy/fractal1/build.sh
+Nice=10
+TimeoutStartSec=15min

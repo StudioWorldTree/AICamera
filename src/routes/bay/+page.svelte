@@ -37,7 +37,8 @@
 	};
 
 	async function pull() {
-		if (!import.meta.env.DEV) {
+		// Live in `vite dev` (vite proxy) and in the fractal1 build (nginx proxy, VITE_BAY_LIVE=1).
+		if (!import.meta.env.DEV && import.meta.env.VITE_BAY_LIVE !== '1') {
 			view = plateView;
 			return;
 		}

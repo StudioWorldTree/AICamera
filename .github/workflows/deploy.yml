@@ -16,15 +16,17 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: npm
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
-        run: npm run build
+        run: bun run build
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v5
