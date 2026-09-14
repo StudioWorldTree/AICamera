@@ -63,26 +63,16 @@ nor the fractal1 site SHALL listen on `0.0.0.0`.
 - WHEN `/bay` loads
 - THEN the glass updates from `/bay-api/loadout.json`
 
-#### Scenario: fractal1-hosted site
-- GIVEN `aicam-site-build` has published `main` and nginx is active
-- WHEN a tailnet browser opens `http://fractal1/bay`
-- THEN the glass updates from same-origin `/bay-api/loadout.json`
+### Requirement: Live hosting lives in fractal1-web
+The fractal1-hosted live bay (tailnet control surface, read-only public
+origin, feed unit, tunnel) SHALL be owned by the `fractal1-web` repo
+(`duke/fractal1-web` on mimir), not this notebook. This repo SHALL keep
+the Pages plate and the dev proxy only.
 
-### Requirement: Public origin is read-only
-The public HTTPS copy (`fractal1.vm.worldtree.network`, via the Mjolnir gateway
-and reverse tunnel) SHALL expose only GET/HEAD and only
-`/bay-api/loadout.json` from the feed. Mag pull and eject SHALL be
-reachable from the tailnet only.
-
-#### Scenario: eject from the internet
-- GIVEN the public origin is up
-- WHEN `curl -X DELETE https://fractal1.vm.worldtree.network/bay-api/mags/klein`
-- THEN the response is 405 and nothing on fractal1 changes
-
-#### Scenario: public glass shows the controls as inert
-- GIVEN the feed response carries `X-Bay-Readonly: 1`
-- WHEN the mag rack renders PULL or EJECT
-- THEN those buttons are greyed and disabled in place (layout unchanged), with a tailnet hint
+#### Scenario: where the live bay is
+- GIVEN someone needs the live glass or its deploy
+- WHEN they look in this repo
+- THEN `docs/3090-SIM.md` § Bay glass points them to fractal1-web
 
 ### Requirement: Swap split
 The glass SHALL distinguish zram (compressed RAM) from the disk swapfile.

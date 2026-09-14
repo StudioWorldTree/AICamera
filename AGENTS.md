@@ -36,11 +36,10 @@ Issue tracking: `bd prime` / `bd ready`. Prefix `aicam`.
 
 Public notebook (SvelteKit SSG + mdsvex, GitHub Pages):
 https://studioworldtree.github.io/AICamera/
-fractal1-served copy with a live `/bay` (nginx + a systemd timer that builds `main`;
-see `deploy/fractal1/` and `docs/3090-SIM.md` § Bay glass):
-public read-only HTTPS at https://fractal1.vm.worldtree.network (Mjolnir gateway →
-proxy VM → reverse SSH tunnel; needed for tracker audio), tailnet `http://fractal1/`
-with PULL/EJECT.
+The live bay moved to its own repo **fractal1-web** (2026-09-14):
+`ssh://git@mimir.worldtree.network/duke/fractal1-web.git`, deployed on fractal1 at
+`~/work/fractal1-web`. Public read-only https://fractal1.vm.worldtree.network, tailnet
+`http://fractal1/` with PULL/EJECT. This repo's `/bay` is the Pages plate.
 Sveltia at `/admin/` edits `docs/*.md` and open decisions via git; locked calls stay out of the CMS.
 
 BOM / crib work is **not this repo**. Sister tree `../daBOM` (local
