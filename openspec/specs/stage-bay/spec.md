@@ -69,14 +69,14 @@ nor the fractal1 site SHALL listen on `0.0.0.0`.
 - THEN the glass updates from same-origin `/bay-api/loadout.json`
 
 ### Requirement: Public origin is read-only
-The public HTTPS copy (`aicam.vm.worldtree.network`, via the Mjolnir gateway
+The public HTTPS copy (`fractal1.vm.worldtree.network`, via the Mjolnir gateway
 and reverse tunnel) SHALL expose only GET/HEAD and only
 `/bay-api/loadout.json` from the feed. Mag pull and eject SHALL be
 reachable from the tailnet only.
 
 #### Scenario: eject from the internet
 - GIVEN the public origin is up
-- WHEN `curl -X DELETE https://aicam.vm.worldtree.network/bay-api/mags/klein`
+- WHEN `curl -X DELETE https://fractal1.vm.worldtree.network/bay-api/mags/klein`
 - THEN the response is 405 and nothing on fractal1 changes
 
 #### Scenario: public glass shows the controls as inert
