@@ -1,0 +1,24 @@
+[Unit]
+Description=AICamera public origin: reverse SSH over Iroh to the Mjolnir proxy VM
+Wants=network-online.target nginx.service
+After=network-online.target nginx.service
+
+[Service]
+User=dorje
+EnvironmentFile=/home/dorje/src/AICamera/deploy/fractal1/aicam-tunnel.env
+Environment=AUTOSSH_GATETIME=0
+# The VM key only permits `-R 0.0.0.0:3000`; nginx :8081 is the read-only public server.
+ExecStart=/usr/bin/autossh -M 0 -N -T \
+	-i /home/dorje/.ssh/aicam_tunnel \
+	"-oProxyCommand=/home/dorje/.local/bin/mj proxy ${AICAM_VM_TICKET} --port 22" \
+	-o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+	-o ExitOnForwardFailure=yes \
+	-o StrictHostKeyChecking=accept-new \
+	-o UserKnownHostsFile=/home/dorje/.ssh/aicam_tunnel_known_hosts \
+	-R 0.0.0.0:3000:127.0.0.1:8081 \
+	tunnel@aicam-proxy
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

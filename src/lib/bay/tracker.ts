@@ -173,6 +173,7 @@ export class BayTracker {
 	private async ensureModNode() {
 		if (this.modWorkletReady && this.modNode) return;
 		if (!this.ctx) throw new Error('no audio');
+		if (!this.ctx.audioWorklet) throw new Error('Cartridges need HTTPS (AudioWorklet)');
 		await this.ctx.audioWorklet.addModule(this.workletUrl);
 		const node = new AudioWorkletNode(this.ctx, 'libopenmpt-processor', {
 			numberOfInputs: 0,

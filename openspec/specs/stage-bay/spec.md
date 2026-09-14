@@ -65,8 +65,19 @@ nor the fractal1 site SHALL listen on `0.0.0.0`.
 
 #### Scenario: fractal1-hosted site
 - GIVEN `aicam-site-build` has published `main` and nginx is active
-- WHEN a tailnet browser opens `https://fractal1.<tailnet>.ts.net/bay`
+- WHEN a tailnet browser opens `http://fractal1/bay`
 - THEN the glass updates from same-origin `/bay-api/loadout.json`
+
+### Requirement: Public origin is read-only
+The public HTTPS copy (`aicam.vm.worldtree.network`, via the Mjolnir gateway
+and reverse tunnel) SHALL expose only GET/HEAD and only
+`/bay-api/loadout.json` from the feed. Mag pull and eject SHALL be
+reachable from the tailnet only.
+
+#### Scenario: eject from the internet
+- GIVEN the public origin is up
+- WHEN `curl -X DELETE https://aicam.vm.worldtree.network/bay-api/mags/klein`
+- THEN the response is 405 and nothing on fractal1 changes
 
 ### Requirement: Swap split
 The glass SHALL distinguish zram (compressed RAM) from the disk swapfile.

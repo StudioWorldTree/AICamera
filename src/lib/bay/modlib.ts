@@ -66,7 +66,8 @@ export async function listMods(): Promise<StoredMod[]> {
 
 export async function putMod(file: File, bytes: ArrayBuffer): Promise<StoredMod> {
 	const rec: StoredMod = {
-		id: crypto.randomUUID(),
+		// randomUUID is secure-context only; plain-HTTP tailnet hosts still get an id.
+		id: crypto.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
 		name: file.name,
 		ext: extOf(file.name),
 		bytes,
