@@ -28,6 +28,9 @@
 	let magFilter = $state<MagFilter>('ready');
 	let openMag = $state<string | null>(null);
 	let busy = $state<Record<string, 'pull' | 'eject'>>({});
+	// Public origin (nginx X-Bay-Readonly) shows live metrics but refuses pull/eject.
+	let readOnly = $state(false);
+	const READ_ONLY_HINT = 'Read-only public copy. PULL / EJECT on the tailnet (http://fractal1/bay).';
 	const tracker = new BayTracker(`${base}/tracker/chiptune3.worklet.js`);
 	tracker.onLead = (next) => {
 		lead = next;
@@ -45,6 +48,7 @@
 		try {
 			const r = await fetch('/bay-api/loadout.json', { signal: AbortSignal.timeout(2500) });
 			if (!r.ok) throw new Error(String(r.status));
+			readOnly = r.headers.get('x-bay-readonly') === '1';
 			const data = (await r.json()) as BayPlate;
 			view = { ...data, feed: 'live' };
 		} catch {
@@ -74,7 +78,7 @@
 	}
 
 	async function magPull(id: string) {
-		if (!liveBrick) return;
+		if (!liveBrick || readOnly) return;
 		busy = { ...busy, [id]: 'pull' };
 		try {
 			await fetch(`/bay-api/mags/${id}/pull`, { method: 'POST' });
@@ -87,7 +91,7 @@
 	}
 
 	async function magEject(id: string) {
-		if (!liveBrick) return;
+		if (!liveBrick || readOnly) return;
 		if (!confirm(`Eject ${id} from disk on fractal1?`)) return;
 		busy = { ...busy, [id]: 'eject' };
 		try {
@@ -345,7 +349,9 @@
 							<button
 								type="button"
 								class="act pull"
-								disabled={!liveBrick || Boolean(busy[mag.id]) || mag.pulling}
+								class:ro={readOnly}
+								title={readOnly ? READ_ONLY_HINT : undefined}
+								disabled={!liveBrick || readOnly || Boolean(busy[mag.id]) || mag.pulling}
 								onclick={(e) => {
 									e.stopPropagation();
 									magPull(mag.id);
@@ -358,7 +364,9 @@
 							<button
 								type="button"
 								class="act eject"
-								disabled={!liveBrick || Boolean(busy[mag.id])}
+								class:ro={readOnly}
+								title={readOnly ? READ_ONLY_HINT : undefined}
+								disabled={!liveBrick || readOnly || Boolean(busy[mag.id])}
 								onclick={(e) => {
 									e.stopPropagation();
 									magEject(mag.id);
@@ -878,6 +886,17 @@
 
 	.act:disabled {
 		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	/* Read-only public copy: same box, plainly inert. */
+	.act.ro,
+	.act.ro:disabled {
+		color: #6f6a62;
+		border-color: #4a4640;
+		border-style: dashed;
+		filter: grayscale(1);
+		opacity: 0.55;
 		cursor: not-allowed;
 	}
 

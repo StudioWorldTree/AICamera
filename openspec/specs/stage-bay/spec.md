@@ -79,6 +79,11 @@ reachable from the tailnet only.
 - WHEN `curl -X DELETE https://aicam.vm.worldtree.network/bay-api/mags/klein`
 - THEN the response is 405 and nothing on fractal1 changes
 
+#### Scenario: public glass shows the controls as inert
+- GIVEN the feed response carries `X-Bay-Readonly: 1`
+- WHEN the mag rack renders PULL or EJECT
+- THEN those buttons are greyed and disabled in place (layout unchanged), with a tailnet hint
+
 ### Requirement: Swap split
 The glass SHALL distinguish zram (compressed RAM) from the disk swapfile.
 It SHALL NOT label zram as “swapping to disk.”
