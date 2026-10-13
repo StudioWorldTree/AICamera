@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "res-aicam-parakeet-stream",
+  "packet_id": "pkt-act-add-parakeet-stream",
+  "node_id": "aicam-parakeet-stream",
+  "change_id": "add-parakeet-stream",
+  "signer": {
+    "id": "agt-grok-4.6",
+    "kind": "model",
+    "harness": "grok",
+    "interface": "grok-4.6",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-grok-4.6" }
+  },
+  "artifacts": [
+    { "path": "asr/server/src/app.ts", "role": "stream-route" },
+    { "path": "asr/server/src/stream.ts", "role": "windowed-tdt" },
+    { "path": "asr/server/src/app.test.ts", "role": "focused-verify" },
+    { "path": "openspec/changes/add-parakeet-stream/specs/parakeet-asr/spec.md", "role": "delta-spec" }
+  ],
+  "evidence": {
+    "kind": "command",
+    "command": "cd asr/server && bun test",
+    "exit_code": 0,
+    "output_tail": "14 pass\n 0 fail\n 35 expect() calls\nRan 14 tests across 1 file. [73.00ms]"
+  },
+  "disposition": "pass",
+  "promoted": false,
+  "commit": null,
+  "summary": "POST /api/v1/stream on the Bun Hono app: 16 kHz mono PCM (application/octet-stream s16le or audio/L16 s16be) in, application/x-ndjson {text,t0,t1,final} out. 4s windows call sidecar.transcribe; last event final:true after half-close. Listed in app.doc31 / well-known OpenAPI. bun test 14 pass (spec lists /stream; fake sidecar two events then final).",
+  "signature": {
+    "mode": "stand-in",
+    "stand_in_id": "agt-grok-4.6",
+    "signed_at": "2026-09-11T02:40:24Z",
+    "content_hash": "sha256:2418aecf0269c87573758f2c65b7cb67b51984867f94eba94deea3afcfd3f017"
+  }
+}

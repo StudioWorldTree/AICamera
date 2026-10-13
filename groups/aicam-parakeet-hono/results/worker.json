@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "res-aicam-parakeet-hono",
+  "packet_id": "pkt-act-add-parakeet-hono",
+  "signer": {
+    "id": "agt-grok-4-6",
+    "kind": "model",
+    "harness": "grok",
+    "interface": "grok-4.6",
+    "signing": {
+      "mode": "stand-in",
+      "stand_in_id": "agt-grok-4-6"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "asr/server/package.json",
+      "role": "own-package"
+    },
+    {
+      "path": "asr/server/src/app.ts",
+      "role": "openapi-routes"
+    },
+    {
+      "path": "asr/server/src/root.ts",
+      "role": "well-known"
+    },
+    {
+      "path": "asr/server/src/app.test.ts",
+      "role": "focused-verify"
+    }
+  ],
+  "evidence": {
+    "kind": "command",
+    "command": "cd asr/server && bun test",
+    "exit_code": 0,
+    "output_tail": "10 pass\n 0 fail\n 22 expect() calls\nRan 10 tests across 1 file. [47.00ms]"
+  },
+  "disposition": "pass",
+  "promoted": false,
+  "commit": null,
+  "summary": "asr/server is a standalone Bun + Hono + @hono/zod-openapi package (own package.json/lockfile). Discovery copies daBOM: GET /.well-known/openapi.json same bytes as /api/v1/openapi.json; RFC 9727 catalog; doc31 servers [{url:'/api/v1'}] with /transcribe and /health. Clip POST 16 kHz mono WAV/L16 \u2192 415/422/503; health always 200. Bind via TAILSCALE_IP / tailscale ip -4 / 100.103.147.70:8750. JSONL child at ../engine/sidecar.py. bun test 10 pass.",
+  "signature": {
+    "mode": "stand-in",
+    "stand_in_id": "agt-grok-4-6",
+    "signed_at": "2026-09-11T02:31:48Z",
+    "content_hash": "sha256:163d2b94401cdcaadc5b67a6f93a76d03a509417933ffc4dea3389da01603a47"
+  }
+}

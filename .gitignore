@@ -42,3 +42,10 @@ vite.config.ts.timestamp-*
 # Local preview captures
 .playwright-mcp/
 aicam-*.png
+
+# Intention scratch (conductor isolate, spawn stage, harness session)
+.worktrees/
+.spawns/
+.omc/
+.omx/
+groups/*/inventory.json

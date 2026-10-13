@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "res-act-add-parakeet-engine",
+  "packet_id": "pkt-act-add-parakeet-engine",
+  "node_id": "aicam-parakeet-engine",
+  "change_id": "add-parakeet-engine",
+  "signer": {
+    "id": "agt-grok-4.6",
+    "kind": "model",
+    "harness": "grok",
+    "interface": "grok-4.6",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-grok-4.6" }
+  },
+  "artifacts": [
+    { "path": "asr/engine/sidecar.py", "role": "engine" },
+    { "path": "asr/engine/requirements.txt", "role": "deps" },
+    { "path": "asr/engine/run.sh", "role": "run" }
+  ],
+  "disposition": "pass",
+  "summary": "CPU-only Parakeet TDT 0.6B v3 INT8 JSONL sidecar at asr/engine/sidecar.py. CUDA_VISIBLE_DEVICES empty, CPUExecutionProvider, intra-op ≤ 4, no listener. Health warm|cold|down; wrong shape 422; --once FILE.wav. Weights ~/aicam/parakeet-cpu. Acceptance compiled and grepped.",
+  "evidence": {
+    "kind": "command",
+    "command": "test -f asr/engine/sidecar.py && python3 -m py_compile asr/engine/sidecar.py && grep -q CPUExecutionProvider asr/engine/sidecar.py && grep -q CUDA_VISIBLE_DEVICES asr/engine/sidecar.py",
+    "exit": 0
+  },
+  "distilled": {
+    "disposition": "pass",
+    "summary": "Warm CPU Parakeet JSONL sidecar landed under asr/engine/.",
+    "verify_command": "test -f asr/engine/sidecar.py && python3 -m py_compile asr/engine/sidecar.py && grep -q CPUExecutionProvider asr/engine/sidecar.py && grep -q CUDA_VISIBLE_DEVICES asr/engine/sidecar.py",
+    "verify_exit": 0,
+    "changed_files": [
+      "asr/engine/sidecar.py",
+      "asr/engine/requirements.txt",
+      "asr/engine/run.sh",
+      "asr/engine/.gitignore"
+    ],
+    "blockers": []
+  },
+  "signature": {
+    "mode": "stand-in",
+    "stand_in_id": "agt-grok-4.6",
+    "content_hash": "sha256:1df4b4d613d5fef40195933370f8885cef5827f2fd623138b225b5d771a04203",
+    "signed_at": "2026-09-11T02:31:21Z"
+  }
+}
