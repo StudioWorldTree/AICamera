@@ -1,0 +1,35 @@
+{
+  "id": "pkt-advise-add-stage-bay",
+  "node_id": "aicam-bay.1",
+  "change_id": "add-stage-bay",
+  "capability": "stage-bay",
+  "goal": "Advise add-stage-bay. Why: fractal1 brick state for a filmmaker EVF; GitHub Pages cannot see Tailscale so live vs last-plate is the architecture. Living spec: openspec/specs/hardware-kit/spec.md (empty until fold). Change spec: openspec/changes/add-stage-bay/specs/stage-bay/spec.md. Cited: sim/3090/serve.py BIND 100.103.147.70:8745 (not 0.0.0.0); vite.config.ts /bay-api proxy; src/routes/bay/+page.svelte DEV-only fetch else last plate; docs/3090-SIM.md owns derates. Write reviews/2026-09-10-advise.md.",
+  "assignee": {
+    "id": "agt-fable-5-1-arch-review",
+    "kind": "model",
+    "harness": "claude",
+    "interface": "fable-5.1",
+    "effort": "high",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-fable-5-1-arch-review" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": [
+      "openspec/changes/add-stage-bay/reviews",
+      "openspec/changes/add-stage-bay/tasks.md"
+    ],
+    "do_not": ["fold", "act", "implement", "flip banner"]
+  },
+  "acceptance": { "kind": "none" },
+  "load_class": "structure-clear",
+  "rigor": "architecture",
+  "density": "lean",
+  "surface": "skill-host",
+  "role": "reader"
+}

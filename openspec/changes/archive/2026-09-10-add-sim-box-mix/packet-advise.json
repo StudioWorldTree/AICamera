@@ -1,0 +1,35 @@
+{
+  "id": "pkt-advise-add-sim-box-mix",
+  "node_id": "aicam-sim-box-mix",
+  "change_id": "add-sim-box-mix",
+  "capability": "hardware-kit",
+  "goal": "Advise add-sim-box-mix. Why: live mix is designed as everything resident at 30 fps; fractal1 3090 cannot (24 GB + 16 GB host) so it swaps one slot at a time and goes slowly; the same software streams realtime on a rented RTX PRO 6000 Blackwell Server 96 GB or a local T4000; truck 6000 stays quality/overnight. Living spec: openspec/specs/hardware-kit/spec.md. Change spec: openspec/changes/add-sim-box-mix/specs/hardware-kit/spec.md. Cited: docs/3090-SIM.md (derates ×0.13/×0.30, emulator role missing); ~/work/Family/web3d-space/docs/all-systems-go/HARDWARE.md:1 (still 'three boxes', no 3090 envelope); MODELS.md:7 (perception table, no SMALL/LARGE packs); VIDEO-PERCEPTION.md:122 (Thor budget; SAM 3.1 + VDA-L not on body). Banner is ACTIVE BUILD. Write openspec/changes/add-sim-box-mix/reviews/2026-09-10-advise.md. Do not open design.md or tasks.md until the 10-line blind take is written. Do not implement. Do not fold. Do not flip the banner.",
+  "assignee": {
+    "id": "agt-fable-5-1-arch-review",
+    "kind": "model",
+    "harness": "claude",
+    "interface": "fable-5.1",
+    "effort": "high",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-fable-5-1-arch-review" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": [
+      "openspec/changes/add-sim-box-mix/reviews",
+      "openspec/changes/add-sim-box-mix/tasks.md"
+    ],
+    "do_not": ["fold", "act", "implement", "flip banner"]
+  },
+  "acceptance": { "kind": "none" },
+  "load_class": "structure-clear",
+  "rigor": "architecture",
+  "density": "lean",
+  "surface": "skill-host",
+  "role": "reader"
+}

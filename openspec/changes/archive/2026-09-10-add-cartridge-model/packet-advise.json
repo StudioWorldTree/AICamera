@@ -1,0 +1,35 @@
+{
+  "id": "pkt-advise-add-cartridge-model",
+  "node_id": "aicam-cart.1",
+  "change_id": "add-cartridge-model",
+  "capability": "cartridge-runtime",
+  "goal": "Advise add-cartridge-model. Why: named modes already pick one extra and unload the rest; the operator wants to slot models and plugins like game carts; without a catalog of costs and shelves a packer cannot refuse an illegal seat and /bay cannot draw the board. Living spec: none yet (capability ADDED cartridge-runtime). Change spec: openspec/changes/add-cartridge-model/specs/cartridge-runtime/spec.md. Cited: ~/work/Family/web3d-space/docs/all-systems-go/MODELS.md:7 (job names; do not fork); MODES.md named modes; docs/3090-SIM.md measured costs; openspec/changes/add-sim-box-mix envelope ids t4000/3090/6000. Banner is ACTIVE BUILD. Write openspec/changes/add-cartridge-model/reviews/2026-09-10-advise.md. Do not open design.md or tasks.md until the 10-line blind take is written. Do not implement. Do not fold. Do not flip the banner.",
+  "assignee": {
+    "id": "agt-fable-5-1-arch-review",
+    "kind": "model",
+    "harness": "claude",
+    "interface": "fable-5.1",
+    "effort": "high",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-fable-5-1-arch-review" }
+  },
+  "requester": {
+    "id": "agt-conductor",
+    "kind": "group",
+    "harness": "grok",
+    "signing": { "mode": "stand-in", "stand_in_id": "agt-conductor" }
+  },
+  "constraints": {
+    "permission": "write",
+    "paths": [
+      "openspec/changes/add-cartridge-model/reviews",
+      "openspec/changes/add-cartridge-model/tasks.md"
+    ],
+    "do_not": ["fold", "act", "implement", "flip banner"]
+  },
+  "acceptance": { "kind": "none" },
+  "load_class": "structure-clear",
+  "rigor": "architecture",
+  "density": "lean",
+  "surface": "skill-host",
+  "role": "reader"
+}
