@@ -16,6 +16,10 @@
 		Two envelopes. The resin shell wraps the kit we can buy today. The product is Thor inside a
 		camera body, on the T4000 SOM, unless the stream budget forces the bigger module.
 	</p>
+	<p class="cart-line">
+		The production buy is <strong>$8,312.57</strong> required, streets checked 27 Oct 2026.
+		<a href="{base}/docs/shopping/">Each piece, and the choice beside it</a>.
+	</p>
 
 	<div class="pair">
 		<section>
@@ -112,7 +116,21 @@
 		font-family: var(--font-serif);
 		font-size: 1.2rem;
 		max-width: 42rem;
+		margin: 0 0 0.8rem;
+	}
+
+	.cart-line {
+		max-width: 42rem;
 		margin: 0 0 2rem;
+		color: var(--ink-2);
+	}
+
+	.cart-line strong {
+		font-family: var(--font-hud-ui);
+		font-weight: 400;
+		letter-spacing: -0.03em;
+		font-size: 1.35rem;
+		color: var(--ink);
 	}
 
 	.pair {

@@ -26,7 +26,7 @@ The SvelteKit app in that repo is the spatial viewer, not the EVF.
 | [POWER.md](POWER.md) | — |
 | [ENCLOSURE.md](ENCLOSURE.md) | — |
 | [cad/](cad/) | STLs for Anycubic |
-| [SHOPPING.md](SHOPPING.md) | Camera + T4000 carrier buy brief |
+| [SHOPPING.md](SHOPPING.md) | Cart T buy brief. Streets checked 2026-10-27. The site page is the cart layout. |
 | [CAMERAS.md](CAMERAS.md) | CSI vs GMSL vs PoE H.265; turret vs module; lidar; Thor-in-body hold |
 | [references/THERMAL.md](references/THERMAL.md) | TDG-12271-001 v1.3: TTP 75 °C, θpa, radiators not lots of fans |
 | [references/T4000.md](references/T4000.md) | — (Arrow DS-11945-001 v1.4) |

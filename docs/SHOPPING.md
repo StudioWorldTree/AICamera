@@ -2,196 +2,183 @@
 title: "Shopping"
 kicker: "Buy brief"
 group: "hardware"
-summary: "Not a spec. Blackmagic is a cinema body (path B), not a CSI science project. T4000 SOM, AGX kit, and carrier options with street prices as of 2026-09-01."
+summary: "Cart T at the 2026-10-27 streets: $8,312.57 required. Each line, the part on the buy, and the ones set aside."
 ---
 
-# Hardware shopping — cameras and T4000 breakout
+# Cart T
 
-Prices checked 2026-09-01 (USD street unless noted). Confirm before you click.
-This is a buy brief, not a spec. Product decisions stay in INTERCONNECT / SENSORS / LENS.
+The published page is the cart layout (`src/lib/cart.ts`). This chapter is the same brief for the repository. Streets below were read 2026-10-27 unless a line says otherwise. Confirm before you click. Product calls stay in INTERCONNECT, SENSORS, LENS, and the thermal note.
 
-## The fork that matters
+**Required: $8,312.57.** That sum includes three placeholder lines (two turrets, one EVB, one PoE switch). HDMI capture is **$80** and stays off the required total. JCB003 is **$1,538** and stays on the sheet so it is not ordered as a 4K pipe.
 
-Blackmagic cameras **do not speak MIPI CSI**. They speak HDMI (Pocket / Cinema Camera 6K) or **12G-SDI + Ethernet + USB-C** (PYXIS). Thor eats CSI/GMSL/HSB natively.
+## What the buy is
 
-So “mount a Blackmagic on the Thor box” has three honest paths:
+One production body computer: a T4000 on a Rogue-T5, a bench heatsink, an NVMe ring, a 12 V brick, and two IX-to-RJ45 leads. A PYXIS 6K PL that records the cinema master itself. Two throwaway PoE H.265 turrets and one RV1126B dev board, so satellite encode and the /i and ToF UART can be written before a custom satellite exists. A small PoE switch that powers the turrets and does not power Thor.
 
-| Path | 4K into Thor? | Cooke /i? | Crack the camera? | Prototype speed |
-|---|---|---|---|---|
-| **A. HDMI/SDI → CSI capture card on the carrier** | HDMI 4K30 maybe; **CTI JCB003 is 3G-SDI = 1080p60 only** | From BMD files / Ethernet control, not from the SDI payload | No | Days if the card exists for Thor |
-| **B. BMD records BRAW internally; Thor gets a monitor feed + sidecar** | Thor AI on 1080p/4K HDMI proxy; master stays on CFexpress | Yes, in BRAW metadata (PL /i or EF/L electronic) | No | Fastest cine path |
-| **C. Open the body, rewire the sensor to CSI** | Only if you reverse a Sony IMX + FPGA. Not a weekend. | You’d still need the /i pins off the mount PCB | Yes | Weeks–months. Don’t buy a PYXIS *in order* to do this |
+The T4000 hardware encoder does two 4Kp30 streams. A body plus two satellites is therefore hybrid: the satellites encode H.265, Thor remuxes. That haul is about 0.24 Gbps, so the Rogue’s 10G jack is enough. The NAS is the vault. The RTX PRO 6000 stays off the camera.
 
-**Recommendation:** do **not** buy a Blackmagic as a CSI science project. Buy it as a cinema body (path B, plus HDMI/SDI into Thor for live AD/overlay). If you want native CSI, that’s a FRAMOS/Leopard module, not BMD.
+The lab brick is still the AGX Thor Developer Kit (a T5000 in NVIDIA’s shell). That is Cart S, and it is a different envelope. This chapter is Cart T.
 
----
+## Where the cinema camera sits
 
-## 1. Compute / breakout (no custom PCB)
+A Blackmagic body speaks HDMI or 12G-SDI. Thor speaks CSI. Three honest paths:
 
-### NVIDIA Jetson T4000 SOM (the module)
+**A. Capture into CSI.** The catalog SDI card is 1080p60. Live 4K into the Thor ISP is not a part we can order.
 
-| | |
-|---|---|
-| PN | `900-13834-0000-000` |
-| Price | **$2,749** qty 1 at [Arrow](https://www.arrow.com/en/products/900-13834-0000-000/nvidia) (492 listed in stock, “ships tomorrow”; also lists 24-week factory LT) |
-| 1KU list | Was $1,999; NVIDIA raised to **$2,999** (Jul 2026) |
-| Notes | 64 GB, 1× NVENC, 70 W default / 90 W TMP, **no CAN, no 3.3 V SYS_VIN_SV**. Needs a 699-pin carrier + TTP/heatsink. Arrow already sold you the datasheet. |
+**B. The camera keeps the master.** BRAW and /i stay on the PYXIS. Thor gets a picture to look at. This is the cart.
 
-ATS Thor heatsinks at Digi-Key: active **~$106**, passive **~$47**.
+**C. Open the body.** The sensor does not land on a Jetson connector. On a PL body the part worth stealing is the mount and the /i reader.
 
-### NVIDIA AGX Thor Developer Kit (T5000 brick — not a T4000)
+Do not buy a Blackmagic as a CSI science project. If the sensor must be native CSI, that is a FRAMOS or Leopard module, not BMD.
 
-| | |
-|---|---|
-| PN | `945-14070-0080-000` (US) |
-| Price | **$3,499** Arrow (75 listed); NVIDIA US list hiked to **$5,499** Jul 2026; Seeed industrial PDF **$5,899**; Amazon third-party **$2,799** — treat Amazon as unverified |
-| What’s in the box | T5000 SOM, reference carrier, 140 W PSU, 1 TB NVMe, Wi-Fi, fan |
-| I/O | 5GbE, QSFP28 (4× **independent** 25G, not 100G), HDMI **out**, DP, USB-C, HSB, USB cameras |
-| Notes | Fastest software bring-up. **No HDMI/SDI in.** Wrong envelope vs production T4000. Fine as the lab brick we already designed the resin shell around. |
+## 01 — NVIDIA Jetson T4000
 
-### Connect Tech Rogue-T5 (`AGX302`) — T4000 *and* T5000  **(preferred carrier)**
+**$2,749** at [Arrow](https://www.arrow.com/en/products/900-13834-0000-000/nvidia). MPN `900-13834-0000-000`. On the cart.
 
-| | |
-|---|---|
-| Size | **92 × 108 mm** |
-| Compat | T5000 / T4000 / IGX Thor 500 (no SMCU) |
-| Net | 2× 10GBASE-T + 1× 2.5G, locking IX Industrial |
-| Camera | Expansion header → add-on boards: GMSL2/3, **3G-SDI**, HDMI, MIPI, FPD-Link |
-| Carrier-only | PN `AGX302` — **quote** `sales@connecttech.com` (not a web cart) |
-| Integrated (T5000 already on board) | WDL: **$8,225–$12,325** depending on cooling/NVMe/Wi-Fi/GMSL ([example AGX302-01M $8,225](https://www.wdlsystems.com/embedded/gpgpu/custitem_ff_processor/Jetson-Thor,NVIDIA-Quadro)) |
-| Power | 12 V, CTI brick MSG103 252 W |
-| Notes | Smallest *production* Thor carrier. Same board if you later drop in T4000. Camera I/O is **add-on**, not on the carrier. Manual: CTIM-00160. |
+Production ceiling. 64 GB, one NVENC, 70 W default and 90 W throttle, 87 × 100 × 15.29 mm. No CAN, no 3.3 V SYS_VIN_SV. HQ encode is two 4Kp30 streams. Two indexed US listings disagreed on stock (434 pieces on a 12-week lead, and 492 that ship tomorrow) and agreed on the unit price. The 1KU list was hiked to **$2,999** in July 2026.
 
-### Connect Tech Gauntlet (`AGX301`)
+| Choice | Price | Why |
+|---|---|---|
+| T4000 SOM, qty 1 | **$2,749** | This line. |
+| AGX Thor Developer Kit | **$3,499** | Arrow street as of 2026-09-01, not re-fetched. T5000, 128 GB, two NVENCs. Lab brick. NVIDIA’s US list is **$5,499**. |
+| Seeed listing | **$3,399** | PN `900-13834-0000-001`. A different part number. Leave it. |
 
-| | |
-|---|---|
-| Size | 155 × 126 mm |
-| Compat | Marketed T5000; T4000 support claimed in CTI blogs |
-| Net | 2× 10GbE + 2× 1GbE RJ45 |
-| Camera | 16-lane MIPI header + same JCB add-ons |
-| Price | AU listing **A$3,999** (~US$2,600) “in stock” — confirm if that’s carrier-only or with T5000. US is quote/WDL assemblies |
-| Notes | Bigger than Rogue-T5. Dual NVMe. Better if you want RJ45 instead of industrial IX plugs. |
+A T5000 in the body is the move only if the satellite count outgrows one encoder.
 
-### FORECR DSBOARD-THRMAX (Estonia)
+## 02 — Connect Tech Rogue-T5
 
-| | |
-|---|---|
-| Size | **140 × 125 mm** |
-| Compat | **T4000 and T5000** |
-| Price | **€999** carrier-only (~US$1,100) at [forecr.io](https://www.forecr.io/products/nvidia-jetson-thor-carrier-board-dsboard-thrmax). SOM/SSD variants listed **sold out** |
-| I/O | 1× GbE RJ45, **QSFP28 4×25G**, 2× HDMI **2.1 out**, USB-C locking, CSI expansion (6×2-lane or 4×4-lane), M.2 NVMe, 18–36 V |
-| Camera add-ons | Optional GMSL2 / MIPI cards |
-| Notes | Cheapest T4000-capable carrier with a public price. **HDMI is output, not capture.** QSFP matches our uplink story. CAN-FD pins are dead on T4000 (no CAN on the SOM). Made in Europe. |
+**$1,806** at [WDL Systems](https://www.wdlsystems.com/connect-tech-agx302). MPN `AGX302`, WDL SKU `1CAGX302`. Six available. On the cart.
 
-### Auvidea X242
+Smallest production Thor carrier that takes a T4000 or a T5000. 92 × 107 mm. Two 10GBASE-T jacks and one 2.5G, all locking IX Industrial. Camera I/O is an add-on header, not connectors on the board. The page title says T5000. The spec lists both modules. Qty breaks: **$1,784** at 10, **$1,761** at 25, **$1,740** at 50.
 
-| | |
-|---|---|
-| Compat | Published as **T5000**. Dual 10GbE, PCIe x16, 16-lane CSI (NVIDIA P3762 cam) |
-| Price | Quote (Auvidea / distributors). Historically cheaper BSP than CTI, more DIY |
-| Notes | Don’t assume T4000 until Auvidea says so. CSI-native, no SDI. |
+Buying the carrier alone is the point. An assembly with the SOM already soldered is a different purchase.
 
-### “Breakout board” in the CTI sense
+| Choice | Price | Why |
+|---|---|---|
+| Rogue-T5, carrier only | **$1,806** | This line. |
+| AGX302-002 with T4000 | **$9,291** | Stock heatspreader and 2 TB, soldered. Skip. |
+| AGX302-005 with T4000 | **$9,367** | Same stack plus Wi-Fi. Skip. |
+| T5000 assemblies on the same board | **$8,200–$12,500** | WDL integrated. Skip unless someone else is soldering the SOM. |
+| FORECR DSBOARD-THRMAX | **€999** | Public carrier-only list, not re-fetched 2026-10-27. 140 × 125 mm, QSFP28, HDMI is an output, brick is 18–36 V. SOM and SSD variants were sold out. The escape if the Rogue slips. |
+| Connect Tech Gauntlet `AGX301` | **A$3,999** | Older AU listing, not re-fetched. 155 × 126 mm, RJ45, dual NVMe. Confirm whether that price is carrier-only. US is still a quote. |
+| Auvidea X242 | Quote | Published as T5000. Do not assume T4000 until Auvidea says so. |
 
-CTI’s old **XBG*** boards were TX2-era mezzanine breakouts, not Thor. For Thor, the prototype without a custom PCB is: **carrier + camera add-on**, not a pin header fan-out of the 699-pin SOM. Don’t look for a $50 Thor “breakout.”
+There is no $50 Thor breakout. CTI’s old XBG boards were TX2-era. For Thor the prototype without a custom PCB is carrier plus a camera add-on.
 
----
+## 03 — ATS passive heatsink
 
-## 2. Getting Blackmagic video *into* Thor
+**$55.58** at [Digi-Key](https://www.digikey.com/en/products/detail/advanced-thermal-solutions-inc/ATS-NVP-3739-C1-R0/28249778). Orderable MPN `ATS-NVP-3739-C1-R0`, Digi-Key `684-ATS-NVP-3739-C1-R0-ND`. 81 in stock, 10-week factory lead, a tariff may apply. On the cart, as a bench piece.
 
-| Widget | Price | What it actually does | 4K? |
-|---|---|---|---|
-| **CTI JCB003** SDI→CSI | **$1,538** [WDL, in stock](https://www.wdlsystems.com/connect-tech-jcb003-01) | 2× **3G-SDI** in → MIPI. Needs Gauntlet or Rogue-T5 | **No.** 1080p60 max. PYXIS 12G-SDI will not give you 4K through this |
-| **CTI JCB010** HDMI→CSI | Quote (JCB010). Page still says Rogue/Forge **Orin/Xavier** — confirm Thor BSP | 4× HDMI → MIPI (Toshiba TC358840) | 4K30 *if* the bridge and BSP allow it. Not confirmed on Thor in public docs |
-| USB HDMI capture | $30–200 | UVC into Thor USB | 4K maybe, latency and CPU. Fine for AD, not for “the take” |
-| PYXIS USB-C / 1G Ethernet | included | Control, proxy, SSD record. 12K model has **10GbE** | Not a live CSI pipe |
-| Open the camera | your time | Sensor is a Sony IMX on a BMD board, not a Jetson CSI pinout | Research project |
+The 100 W number is with airflow, about 500 LFM, not a sealed lid. Natural convection on this brick is a ~140 °C rise at 70 W. Measure TTP before any metal. The product lid is heatpipes to a radiator, with at most one slow fan. 70 W fanless in a cine shell is not the design.
 
-**Live 4K from PYXIS into Thor ISP is not a catalog part today.** Plan on: BMD records the master; Thor takes HDMI 1080p/4K from a Pocket or a converter for live AI.
+| Choice | Price | Why |
+|---|---|---|
+| Passive ATS-NVP-3739-C1-R0 | **$55.58** | Digi-Key. Measure it. |
+| Same sink at Mouser | **$61.37** | `984-ATSNVP-3739C1-R0`, 20 in stock. Second source. |
+| Active ATS-NVA-3740-C1-R0 | **$125.27** | Digi-Key. The honest fan if the bench is still air. |
 
----
+## 04 — Connect Tech MSG103
 
-## 3. Blackmagic cameras (body)
+**$316** at [WDL](https://www.wdlsystems.com/Connect-Tech-Forge-AGX-Orin-AC-DC-Power-Supply-252Watt-12Volt). WDL SKU `1CMSG103`. 28 available. Fifty-plus is **$308**. On the cart.
 
-Street from B&H 2026-09-01 unless noted. All record BRAW internally. None are CSI cameras.
+12 V, 21 A, 252 W ±5%, 6-pin Micro-Fit. The Rogue wants 12 V. FORECR’s carrier wants 18–36 V, so that board means a different supply. Do not feed Thor from the PoE switch.
 
-| Camera | Street | Mount / metadata | Video out | Form | Why / why not |
-|---|---|---|---|---|---|
-| **PYXIS 6K PL** | **$3,675** | **Cooke /i pins at 12 o’clock** (Canon/Cooke/Fujinon/Leica/Zeiss /i lenses). PL not user-swappable | **12G-SDI**, USB-C, **1G Ethernet**, TC/ref | Box, side plates, mounts on a Thor box | **Best match** to LENS.md. /i is real (PYXIS manual). SDI is 4K60 monitoring, not a Thor CSI input |
-| **PYXIS 6K EF** | **$3,455** | Active EF (focal/iris/focus). Not /i | 12G-SDI, USB-C, Ethernet | Box | Cheaper glass. Metadata is EF-class, not entrance-pupil /i |
-| **PYXIS 6K L** | **$3,465** | L-mount electronic | 12G-SDI, USB-C, Ethernet | Box | Adapt EF/PL *out* (flange). No native /i |
-| **Cinema Camera 6K L** | **$2,989** (used ~$2,390) | L-mount electronic, OLP | **HDMI**, USB-C. No SDI | Handheld brick | Cheapest full-frame 6K. HDMI into a capture card is simpler than 12G. Worse “bolted to Thor” |
-| **Pocket 6K G2** | **$2,269** (used ~$1,770) | Active EF | HDMI only | Pocket | Cheap Super35. HDMI. No ND. Fine as a sacrificial HDMI source |
-| **Pocket 6K Pro** | **$2,835** (used ~$1,820) | Active EF, built-in ND, dual XLR | HDMI | Pocket | Same as G2 plus ND/XLR. Still HDMI |
-| **Pocket 4K** | **$1,139** (used ~$930) | MFT electronic | HDMI | Pocket | Too small a sensor for “the” A-cam. OK as an HDMI test mule |
-| **PYXIS 12K L/EF/PL** | **$5,825–5,829** | L electronic; PL has /i. **10GbE** | 12G-SDI, 10G RJ45 | Box | Overkill. Early 12K had a sensor-board recall (pre s/n 14221337) |
-| **URSA Cine 12K LF** | **$8,435–17,435** | EF/PL | SDI / optional 100GbE | Shoulder | Wrong size/price for a Thor-mounted body |
+The wall cable, **CBG448**, is not in the box and was not priced.
 
-Blackmagic list prices on their site (PYXIS 6K ~$3,455–3,515) match B&H. Holiday 2025 discounts are over.
+## 05 — IX to RJ45, 1.5 m
 
-### Cracking one open
+**$82** each, **$164** for the two on the cart. [WDL](https://www.wdlsystems.com/connect-tech-cbg695), Connect Tech `CBG695`, WDL SKU `1CBG695R`. 26 available.
 
-Teardowns show a sensor board + I/O board + fan. The MIPI from the IMX does not land on a Jetson-compatible connector. /i lives on the PL mount PCB (four pins, RS-232-ish, milliamps — **not** servo power). If you crack a PYXIS PL, the useful steal is the **mount + /i reader**, not the sensor.
+The Rogue’s Ethernet is locking IX, not RJ45. Two leads land the 10G jacks on an ordinary switch. The third jack is 2.5G and can wait. A third lead is another **$82**.
 
-Rewire value: tap /i UART and HDMI/SDI. Leave the sensor in the BMD box unless you want a six-week FPGA job.
+The full cable kit **CKG073** is **$784** (eight in stock). It adds USB and DisplayPort breakouts this cart is not using. Leave it.
 
----
+## 06 — 1 TB NVMe
 
-## 4. Suggested carts (pick one)
+**$146.99** is a stand-in, not a locked part. [ADATA Legend 710 1 TB](https://www.amazon.com/ADATA-Legend-PCIe-Gen4x4-2280/dp/B09YRY5MDC) (`ALEG-710-1TCS`), sold by ADATA, Gen3. The old $80 crib number is dead. No manufacturer part is chosen.
 
-### Cart S — software this week (no T4000 SOM yet)
+A TLC Gen4 in the WD SN7100 class is about **$175–$200** and is the drive to buy if the ring holds real picture. Locking that MPN is the choice still open on this line. Do not use an unnamed $138 merchant.
 
-1. AGX Thor Dev Kit — **$3,499** Arrow  
-2. Pocket 6K G2 — **$2,269** B&H (HDMI mule + EF metadata)  
-3. HDMI cable + cheap USB capture if the kit USB stack is easier than CSI  
+## 07 — Blackmagic PYXIS 6K PL
 
-**~$5.8k.** Matches the resin shell. Not production T4000.
+**$2,475** at B&H, catalog card `BLPYXIS6KPL`, MFR `CINECAMCPYXH60LFPL`. Temporarily out of stock. The expected date was 16 Oct 2026, which has passed. Sweetwater lists the same **$2,475**. The direct B&H page returned a Cloudflare interstitial, so stock is from the catalog card. On the cart.
 
-### Cart T — T4000 + Rogue-T5 **(preferred production stack)**
+The PYXIS records BRAW itself. Thor takes a monitor feed. Cooke /i pins sit at 12 o’clock on the PL mount, and the mount does not swap later. SDI on this body is 4K60 monitoring. It is not a CSI input.
 
-1. T4000 SOM — **$2,749** Arrow `900-13834-0000-000`  
-2. **CTI Rogue-T5 AGX302** — quote `sales@connecttech.com` (carrier-only). WDL T5000 assemblies $8.2k+ if you want them to solder a T5000  
-3. ATS Thor HS — passive `ATS-NVP-3739` **~$56** (needs system air) or active `ATS-NVA-3740` **~$125** Digi-Key. Prefer measuring the passive on the bench; production wants heatpipes to a radiator, not this brick as the product lid  
-4. **PYXIS 6K PL** — **$3,675** B&H (hero /i + BRAW; not the CSI body)  
-5. 1–2× RV1126/B IMX415 **PoE turrets** — **$50–150** each (encode mule)  
-6. 1× RV1126B EVB/core — **$160–244** (sat software; UART for ToF + /i)  
+The September ex-duty list for PL was **$2,195**. US street, duties in, settled at **$2,475**. The old crib number, **$3,675**, is the pre-cut B&H price.
 
-Carrier + SOM + HS is the T4000 prototype. Live AI is HDMI/USB until a CSI/GMSL add-on. Master is BRAW + /i on the PYXIS until the CSI body exists. Thor remuxes sat HEVC.
+| Choice | Price | Why |
+|---|---|---|
+| PYXIS 6K PL | **$2,475** | The /i body. |
+| PYXIS 6K EF or L | **$2,245** | About $230 less. Electronic mount metadata. No Cooke /i pins. Do not buy EF and plan to add /i later. |
+| PL plus Irix two-lens kit | **$6,355** | Body, two lenses, a case. Not this line. |
+| Pocket 6K G2 | older street | A cheaper HDMI mule. Not this master. |
 
-FORECR THRMAX (€999, 140×125, QSFP) is the fallback if CTI quotes slowly. Bigger board.
+Cracking one open: teardowns show a sensor board, an I/O board, and a fan. The MIPI from the IMX does not land on a Jetson-compatible connector. /i lives on the PL mount PCB (four pins, RS-232-ish, milliamps). The useful steal is the mount and the /i reader.
 
-If you need SDI→CSI on day one, add **JCB003 ($1,538)** and accept **1080p** into the ISP.
+## 08 — Two PoE turrets and one EVB
 
-### Cart C — cine body that is actually /i, Thor is the brain
+**$400** of placeholders from 2026-09-01. Not re-shopped. On the cart as stand-ins: **$100** each for two turrets, **$200** for one dev board.
 
-Same as T, PYXIS PL non-negotiable. Do not buy EF “and add /i later” — the mount is not swappable.
+These are encode mules. They are not what we ship. The SoC has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A random IMX415 turret, or a USB board such as the youyeetoo at **$75**, is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. iVcan’s older RV1126 boards were **$160–$244**. PoE+ is enough for two turrets.
 
----
+Name an RV1126B PoE turret and a dev board before RV1126 stock disappears.
 
-## 5. What I would not buy yet
+## 09 — PoE+ switch and HDMI capture
 
-- Auvidea X242 until T4000 is in writing  
-- JCB003 as a “4K pipeline” — it is 3G  
-- PYXIS 12K (money, recall, 10GbE you don’t need)  
-- Integrated CTI T5000 assemblies at $8k+ unless you want them to solder the SOM  
-- Opening a Pocket to harvest CSI — wrong pinout  
+The switch is a **$200** placeholder. It powers the two turrets and nothing else. Thor has no PoE. A bigger switch does not change the camera.
 
----
+USB HDMI capture is **$80** optional, and off the required total. A real dongle is anywhere from about $30 to $200. It is the live-AI proxy until a CSI or GMSL add-on exists. It is not the take. The take is BRAW on the PYXIS.
+
+## 10 — JCB003, leave it
+
+**$1,538** at [WDL](https://www.wdlsystems.com/connect-tech-jcb003-01). MPN `JCB003-01`, WDL SKU `1CJCB031`. Four available. It does run on a Rogue-T5. Do not buy it.
+
+Two 3G-SDI inputs into MIPI, 1080p60. The PYXIS 12G output does not become 4K by passing through this board. It stays on the sheet so nobody adds it as a 4K pipeline.
+
+**JCB010**, the HDMI bridge, is still a quote. Its public page is Orin and Xavier. Confirm a Thor BSP before that becomes a line. 4K30 only if the bridge and the BSP both allow it.
+
+## Choices that still move the build
+
+- Name the NVMe. **$146.99** is a Gen3 stand-in. A TLC Gen4 is the ring if it holds picture.
+- Measure the passive sink. Still air on the bench means the **$125.27** active, not a hope.
+- Quote **CBG448**, the wall cable the brick does not include.
+- Name an RV1126B PoE turret and a dev board before RV1126 stock disappears.
+- FORECR at **€999** is the escape if the Rogue slips. It is a different brick and a bigger board.
+- A third IX lead is **$82** when the 2.5G jack needs a switch.
+
+## What not to buy
+
+- Seeed `900-13834-0000-001` at **$3,399**. Wrong part number.
+- Integrated Rogue assemblies at **$9,291** and up, unless someone else is soldering the SOM.
+- CKG073 at **$784** in place of two CBG695 leads.
+- JCB003 as a 4K pipeline.
+- PYXIS EF or L “and add /i later.” The mount is not swappable.
+- Auvidea X242 until T4000 is in writing.
+- A Pocket opened up to harvest CSI. Wrong pinout.
+- PYXIS 12K. Money, an early sensor-board recall, and 10GbE this cart does not need.
+
+## Cart S, the other buy
+
+The resin shell wraps the AGX kit, not this sandwich.
+
+1. AGX Thor Developer Kit — **$3,499** at the 2026-09-01 Arrow street. Not re-fetched. NVIDIA US list **$5,499**.
+2. A Pocket as an HDMI mule, if the week’s job is software on the kit.
+
+That is not the production ceiling. Cart T is.
 
 ## Contacts
 
-- Arrow T4000 / AGX kit: arrow.com (you already have the DS)  
-- Connect Tech: sales@connecttech.com · WDL Systems US reseller  
-- FORECR: sales@forecr.io  
-- Blackmagic: B&H, or blackmagicdesign.com reseller finder  
+- Arrow, T4000 and the AGX kit.
+- Connect Tech, `sales@connecttech.com`. WDL Systems is the US reseller with the public cart.
+- FORECR, `sales@forecr.io`.
+- Blackmagic, B&H, or the Blackmagic reseller finder.
 
-## Sources (primary)
+## Sources
 
-- Arrow T4000 `900-13834-0000-000` $2,749 (2026-09-01)  
-- NVIDIA / VideoCardz Jul 2026 list-price hike (kit $5,499, T4000 1KU $2,999)  
-- FORECR product page €999  
-- WDL Rogue-T5 assemblies $8,225+; JCB003 $1,538  
-- B&H BMD prices 2026-09-01  
-- PYXIS manual: Cooke /i on PL models only  
-- CTI JCB003: 3G-SDI, 1080p60, MIPI 8-bit  
+- Arrow T4000 `900-13834-0000-000`, **$2,749**, 2026-10-27. Two stock counts, one price.
+- WDL Rogue-T5 carrier **$1,806**; AGX302-002 **$9,291**; AGX302-005 **$9,367**; MSG103 **$316**; CBG695 **$82**; CKG073 **$784**; JCB003-01 **$1,538**.
+- Digi-Key ATS-NVP-3739-C1-R0 **$55.58**; Mouser **$61.37**; ATS-NVA-3740-C1-R0 **$125.27**.
+- B&H PYXIS 6K PL catalog card **$2,475**, out of stock. EF and L **$2,245**. Irix kit **$6,355**.
+- ADATA Legend 710 1 TB **$146.99**, Amazon, sold by ADATA. Not a locked MPN.
+- Not re-fetched this pass: AGX kit **$3,499**, FORECR **€999**, Gauntlet **A$3,999**, turret / EVB / switch / HDMI placeholders.

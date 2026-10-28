@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import CartBoard from '$lib/components/CartBoard.svelte';
 	import { docsBySlug } from '$lib/content';
 
 	let { data } = $props();
 
 	const doc = $derived(docsBySlug.get(data.slug)!);
 	const Doc = $derived(doc.component);
+	const designed = $derived(data.slug === 'shopping');
 </script>
 
 <svelte:head>
-	<title>{data.title} — AICamera</title>
+	<title>{designed ? 'Cart T' : data.title} — AICamera</title>
 	<meta name="description" content={data.summary} />
 </svelte:head>
 
@@ -20,14 +22,18 @@
 		<span>{data.kicker}</span>
 	</nav>
 
-	<div class="layout">
+	<div class="layout" class:designed>
 		<article>
-			<p class="file">{data.file}</p>
-			<div class="prose prose-doc">
-				<Doc />
-			</div>
+			{#if designed}
+				<CartBoard />
+			{:else}
+				<p class="file">{data.file}</p>
+				<div class="prose prose-doc">
+					<Doc />
+				</div>
+			{/if}
 		</article>
-		{#if data.headings.length}
+		{#if !designed && data.headings.length}
 			<aside>
 				<p class="toc-label">On this page</p>
 				<ol>
@@ -158,6 +164,9 @@
 	@media (min-width: 960px) {
 		.layout {
 			grid-template-columns: minmax(0, 1fr) 14rem;
+		}
+		.layout.designed {
+			grid-template-columns: minmax(0, 1fr);
 		}
 		aside {
 			order: 0;

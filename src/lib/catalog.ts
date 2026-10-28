@@ -113,7 +113,7 @@ export const chapters: Chapter[] = [
 		title: 'Shopping',
 		kicker: 'Buy brief',
 		summary:
-			'Not a spec. Blackmagic is a cinema body (path B), not a CSI science project. T4000 SOM, AGX kit, and carrier options with street prices as of 2026-09-01.',
+			'Cart T at the 2026-10-27 streets: $8,312.57 required. Each line, the part on the buy, and the ones set aside.',
 		group: 'hardware'
 	},
 	{

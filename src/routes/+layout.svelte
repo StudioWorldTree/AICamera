@@ -11,6 +11,11 @@
 </script>
 
 <svelte:head>
+	{@html `<style>
+@font-face{font-family:'Space Age';src:url('${base}/fonts/space-age.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Tactic ExtExd Black';src:url('${base}/fonts/TacticSansExtExd-Blk.otf') format('opentype');font-weight:900;font-style:normal;font-display:swap}
+@font-face{font-family:'Tactic Sans';src:url('${base}/fonts/TacticSans-Reg.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+</style>`}
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
