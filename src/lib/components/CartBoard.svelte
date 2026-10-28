@@ -243,8 +243,8 @@
 	}
 
 	.total.main .figure {
-		font-family: 'Tactic ExtExd Ultra', var(--font-hud);
-		font-weight: 800;
+		font-family: 'Tactic ExtExd Bold', var(--font-hud);
+		font-weight: 700;
 		color: var(--ice);
 	}
 

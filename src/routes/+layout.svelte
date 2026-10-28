@@ -14,7 +14,7 @@
 	{@html `<style>
 @font-face{font-family:'Space Age';src:url('${base}/fonts/space-age.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:'Tactic ExtExd Black';src:url('${base}/fonts/TacticSansExtExd-Blk.otf') format('opentype');font-weight:900;font-style:normal;font-display:swap}
-@font-face{font-family:'Tactic ExtExd Ultra';src:url('${base}/fonts/TacticSansExtExd-Ult.otf') format('opentype');font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:'Tactic ExtExd Bold';src:url('${base}/fonts/TacticSansExtExd-Bld.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap}
 @font-face{font-family:'Tactic Sans';src:url('${base}/fonts/TacticSans-Reg.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
 </style>`}
 	<link rel="icon" href={favicon} />
