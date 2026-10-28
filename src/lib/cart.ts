@@ -31,12 +31,19 @@ export type Piece = {
 	lead: string;
 	choice: string;
 	options: Option[];
+	/** `turret` is the optional plant. `later` is off the required total and not part of that plant. */
+	lane?: 'turret' | 'later';
 };
 
 export const checked = '2026-10-27';
 
-/** Required lines, cents, matching the daBOM rollup. */
-export const requiredCents = 831257;
+/**
+ * Cart T required lines, cents.
+ * Two PoE turrets ($200) and the switch that only powers them ($200) are `turretCents`.
+ * HDMI capture is `captureCents`. The RV1126B EVB placeholder ($200) stays here.
+ */
+export const requiredCents = 794558;
+export const turretCents = 40000;
 export const captureCents = 8000;
 
 export function money(cents: number) {
@@ -59,7 +66,8 @@ export const pieces: Piece[] = [
 		vendor: 'Arrow',
 		mpn: '900-13834-0000-000',
 		href: 'https://www.arrow.com/en/products/900-13834-0000-000/nvidia',
-		stock: 'In stock. Two indexed US listings: 434 pieces on a 12-week lead, and 492 that ship tomorrow. Same unit price.',
+		stock:
+			'In stock. Two indexed US listings: 434 pieces on a 12-week lead, and 492 that ship tomorrow. Same unit price.',
 		lead: 'Production ceiling. 64 GB, one NVENC, 70 W default and 90 W throttle, 87 × 100 × 15.29 mm. HQ encode is two 4Kp30 streams, so a body plus two satellites is a hybrid: the satellites encode, Thor remuxes.',
 		choice:
 			'The AGX Developer Kit is a T5000 brick for the lab, in the resin shell we already drew. It is the wrong envelope for the product. A T5000 in the body is the move only if the satellite count outgrows one encoder. Seeed’s 900-13834-0000-001 at $3,399 is a different part number.',
@@ -98,7 +106,8 @@ export const pieces: Piece[] = [
 		vendor: 'WDL Systems',
 		mpn: 'AGX302',
 		href: 'https://www.wdlsystems.com/connect-tech-agx302',
-		stock: '6 available. Qty 1 is $1,806. The ladder runs $1,784 at 10, $1,761 at 25, $1,740 at 50.',
+		stock:
+			'6 available. Qty 1 is $1,806. The ladder runs $1,784 at 10, $1,761 at 25, $1,740 at 50.',
 		lead: 'Smallest production Thor carrier that takes a T4000 or a T5000. 92 × 107 mm. Two 10GBASE-T jacks and one 2.5G, all IX Industrial. Camera I/O is an add-on header, not connectors on the board. WDL’s page title says T5000. The spec lists both modules.',
 		choice:
 			'Buying the carrier alone is the whole point. A WDL assembly with a T4000, stock heatspreader, and 2 TB already on it is $9,291, or $9,367 with Wi-Fi. T5000 assemblies on the same board run from about $8,200 to $12,500. FORECR DSBOARD-THRMAX is the public-price fallback if this lead time slips: €999 carrier-only, 140 × 125 mm, QSFP28, HDMI is an output, and the brick is 18–36 V. Gauntlet is the larger CTI board with RJ45, still a quote in the US. Auvidea X242 is published as T5000 until they say T4000.',
@@ -244,31 +253,39 @@ export const pieces: Piece[] = [
 	{
 		id: 'nvme',
 		kicker: 'Ring buffer',
-		name: '1 TB NVMe',
-		stance: 'hold',
-		price: '$146.99',
-		vendor: 'Unspecified',
-		mpn: 'Not locked',
-		source: 'Amazon',
-		href: 'https://www.amazon.com/ADATA-Legend-PCIe-Gen4x4-2280/dp/B09YRY5MDC',
-		stock: 'The $146.99 card is in stock at Amazon, sold by ADATA.',
-		lead: 'The carrier has an M.2 2280 slot for the ring. The old $80 crib number is dead. No manufacturer part is chosen, so the rollup holds the low new street until we name one.',
+		name: 'Sandisk Optimus GX 7100 1 TB',
+		stance: 'buy',
+		price: '$180',
+		vendor: 'Amazon',
+		mpn: 'SDSP71100TAN',
+		href: 'https://www.amazon.com/dp/B0GK1M1N4V',
+		stock:
+			'New is $180, three left, sold by Elite100 and shipped by Amazon. Used is $175.74. Do not buy used.',
+		lead: 'The ring on the Rogue’s M.2 2280 slot. PCIe 4.0 x4, TLC BiCS, up to 7,250 MB/s read and 6,900 MB/s write. Sandisk lists this as the drive that replaces the WD_BLACK SN7100. No heatsink in the box, so it fits the carrier slot.',
 		choice:
-			'ADATA Legend 710, ALEG-710-1TCS, is a Gen3 drive at $146.99. A TLC Gen4 in the WD SN7100 class is about $175 to $200 and is the drive to buy if the ring is real picture, not a bench scratch disk. Locking that MPN is the choice still open on this line.',
+			'The ADATA Legend 710 at $146.99 is Gen3. It was a stand-in, and it is off the cart. The previous WD part, WDS100T4X0E, is the same speeds and TLC, and B&H still lists it at $219.99 in stock. Amazon’s own page tells you to buy this Sandisk number instead. One terabyte holds about nine hours of the hybrid HEVC haul. A 2 TB card exists on the same listing if the ring has to outlast a long day.',
 		options: [
 			{
-				name: 'ADATA Legend 710 1 TB',
-				price: '$146.99',
-				detail: 'Low new street. Gen3. Placeholder, not a commitment.',
+				name: 'Optimus GX 7100 1 TB',
+				price: '$180',
+				detail: 'SDSP71100TAN. This is the ring.',
 				taken: true,
-				href: 'https://www.amazon.com/ADATA-Legend-PCIe-Gen4x4-2280/dp/B09YRY5MDC',
+				href: 'https://www.amazon.com/dp/B0GK1M1N4V',
 				source: 'Amazon'
 			},
 			{
-				name: 'TLC Gen4, unnamed',
-				price: '$175–$200',
-				detail: 'The band to shop once the ring has a job.',
+				name: 'WD_BLACK SN7100 1 TB',
+				price: '$219.99',
+				detail: 'WDS100T4X0E at B&H, in stock. The previous part. Same TLC Gen4.',
 				aside: true
+			},
+			{
+				name: 'ADATA Legend 710 1 TB',
+				price: '$146.99',
+				detail: 'Gen3. Off the cart.',
+				aside: true,
+				href: 'https://www.amazon.com/ADATA-Legend-PCIe-Gen4x4-2280/dp/B09YRY5MDC',
+				source: 'Amazon'
 			}
 		]
 	},
@@ -310,25 +327,19 @@ export const pieces: Piece[] = [
 		]
 	},
 	{
-		id: 'sats',
-		kicker: 'Satellites',
-		name: 'Two PoE turrets and one EVB',
+		id: 'evb',
+		kicker: 'Satellite seat',
+		name: 'RV1126B dev board',
 		stance: 'hold',
-		price: '$400',
-		ext: 'Two turrets and one board. Placeholders.',
+		price: '$200',
+		ext: 'Placeholder. On the required total.',
 		vendor: 'Unspecified',
 		mpn: 'Not locked',
-		stock: 'No fresh distributor card. The crib still holds the September placeholders.',
-		lead: 'Two encode mules so satellite H.265 and the /i and ToF UART can be written before a custom satellite exists. One RV1126B dev board is the software seat. The turrets are not what we ship.',
+		stock: 'No fresh distributor card. The crib still holds the September placeholder.',
+		lead: 'The software seat for satellite H.265 and the /i and ToF UART, before a custom satellite exists. A sealed turret has no pins for that. This board does.',
 		choice:
-			'The mule has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A random IMX415 turret, or a USB board such as the youyeetoo at $75, is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. Leave the $100 and $200 placeholders until a board is named. PoE+ is enough for two turrets.',
+			'The SoC has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A USB board such as the youyeetoo at $75 is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. iVcan’s older RV1126 boards were $160–$244. Leave the $200 placeholder until a board is named. The turrets, and the switch that only powers them, are a separate optional buy.',
 		options: [
-			{
-				name: 'Two turrets',
-				price: '$200',
-				detail: '$100 each, placeholder. Must be RV1126 or RV1126B, PoE, IMX415-class.',
-				taken: true
-			},
 			{
 				name: 'RV1126B EVB',
 				price: '$200',
@@ -338,35 +349,81 @@ export const pieces: Piece[] = [
 		]
 	},
 	{
-		id: 'plant',
-		kicker: 'Plant',
-		name: 'PoE+ switch and HDMI capture',
+		id: 'turrets',
+		lane: 'turret',
+		kicker: 'Optional',
+		name: 'Two PoE turrets',
 		stance: 'hold',
+		badge: 'Optional',
 		price: '$200',
-		ext: '$80 capture, optional',
+		ext: 'Two cameras. Placeholders. Off the required total.',
 		vendor: 'Unspecified',
 		mpn: 'Not locked',
-		stock: 'Placeholders from 2026-09-01. Not re-shopped.',
-		lead: 'The switch powers the two turrets and nothing else. Thor has no PoE, and the switch does not power Thor. The HDMI capture is the live-AI proxy until a CSI or GMSL add-on exists.',
+		stock: 'No fresh distributor card. The crib still holds the September placeholders.',
+		lead: 'Throwaway encode mules: a known-good PoE H.265 picture so Thor can remux a stream before a custom satellite exists. They are not what we ship. The eyeball gets thrown away.',
 		choice:
-			'PoE+ (802.3at) covers two turrets. A bigger switch does not change the camera. The capture card can be a $30 to $200 UVC dongle. $80 is a stand-in, and the line stays optional. It is not the take. The take is BRAW on the PYXIS.',
+			'Each camera has to be an RV1126 or RV1126B, PoE, IMX415-class. A random IMX415 turret is the wrong pipe. Leave the $100 placeholder until a camera is named. PoE+ is enough for these two. They need the switch in this section. They do not need the dev board, and the dev board does not need them.',
+		options: [
+			{
+				name: 'Two turrets',
+				price: '$200',
+				detail: '$100 each, placeholder. Must be RV1126 or RV1126B, PoE, IMX415-class.',
+				taken: true
+			}
+		]
+	},
+	{
+		id: 'poe',
+		lane: 'turret',
+		kicker: 'Optional',
+		name: 'PoE+ switch',
+		stance: 'hold',
+		badge: 'Optional',
+		price: '$200',
+		ext: 'Powers the turrets. Nothing else on this order.',
+		vendor: 'Unspecified',
+		mpn: 'Not locked',
+		stock: 'Placeholder from 2026-09-01. Not re-shopped.',
+		lead: 'On this order the switch exists to power the two turrets. Thor has no PoE, and the switch does not power Thor. A product satellite brings its own switch decision later.',
+		choice:
+			'PoE+ (802.3at) covers two turrets. A bigger switch does not change the camera. Do not feed Thor from this supply.',
 		options: [
 			{
 				name: 'PoE+ switch',
 				price: '$200',
 				detail: 'Placeholder. Turrets only.',
 				taken: true
-			},
+			}
+		]
+	},
+	{
+		id: 'capture',
+		lane: 'later',
+		kicker: 'Monitor',
+		name: 'USB HDMI capture',
+		stance: 'hold',
+		badge: 'Optional',
+		price: '$80',
+		ext: 'Off the required total.',
+		vendor: 'Unspecified',
+		mpn: 'Not locked',
+		stock: 'Placeholder from 2026-09-01. Not re-shopped.',
+		lead: 'The live-AI proxy until a CSI or GMSL add-on exists. It is not the take. The take is BRAW on the PYXIS.',
+		choice:
+			'A real dongle is anywhere from about $30 to $200. $80 is a stand-in. The line stays off the required total and off the turret plant.',
+		options: [
 			{
 				name: 'USB HDMI capture',
 				price: '$80',
 				detail: 'Optional. Off until a CSI or GMSL card exists.',
-				aside: true
+				taken: true,
+				mark: 'Stand-in'
 			}
 		]
 	},
 	{
 		id: 'body4k',
+		lane: 'later',
 		kicker: '4K into Thor',
 		name: 'CSI sensor on the Rogue header',
 		stance: 'hold',
@@ -398,7 +455,8 @@ export const pieces: Piece[] = [
 			{
 				name: 'SDI or HDMI bridge',
 				price: 'Off',
-				detail: '1080p60, or an unconfirmed 4K HDMI card. The monitor feed is already the USB capture.',
+				detail:
+					'1080p60, or an unconfirmed 4K HDMI card. The monitor feed is already the USB capture.',
 				aside: true,
 				mark: 'Off the cart'
 			}

@@ -113,7 +113,7 @@ export const chapters: Chapter[] = [
 		title: 'Shopping',
 		kicker: 'Buy brief',
 		summary:
-			'Cart T at the 2026-10-27 streets: $8,312.57 required. Each line, the part on the buy, and the ones set aside.',
+			'Cart T at the 2026-10-27 streets: $7,945.58 required. Turrets and their switch are $400, off that total.',
 		group: 'hardware'
 	},
 	{
@@ -130,7 +130,8 @@ export const chapters: Chapter[] = [
 		file: 'docs/references/README.md',
 		title: 'References',
 		kicker: 'Sources',
-		summary: 'Where the Arrow datasheet lives, and how it was ingested (pdf2md, text-based, 59 pages).',
+		summary:
+			'Where the Arrow datasheet lives, and how it was ingested (pdf2md, text-based, 59 pages).',
 		group: 'reference'
 	},
 	{
@@ -138,7 +139,8 @@ export const chapters: Chapter[] = [
 		file: 'AGENTS.md',
 		title: 'Agent notes',
 		kicker: 'Repo',
-		summary: 'Working rules for this tree: what is already decided, HEVC, /i sidecars, beads prefix aicam.',
+		summary:
+			'Working rules for this tree: what is already decided, HEVC, /i sidecars, beads prefix aicam.',
 		group: 'meta'
 	}
 ];

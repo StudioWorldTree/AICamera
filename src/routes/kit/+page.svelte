@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { checked, money, requiredCents } from '$lib/cart';
 </script>
 
 <svelte:head>
@@ -17,7 +18,7 @@
 		camera body, on the T4000 SOM, unless the stream budget forces the bigger module.
 	</p>
 	<p class="cart-line">
-		The production buy is <strong>$8,312.57</strong> required, streets checked 27 Oct 2026.
+		The production buy is <strong>{money(requiredCents)}</strong> required, streets checked {checked}.
 		<a href="{base}/docs/shopping/">Each piece, and the choice beside it</a>.
 	</p>
 

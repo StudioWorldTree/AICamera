@@ -1,12 +1,43 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { captureCents, checked, money, pieces, requiredCents, type Stance } from '$lib/cart';
+	import {
+		captureCents,
+		checked,
+		money,
+		pieces,
+		requiredCents,
+		turretCents,
+		type Piece,
+		type Stance
+	} from '$lib/cart';
 
 	const stanceLabel: Record<Stance, string> = {
 		buy: 'On the cart',
 		hold: 'Price is a stand-in',
 		skip: 'Do not buy'
 	};
+
+	const cartPieces = pieces.filter((piece) => !piece.lane);
+	const turretPieces = pieces.filter((piece) => piece.lane === 'turret');
+	const laterPieces = pieces.filter((piece) => piece.lane === 'later');
+
+	const groups: { key: string; heading: string; note: string; items: Piece[]; start: number }[] = [
+		{ key: 'cart', heading: '', note: '', items: cartPieces, start: 1 },
+		{
+			key: 'turret',
+			heading: 'Optional — turrets',
+			note: 'Off the required total. Two throwaway PoE cameras and the switch that only powers them.',
+			items: turretPieces,
+			start: 1
+		},
+		{
+			key: 'later',
+			heading: '',
+			note: '',
+			items: laterPieces,
+			start: cartPieces.length + 1
+		}
+	];
 </script>
 
 <div class="cart">
@@ -14,13 +45,22 @@
 		<p class="kicker">Buy brief · prices checked {checked}</p>
 		<h1>Cart T</h1>
 		<p class="lede">
-			One production body computer, a cinema camera that keeps its own master, and two throwaway
-			encode mules so the satellite path can be written before a custom satellite exists.
+			One production body computer, a cinema camera that keeps its own master, and an RV1126B dev
+			board as the satellite software seat. The throwaway PoE turrets are a separate buy.
 		</p>
 		<div class="totals">
 			<div class="total main">
 				<p class="figure">{money(requiredCents)}</p>
-				<p class="caption">Required, at these streets. Includes the three lines that are still placeholders.</p>
+				<p class="caption">
+					Required, at these streets. Includes the EVB placeholder. Turrets and their switch are not
+					in this number.
+				</p>
+			</div>
+			<div class="total">
+				<p class="figure minor">{money(turretCents)}</p>
+				<p class="caption">
+					Optional turret plant. Two cameras and the PoE switch they need. Off the required total.
+				</p>
 			</div>
 			<div class="total">
 				<p class="figure minor">{money(captureCents)}</p>
@@ -28,7 +68,9 @@
 			</div>
 			<div class="total leave">
 				<p class="figure minor">Open</p>
-				<p class="caption">Body 4K into the ISP. A sensor on the Rogue header. Not on this order.</p>
+				<p class="caption">
+					Body 4K into the ISP. A sensor on the Rogue header. Not on this order.
+				</p>
 			</div>
 		</div>
 	</header>
@@ -44,8 +86,9 @@
 		<p>
 			Thor lives in the body: a T4000 on a Rogue-T5, a bench heatsink, an NVMe ring, a 12&nbsp;V
 			brick, and two IX-to-RJ45 leads. The PYXIS 6K PL records Blackmagic RAW and the Cooke /i
-			sidecar. Thor’s live look is the USB monitor feed. The body 4K is a sensor on the Rogue
-			camera header, into the ISP, then the NVENC.
+			sidecar. Thor’s live look is the USB monitor feed. The body 4K is a sensor on the Rogue camera
+			header, into the ISP, then the NVENC. The PoE turrets, and the switch that only powers them,
+			are optional and are not in the required total.
 		</p>
 		<p>
 			The T4000’s hardware encoder does two 4Kp30 streams. A body plus two satellites is therefore
@@ -80,81 +123,93 @@
 			</li>
 			<li>
 				<strong>Open the body.</strong>
-				The sensor does not land on a Jetson connector. On a PL body the part worth stealing is the
-				mount and the /i reader.
+				The sensor does not land on a Jetson connector. On a PL body the part worth stealing is the mount
+				and the /i reader.
 			</li>
 		</ol>
 	</section>
 
-	<ol class="pieces">
-		{#each pieces as piece, i (piece.id)}
-			<li class="piece stance-{piece.stance}" id={piece.id}>
-				<div class="piece-top">
-					<p class="index">{String(i + 1).padStart(2, '0')}</p>
-					<div>
-						<p class="piece-kicker">{piece.kicker}</p>
-						<h2>{piece.name}</h2>
+	{#each groups as group (group.key)}
+		{#if group.heading}
+			<section class="lane" id="turret-plant">
+				<h2>{group.heading}</h2>
+				<p>
+					{group.note}
+					<strong>{money(turretCents)}</strong> at the September placeholders.
+				</p>
+			</section>
+		{/if}
+		<ol class="pieces">
+			{#each group.items as piece, i (piece.id)}
+				<li class="piece stance-{piece.stance}" id={piece.id}>
+					<div class="piece-top">
+						<p class="index">{String(group.start + i).padStart(2, '0')}</p>
+						<div>
+							<p class="piece-kicker">{piece.kicker}</p>
+							<h2>{piece.name}</h2>
+						</div>
+						<p class="badge">{piece.badge ?? stanceLabel[piece.stance]}</p>
 					</div>
-					<p class="badge">{piece.badge ?? stanceLabel[piece.stance]}</p>
-				</div>
 
-				<div class="piece-grid">
-					<div class="price-col">
-						<p class="figure">{piece.price}</p>
-						{#if piece.ext}
-							<p class="ext">{piece.ext}</p>
-						{/if}
-						<p class="meta mpn">{piece.mpn}</p>
-						<p class="meta">
-							{#if piece.href}
-								<a class="source" href={piece.href} target="_blank" rel="noreferrer"
-									>{piece.source ?? piece.vendor} listing</a
-								>
-							{:else}
-								{piece.vendor}
+					<div class="piece-grid">
+						<div class="price-col">
+							<p class="figure">{piece.price}</p>
+							{#if piece.ext}
+								<p class="ext">{piece.ext}</p>
 							{/if}
-						</p>
-					</div>
-					<div class="copy">
-						<p>{piece.lead}</p>
-						<p class="stock">{piece.stock}</p>
-						<h3>The choice</h3>
-						<p>{piece.choice}</p>
-					</div>
-				</div>
-
-				<ul class="options">
-					{#each piece.options as option (option.name)}
-						<li class:taken={option.taken} class:aside={option.aside && !option.taken}>
-							<p class="mark">{option.mark ?? (option.taken ? 'This line' : 'Set aside')}</p>
-							<p class="opt-price">{option.price}</p>
-							<p class="opt-name">{option.name}</p>
-							{#if option.href}
-								<p class="opt-detail">
-									<a class="source" href={option.href} target="_blank" rel="noreferrer"
-										>{option.source ?? 'Listing'}</a
+							<p class="meta mpn">{piece.mpn}</p>
+							<p class="meta">
+								{#if piece.href}
+									<a class="source" href={piece.href} target="_blank" rel="noreferrer"
+										>{piece.source ?? piece.vendor} listing</a
 									>
-								</p>
-							{/if}
-							<p class="opt-detail">{option.detail}</p>
-						</li>
-					{/each}
-				</ul>
-			</li>
-		{/each}
-	</ol>
+								{:else}
+									{piece.vendor}
+								{/if}
+							</p>
+						</div>
+						<div class="copy">
+							<p>{piece.lead}</p>
+							<p class="stock">{piece.stock}</p>
+							<h3>The choice</h3>
+							<p>{piece.choice}</p>
+						</div>
+					</div>
+
+					<ul class="options">
+						{#each piece.options as option (option.name)}
+							<li class:taken={option.taken} class:aside={option.aside && !option.taken}>
+								<p class="mark">{option.mark ?? (option.taken ? 'This line' : 'Set aside')}</p>
+								<p class="opt-price">{option.price}</p>
+								<p class="opt-name">{option.name}</p>
+								{#if option.href}
+									<p class="opt-detail">
+										<a class="source" href={option.href} target="_blank" rel="noreferrer"
+											>{option.source ?? 'Listing'}</a
+										>
+									</p>
+								{/if}
+								<p class="opt-detail">{option.detail}</p>
+							</li>
+						{/each}
+					</ul>
+				</li>
+			{/each}
+		</ol>
+	{/each}
 
 	<section class="close" id="still-open">
 		<h2>Choices that still move the build</h2>
 		<ul>
-			<li>Name the NVMe. $146.99 is a Gen3 stand-in. A TLC Gen4 is the ring if it holds picture.</li>
 			<li>Measure the passive sink. Still air on the bench means the $125 active, not a hope.</li>
 			<li>Quote CBG448, the wall cable the brick does not include.</li>
 			<li>
-				Name an RV1126B PoE turret and a dev board before RV1126 stock disappears. A USB IMX415
-				board is a different animal.
+				Name an RV1126B dev board before RV1126 stock disappears. A USB IMX415 board is a different
+				animal.
 			</li>
-			<li>FORECR at €999 is the escape if the Rogue slips. It is a different brick and a bigger board.</li>
+			<li>
+				FORECR at €999 is the escape if the Rogue slips. It is a different brick and a bigger board.
+			</li>
 			<li>A third IX lead is $82 when the 2.5G jack needs a switch.</li>
 			<li>
 				Ask Vision Components for a Thor device tree on the IMX585, and Connect Tech for a Thor BSP
@@ -163,7 +218,7 @@
 		</ul>
 		<p class="fine">
 			Street prices are qty-1 USD from public listings on {checked}, except the AGX kit, the FORECR
-			board, and the satellite and switch placeholders, which still carry their earlier figures.
+			board, and the EVB, turret, and switch placeholders, which still carry their earlier figures.
 			Arrow’s two stock counts disagree. The T4000 price does not.
 		</p>
 	</section>
@@ -219,6 +274,7 @@
 
 	.lede,
 	.story p,
+	.lane p,
 	.fork-lead,
 	.copy p,
 	.close li,
@@ -234,6 +290,16 @@
 		margin: 0 0 1.5rem;
 		font-size: 1.28rem;
 		color: var(--ink);
+	}
+
+	.lane {
+		border-top: 1px solid var(--line);
+		padding-top: 1.25rem;
+	}
+
+	.lane p {
+		max-width: 40rem;
+		margin: 0.6rem 0 0;
 	}
 
 	.totals {
