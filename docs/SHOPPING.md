@@ -7,7 +7,7 @@ summary: "Cart T at the 2026-10-27 streets: $7,745.58 required. The satellite pl
 
 # Hardware shopping
 
-The published page is the cart layout (`src/lib/cart.ts`). This chapter is the same brief for the repository. Streets below were read 2026-10-27 unless a line says otherwise. Confirm before you click. Product calls stay in INTERCONNECT, SENSORS, LENS, and the thermal note.
+The published page reads `src/lib/bom/kit-prod.csv`, a daBOM export of `kit-prod` committed in this repo. Re-export that file when a quote changes. The sentences live in `src/lib/cart.ts`. Streets below were read 2026-10-27 unless a line says otherwise. Confirm before you click. Product calls stay in INTERCONNECT, SENSORS, LENS, and the thermal note.
 
 **Required: $7,745.58.** HDMI capture is **$80** and stays off the required total. The satellite plant is **$600** and stays off it too: an RV1126B dev board, two PoE cameras, and the switch that powers those cameras. Cooke /i can be patched without that board. The body 4K sensor is not on the order yet. SDI and HDMI bridge cards are off the cart.
 

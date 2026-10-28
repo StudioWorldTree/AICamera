@@ -1,3 +1,14 @@
+import {
+	bomLine,
+	captureCents,
+	checked,
+	requiredCents,
+	satCents,
+	satChecked
+} from '$lib/bom/kit-prod';
+
+export { captureCents, checked, requiredCents, satCents, satChecked };
+
 export type Stance = 'buy' | 'hold' | 'skip';
 
 export type Option = {
@@ -33,18 +44,9 @@ export type Piece = {
 	options: Option[];
 	/** `sat` is the optional satellite plant. `later` is off the required total and not part of that plant. */
 	lane?: 'sat' | 'later';
+	/** daBOM sku in kit-prod.csv. The figure, part number, and listing come from that row. */
+	sku?: string;
 };
-
-export const checked = '2026-10-27';
-
-/**
- * Cart T required lines, cents.
- * The satellite plant is `satCents`: RV1126B EVB ($200), two PoE turrets ($200),
- * and the switch that powers them ($200). HDMI capture is `captureCents`.
- */
-export const requiredCents = 774558;
-export const satCents = 60000;
-export const captureCents = 8000;
 
 export function money(cents: number) {
 	const digits = cents % 100 === 0 ? 0 : 2;
@@ -56,9 +58,10 @@ export function money(cents: number) {
 	}).format(cents / 100);
 }
 
-export const pieces: Piece[] = [
+const draft: Piece[] = [
 	{
 		id: 'som',
+		sku: 't4000-som',
 		kicker: 'Body computer',
 		name: 'NVIDIA Jetson T4000',
 		stance: 'buy',
@@ -99,6 +102,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'carrier',
+		sku: 'rogue-t5',
 		kicker: 'Carrier',
 		name: 'Connect Tech Rogue-T5',
 		stance: 'buy',
@@ -149,6 +153,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'heat',
+		sku: 'ats-nvp-3739',
 		kicker: 'Bench cooler',
 		name: 'ATS passive heatsink',
 		stance: 'buy',
@@ -189,6 +194,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'power',
+		sku: 'cti-msg103',
 		kicker: '12 V brick',
 		name: 'Connect Tech MSG103',
 		stance: 'buy',
@@ -219,6 +225,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'ix',
+		sku: 'ix-industrial-breakout',
 		kicker: 'Network leads',
 		name: 'IX to RJ45, 1.5 m',
 		stance: 'buy',
@@ -252,6 +259,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'nvme',
+		sku: 'nvme-1tb',
 		kicker: 'Ring buffer',
 		name: 'Sandisk Optimus GX 7100 1 TB',
 		stance: 'buy',
@@ -291,6 +299,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'pyxis',
+		sku: 'pyxis-6k-pl',
 		kicker: 'Cinema master',
 		name: 'Blackmagic PYXIS 6K PL',
 		stance: 'buy',
@@ -328,6 +337,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'evb',
+		sku: 'rv1126b-evb',
 		lane: 'sat',
 		kicker: 'Optional',
 		name: 'RV1126B dev board',
@@ -352,6 +362,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'turrets',
+		sku: 'rv1126b-turret',
 		lane: 'sat',
 		kicker: 'Optional',
 		name: 'Two PoE turrets',
@@ -376,6 +387,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'poe',
+		sku: 'poe-switch-at',
 		lane: 'sat',
 		kicker: 'Optional',
 		name: 'PoE+ switch',
@@ -400,6 +412,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'capture',
+		sku: 'hdmi-usb-capture',
 		lane: 'later',
 		kicker: 'Monitor',
 		name: 'USB HDMI capture',
@@ -465,3 +478,46 @@ export const pieces: Piece[] = [
 		]
 	}
 ];
+
+const unnamedVendor = 'TBD / quote';
+
+/** Figure, part number, and store link follow the committed CSV. Essays stay here. */
+function fromCsv(piece: Piece): Piece {
+	if (!piece.sku) return piece;
+	const row = bomLine(piece.sku);
+	if (!row || row.unitCents == null || row.extCents == null) {
+		throw new Error(`kit-prod.csv has no priced line for ${piece.sku}`);
+	}
+	const lot = piece.sku === 'rv1126b-turret';
+	const namedVendor = row.vendor && row.vendor !== unnamedVendor;
+	const vendor = namedVendor ? row.vendor : piece.vendor;
+	const href = row.productUrl || piece.href;
+	const figure = lot ? row.extCents : row.unitCents;
+	const chip =
+		lot || (row.qtyForOne > 1 && (piece.ext ?? '').startsWith('$')) ? row.extCents : row.unitCents;
+	let ext = piece.ext;
+	if (!lot && row.qtyForOne > 1 && (piece.ext ?? '').startsWith('$')) {
+		const word = row.qtyForOne === 2 ? 'two' : String(row.qtyForOne);
+		ext = `${money(row.extCents)} for ${word}`;
+	}
+	return {
+		...piece,
+		price: money(figure),
+		ext,
+		vendor,
+		mpn: row.mpn || piece.mpn,
+		href,
+		options: piece.options.map((option) =>
+			option.taken
+				? {
+						...option,
+						price: money(chip),
+						href: href || option.href,
+						source: namedVendor ? row.vendor : option.source
+					}
+				: option
+		)
+	};
+}
+
+export const pieces = draft.map(fromCsv);

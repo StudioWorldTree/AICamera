@@ -63,11 +63,7 @@ function summaryFromMarkdown(md: string) {
 	}
 	if (buf.length) paras.push(buf.join(' '));
 	const text = paras.find((p) => p.length > 40) ?? paras[0] ?? '';
-	return text
-		.replace(/[*_`]/g, '')
-		.replace(/^>\s*/, '')
-		.replace(/\s+/g, ' ')
-		.slice(0, 280);
+	return text.replace(/[*_`]/g, '').replace(/^>\s*/, '').replace(/\s+/g, ' ').slice(0, 280);
 }
 
 function metadataString(metadata: MdModule['metadata'], key: string) {
@@ -123,7 +119,11 @@ function buildDocs(): DocRecord[] {
 				chapter?.title ??
 				titleFromMarkdown(markdown, slug || file),
 			summary:
-				metadataString(mod.metadata, 'summary') ?? chapter?.summary ?? summaryFromMarkdown(markdown),
+				slug === 'shopping' && chapter?.summary
+					? chapter.summary
+					: (metadataString(mod.metadata, 'summary') ??
+						chapter?.summary ??
+						summaryFromMarkdown(markdown)),
 			group:
 				(metadataString(mod.metadata, 'group') as DocRecord['group'] | undefined) ??
 				chapter?.group ??
@@ -139,8 +139,6 @@ function buildDocs(): DocRecord[] {
 
 export const docs = buildDocs();
 export const docsBySlug = new Map(docs.map((d) => [d.slug, d]));
-
-
 
 export function hardwareDocs() {
 	return chapters

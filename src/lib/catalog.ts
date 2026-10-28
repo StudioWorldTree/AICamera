@@ -1,3 +1,5 @@
+import { checked, money, requiredCents, satCents } from './cart';
+
 export type Chapter = {
 	slug: string;
 	file: string;
@@ -112,8 +114,7 @@ export const chapters: Chapter[] = [
 		file: 'docs/SHOPPING.md',
 		title: 'Shopping',
 		kicker: 'Buy brief',
-		summary:
-			'Cart T at the 2026-10-27 streets: $7,745.58 required. The satellite plant is $600, off that total.',
+		summary: `Cart T at the ${checked} streets: ${money(requiredCents)} required. The satellite plant is ${money(satCents)}, off that total.`,
 		group: 'hardware'
 	},
 	{

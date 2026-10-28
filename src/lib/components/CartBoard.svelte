@@ -7,6 +7,7 @@
 		pieces,
 		requiredCents,
 		satCents,
+		satChecked,
 		type Piece,
 		type Stance
 	} from '$lib/cart';
@@ -136,7 +137,7 @@
 				<h2>{group.heading}</h2>
 				<p>
 					{group.note}
-					<strong>{money(satCents)}</strong> at the September placeholders.
+					<strong>{money(satCents)}</strong>. Prices in this section were checked {satChecked}.
 				</p>
 			</section>
 		{/if}
@@ -214,9 +215,9 @@
 			</li>
 		</ul>
 		<p class="fine">
-			Street prices are qty-1 USD from public listings on {checked}, except the AGX kit, the FORECR
-			board, and the EVB, turret, and switch placeholders, which still carry their earlier figures.
-			Arrow’s two stock counts disagree. The T4000 price does not.
+			The totals and the figure on each cart line are read from the committed kit-prod.csv.
+			Sentences were written with the {checked} streets. The AGX kit, the FORECR board, and the lines
+			set aside are not in that file. Arrow’s two stock counts disagree. The T4000 price does not.
 		</p>
 	</section>
 </div>
