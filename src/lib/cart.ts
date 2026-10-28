@@ -8,6 +8,9 @@ export type Option = {
 	aside?: boolean;
 	/** Overrides the card label when “This line” would overclaim. */
 	mark?: string;
+	/** Store page the figure was read from, when we have one. */
+	href?: string;
+	source?: string;
 };
 
 export type Piece = {
@@ -21,6 +24,8 @@ export type Piece = {
 	ext?: string;
 	vendor: string;
 	mpn: string;
+	/** Store named on the quote link when it is not `vendor`. */
+	source?: string;
 	href?: string;
 	stock: string;
 	lead: string;
@@ -63,7 +68,9 @@ export const pieces: Piece[] = [
 				name: 'T4000 SOM, qty 1',
 				price: '$2,749',
 				detail: 'Arrow street. 1KU list was hiked to $2,999 in July 2026.',
-				taken: true
+				taken: true,
+				href: 'https://www.arrow.com/en/products/900-13834-0000-000/nvidia',
+				source: 'Arrow'
 			},
 			{
 				name: 'AGX Thor Developer Kit',
@@ -76,7 +83,9 @@ export const pieces: Piece[] = [
 				name: 'Seeed T4000 listing',
 				price: '$3,399',
 				detail: 'PN 900-13834-0000-001. Leave it. Wrong number for this SOM.',
-				aside: true
+				aside: true,
+				href: 'https://www.seeedstudio.com/NVIDIA-Jetson-AGX-Thor-T4000-Module-p-6939.html',
+				source: 'Seeed'
 			}
 		]
 	},
@@ -98,26 +107,34 @@ export const pieces: Piece[] = [
 				name: 'Rogue-T5 carrier only',
 				price: '$1,806',
 				detail: 'WDL SKU 1CAGX302. This is the line.',
-				taken: true
+				taken: true,
+				href: 'https://www.wdlsystems.com/connect-tech-agx302',
+				source: 'WDL Systems'
 			},
 			{
 				name: 'AGX302-002 with T4000',
 				price: '$9,291',
 				detail: 'Stock heatspreader and 2 TB, soldered. Skip.',
-				aside: true
+				aside: true,
+				href: 'https://www.wdlsystems.com/connect-tech-agx302',
+				source: 'WDL Systems'
 			},
 			{
 				name: 'AGX302-005 with T4000',
 				price: '$9,367',
 				detail: 'Same stack plus Wi-Fi. Skip.',
-				aside: true
+				aside: true,
+				href: 'https://www.wdlsystems.com/connect-tech-agx302',
+				source: 'WDL Systems'
 			},
 			{
 				name: 'FORECR THRMAX',
 				price: '€999',
 				detail:
 					'Carrier-only public list. Bigger board, different brick, HDMI out. SOM and SSD variants were sold out. Not re-fetched 2026-10-27.',
-				aside: true
+				aside: true,
+				href: 'https://www.forecr.io/products/nvidia-jetson-thor-carrier-board-dsboard-thrmax',
+				source: 'FORECR'
 			}
 		]
 	},
@@ -139,19 +156,25 @@ export const pieces: Piece[] = [
 				name: 'Passive ATS-NVP-3739-C1-R0',
 				price: '$55.58',
 				detail: 'Digi-Key. Bench piece. Measure it.',
-				taken: true
+				taken: true,
+				href: 'https://www.digikey.com/en/products/detail/advanced-thermal-solutions-inc/ATS-NVP-3739-C1-R0/28249778',
+				source: 'Digi-Key'
 			},
 			{
 				name: 'Same sink at Mouser',
 				price: '$61.37',
 				detail: '984-ATSNVP-3739C1-R0. Second source.',
-				aside: true
+				aside: true,
+				href: 'https://www.mouser.com/ProductDetail/Advanced-Thermal-Solutions/ATS-NVP-3739-C1-R0',
+				source: 'Mouser'
 			},
 			{
 				name: 'Active ATS-NVA-3740-C1-R0',
 				price: '$125.27',
 				detail: 'Digi-Key. Use this if the bench is still air.',
-				aside: true
+				aside: true,
+				href: 'https://www.digikey.com/en/products/detail/advanced-thermal-solutions-inc/ATS-NVA-3740-C1-R0/28249775',
+				source: 'Digi-Key'
 			}
 		]
 	},
@@ -173,7 +196,9 @@ export const pieces: Piece[] = [
 				name: 'MSG103',
 				price: '$316',
 				detail: 'WDL SKU 1CMSG103. On the cart.',
-				taken: true
+				taken: true,
+				href: 'https://www.wdlsystems.com/Connect-Tech-Forge-AGX-Orin-AC-DC-Power-Supply-252Watt-12Volt',
+				source: 'WDL Systems'
 			},
 			{
 				name: 'Wall cable CBG448',
@@ -202,13 +227,17 @@ export const pieces: Piece[] = [
 				name: 'Two CBG695 leads',
 				price: '$164',
 				detail: '$82 each. WDL SKU 1CBG695R.',
-				taken: true
+				taken: true,
+				href: 'https://www.wdlsystems.com/connect-tech-cbg695',
+				source: 'WDL Systems'
 			},
 			{
 				name: 'Full kit CKG073',
 				price: '$784',
 				detail: 'Three CBG695 plus USB, DisplayPort, and IO breakouts. A different buy.',
-				aside: true
+				aside: true,
+				href: 'https://www.wdlsystems.com/connect-tech-ckg073',
+				source: 'WDL Systems'
 			}
 		]
 	},
@@ -220,6 +249,7 @@ export const pieces: Piece[] = [
 		price: '$146.99',
 		vendor: 'Unspecified',
 		mpn: 'Not locked',
+		source: 'Amazon',
 		href: 'https://www.amazon.com/ADATA-Legend-PCIe-Gen4x4-2280/dp/B09YRY5MDC',
 		stock: 'The $146.99 card is in stock at Amazon, sold by ADATA.',
 		lead: 'The carrier has an M.2 2280 slot for the ring. The old $80 crib number is dead. No manufacturer part is chosen, so the rollup holds the low new street until we name one.',
@@ -230,7 +260,9 @@ export const pieces: Piece[] = [
 				name: 'ADATA Legend 710 1 TB',
 				price: '$146.99',
 				detail: 'Low new street. Gen3. Placeholder, not a commitment.',
-				taken: true
+				taken: true,
+				href: 'https://www.amazon.com/ADATA-Legend-PCIe-Gen4x4-2280/dp/B09YRY5MDC',
+				source: 'Amazon'
 			},
 			{
 				name: 'TLC Gen4, unnamed',
@@ -259,7 +291,9 @@ export const pieces: Piece[] = [
 				name: 'PYXIS 6K PL',
 				price: '$2,475',
 				detail: 'BH BLPYXIS6KPL. The /i body.',
-				taken: true
+				taken: true,
+				href: 'https://www.bhphotovideo.com/c/product/1823586-REG/blackmagic_design_blpyxis6kpl_pyxis_6k_cinema_box.html',
+				source: 'B&H'
 			},
 			{
 				name: 'PYXIS 6K EF or L',
@@ -357,7 +391,9 @@ export const pieces: Piece[] = [
 				price: '$448.80',
 				detail: 'JCB005 at WDL, out of stock. Page says Xavier and Orin. Not confirmed on Thor.',
 				aside: true,
-				mark: 'Wait for a BSP'
+				mark: 'Wait for a BSP',
+				href: 'https://www.wdlsystems.com/Connect-Tech-JCB005-Allied-Vision-MIPI-Camera-Expansion-Board-up-to-6x.-4-x-4-Lane-or-6-x-2-Lane-150',
+				source: 'WDL Systems'
 			},
 			{
 				name: 'SDI or HDMI bridge',

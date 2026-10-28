@@ -41,7 +41,7 @@ Production ceiling. 64 GB, one NVENC, 70 W default and 90 W throttle, 87 × 100 
 |---|---|---|
 | T4000 SOM, qty 1 | **$2,749** | This line. |
 | AGX Thor Developer Kit | **$3,499** | Arrow street as of 2026-09-01, not re-fetched. T5000, 128 GB, two NVENCs. Lab brick. NVIDIA’s US list is **$5,499**. |
-| Seeed listing | **$3,399** | PN `900-13834-0000-001`. A different part number. Leave it. |
+| [Seeed listing](https://www.seeedstudio.com/NVIDIA-Jetson-AGX-Thor-T4000-Module-p-6939.html) | **$3,399** | PN `900-13834-0000-001`. A different part number. Leave it. |
 
 A T5000 in the body is the move only if the satellite count outgrows one encoder.
 
@@ -56,10 +56,10 @@ Buying the carrier alone is the point. An assembly with the SOM already soldered
 | Choice | Price | Why |
 |---|---|---|
 | Rogue-T5, carrier only | **$1,806** | This line. |
-| AGX302-002 with T4000 | **$9,291** | Stock heatspreader and 2 TB, soldered. Skip. |
-| AGX302-005 with T4000 | **$9,367** | Same stack plus Wi-Fi. Skip. |
+| [AGX302-002 with T4000](https://www.wdlsystems.com/connect-tech-agx302) | **$9,291** | Stock heatspreader and 2 TB, soldered. Skip. |
+| [AGX302-005 with T4000](https://www.wdlsystems.com/connect-tech-agx302) | **$9,367** | Same stack plus Wi-Fi. Skip. |
 | T5000 assemblies on the same board | **$8,200–$12,500** | WDL integrated. Skip unless someone else is soldering the SOM. |
-| FORECR DSBOARD-THRMAX | **€999** | Public carrier-only list, not re-fetched 2026-10-27. 140 × 125 mm, QSFP28, HDMI is an output, brick is 18–36 V. SOM and SSD variants were sold out. The escape if the Rogue slips. |
+| [FORECR DSBOARD-THRMAX](https://www.forecr.io/products/nvidia-jetson-thor-carrier-board-dsboard-thrmax) | **€999** | Public carrier-only list, not re-fetched 2026-10-27. 140 × 125 mm, QSFP28, HDMI is an output, brick is 18–36 V. SOM and SSD variants were sold out. The escape if the Rogue slips. |
 | Connect Tech Gauntlet `AGX301` | **A$3,999** | Older AU listing, not re-fetched. 155 × 126 mm, RJ45, dual NVMe. Confirm whether that price is carrier-only. US is still a quote. |
 | Auvidea X242 | Quote | Published as T5000. Do not assume T4000 until Auvidea says so. |
 
@@ -74,8 +74,8 @@ The 100 W number is with airflow, about 500 LFM, not a sealed lid. Natural conve
 | Choice | Price | Why |
 |---|---|---|
 | Passive ATS-NVP-3739-C1-R0 | **$55.58** | Digi-Key. Measure it. |
-| Same sink at Mouser | **$61.37** | `984-ATSNVP-3739C1-R0`, 20 in stock. Second source. |
-| Active ATS-NVA-3740-C1-R0 | **$125.27** | Digi-Key. The honest fan if the bench is still air. |
+| [Same sink at Mouser](https://www.mouser.com/ProductDetail/Advanced-Thermal-Solutions/ATS-NVP-3739-C1-R0) | **$61.37** | `984-ATSNVP-3739C1-R0`, 20 in stock. Second source. |
+| [Active ATS-NVA-3740-C1-R0](https://www.digikey.com/en/products/detail/advanced-thermal-solutions-inc/ATS-NVA-3740-C1-R0/28249775) | **$125.27** | Digi-Key. The honest fan if the bench is still air. |
 
 ## 04 — Connect Tech MSG103
 
@@ -91,7 +91,7 @@ The wall cable, **CBG448**, is not in the box and was not priced.
 
 The Rogue’s Ethernet is locking IX, not RJ45. Two leads land the 10G jacks on an ordinary switch. The third jack is 2.5G and can wait. A third lead is another **$82**.
 
-The full cable kit **CKG073** is **$784** (eight in stock). It adds USB and DisplayPort breakouts this cart is not using. Leave it.
+The full cable kit [CKG073](https://www.wdlsystems.com/connect-tech-ckg073) is **$784** (eight in stock). It adds USB and DisplayPort breakouts this cart is not using. Leave it.
 
 ## 06 — 1 TB NVMe
 
@@ -101,7 +101,7 @@ A TLC Gen4 in the WD SN7100 class is about **$175–$200** and is the drive to b
 
 ## 07 — Blackmagic PYXIS 6K PL
 
-**$2,475** at B&H, catalog card `BLPYXIS6KPL`, MFR `CINECAMCPYXH60LFPL`. Temporarily out of stock. The expected date was 16 Oct 2026, which has passed. Sweetwater lists the same **$2,475**. The direct B&H page returned a Cloudflare interstitial, so stock is from the catalog card. On the cart.
+**$2,475** at [B&H](https://www.bhphotovideo.com/c/product/1823586-REG/blackmagic_design_blpyxis6kpl_pyxis_6k_cinema_box.html), catalog card `BLPYXIS6KPL`, MFR `CINECAMCPYXH60LFPL`. Temporarily out of stock. The expected date was 16 Oct 2026, which has passed. Sweetwater lists the same **$2,475**. The direct B&H page returned a Cloudflare interstitial, so stock is from the catalog card. On the cart.
 
 The PYXIS records BRAW itself. Thor takes a monitor feed. Cooke /i pins sit at 12 o’clock on the PL mount, and the mount does not swap later. SDI on this body is 4K60 monitoring. It is not a CSI input.
 
@@ -142,7 +142,7 @@ The body 4K is the one Thor itself encodes. The Rogue-T5 camera input is one Sam
 
 The sensor to aim at is a Sony Starvis 4K module. Vision Components **VC MIPI IMX585** is 3840×2160, up to 72 fps, **€244.99** on the thousand-piece flyer. That is not a qty-1 street checked this pass. The public driver tree stops at Orin. VC said Thor drivers would follow project demand from the end of 2025, and the repo does not show that overlay yet.
 
-The header is not the module’s flex. Something has to mate the QSH. Connect Tech’s Alvium board, **JCB005**, is **$448.80** at WDL and out of stock. The product page still limits it to Xavier and Orin. A March 2026 WDL note says to order it for a Rogue-T5. Those pages disagree, so it is not a buy.
+The header is not the module’s flex. Something has to mate the QSH. Connect Tech’s Alvium board, [JCB005](https://www.wdlsystems.com/Connect-Tech-JCB005-Allied-Vision-MIPI-Camera-Expansion-Board-up-to-6x.-4-x-4-Lane-or-6-x-2-Lane-150), is **$448.80** at WDL and out of stock. The product page still limits it to Xavier and Orin. A March 2026 WDL note says to order it for a Rogue-T5. Those pages disagree, so it is not a buy.
 
 The open move is a yes or no from each vendor: a Thor device tree for the IMX585, and a Thor BSP for one 4-lane camera on that header. A one-camera flex is a small board once those answers are yes.
 

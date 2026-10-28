@@ -104,13 +104,16 @@
 						{#if piece.ext}
 							<p class="ext">{piece.ext}</p>
 						{/if}
-						<p class="meta">{piece.vendor}</p>
 						<p class="meta mpn">{piece.mpn}</p>
-						{#if piece.href}
-							<p class="meta">
-								<a href={piece.href}>Listing</a>
-							</p>
-						{/if}
+						<p class="meta">
+							{#if piece.href}
+								<a class="source" href={piece.href} target="_blank" rel="noreferrer"
+									>{piece.source ?? piece.vendor} listing</a
+								>
+							{:else}
+								{piece.vendor}
+							{/if}
+						</p>
 					</div>
 					<div class="copy">
 						<p>{piece.lead}</p>
@@ -126,6 +129,13 @@
 							<p class="mark">{option.mark ?? (option.taken ? 'This line' : 'Set aside')}</p>
 							<p class="opt-price">{option.price}</p>
 							<p class="opt-name">{option.name}</p>
+							{#if option.href}
+								<p class="opt-detail">
+									<a class="source" href={option.href} target="_blank" rel="noreferrer"
+										>{option.source ?? 'Listing'}</a
+									>
+								</p>
+							{/if}
 							<p class="opt-detail">{option.detail}</p>
 						</li>
 					{/each}
@@ -442,6 +452,18 @@
 		letter-spacing: 0;
 		font-size: 0.8rem;
 		color: var(--ink-2);
+	}
+
+	.source,
+	.meta a.source {
+		color: var(--tungsten);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.18em;
+	}
+
+	.source:hover {
+		color: var(--ink);
 	}
 
 	.copy p {
