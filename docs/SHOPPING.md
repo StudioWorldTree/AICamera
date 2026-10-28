@@ -95,7 +95,7 @@ The full cable kit [CKG073](https://www.wdlsystems.com/connect-tech-ckg073) is *
 
 ## 06 — Sandisk Optimus GX 7100, 1 TB
 
-**$180** at [Amazon](https://www.amazon.com/dp/B0GK1M1N4V). MPN `SDSP71100TAN`. New, three left, sold by Elite100 and shipped by Amazon. On the cart.
+**$180** at [Amazon](https://www.amazon.com/dp/B0GK1M1N4V). MPN `SDSP71100TAN`. New, three left, sold and shipped by Elite100. On the cart.
 
 This is the ring. PCIe 4.0 x4, M.2 2280, TLC BiCS, up to 7,250 MB/s read and 6,900 MB/s write. Sandisk’s page for the WD_BLACK SN7100 says this drive replaces it. There is no heatsink in the box, so it fits the Rogue slot. One terabyte holds about nine hours of the hybrid HEVC haul.
 
@@ -244,13 +244,10 @@ The numbered carts below are the selection the hardware crib reads. The discussi
 3. ATS Thor HS — passive `ATS-NVP-3739` or active `ATS-NVA-3740`
 4. PYXIS 6K PL — BRAW and Cooke /i
 5. 1× RV1126B EVB
+6. 1–2× RV1126/B PoE turrets
+7. PoE+ switch — powers those cameras, not Thor
 
-### Optional — turrets
-
-Not in the Cart T total. **$400** of placeholders.
-
-1. 2× RV1126/B PoE turrets
-2. PoE+ switch — powers those cameras, not Thor
+The published cart total leaves lines 6 and 7 out. They stay on this selection so the crib still carries them.
 
 ### Cart C — cine body that is actually /i
 

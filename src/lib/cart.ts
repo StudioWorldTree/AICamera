@@ -260,7 +260,7 @@ export const pieces: Piece[] = [
 		mpn: 'SDSP71100TAN',
 		href: 'https://www.amazon.com/dp/B0GK1M1N4V',
 		stock:
-			'New is $180, three left, sold by Elite100 and shipped by Amazon. Used is $175.74. Do not buy used.',
+			'New is $180, three left, sold and shipped by Elite100. Used is $175.74. Do not buy used.',
 		lead: 'The ring on the Rogue’s M.2 2280 slot. PCIe 4.0 x4, TLC BiCS, up to 7,250 MB/s read and 6,900 MB/s write. Sandisk lists this as the drive that replaces the WD_BLACK SN7100. No heatsink in the box, so it fits the carrier slot.',
 		choice:
 			'The ADATA Legend 710 at $146.99 is Gen3. It was a stand-in, and it is off the cart. The previous WD part, WDS100T4X0E, is the same speeds and TLC, and B&H still lists it at $219.99 in stock. Amazon’s own page tells you to buy this Sandisk number instead. One terabyte holds about nine hours of the hybrid HEVC haul. A 2 TB card exists on the same listing if the ring has to outlast a long day.',
