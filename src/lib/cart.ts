@@ -31,19 +31,19 @@ export type Piece = {
 	lead: string;
 	choice: string;
 	options: Option[];
-	/** `turret` is the optional plant. `later` is off the required total and not part of that plant. */
-	lane?: 'turret' | 'later';
+	/** `sat` is the optional satellite plant. `later` is off the required total and not part of that plant. */
+	lane?: 'sat' | 'later';
 };
 
 export const checked = '2026-10-27';
 
 /**
  * Cart T required lines, cents.
- * Two PoE turrets ($200) and the switch that only powers them ($200) are `turretCents`.
- * HDMI capture is `captureCents`. The RV1126B EVB placeholder ($200) stays here.
+ * The satellite plant is `satCents`: RV1126B EVB ($200), two PoE turrets ($200),
+ * and the switch that powers them ($200). HDMI capture is `captureCents`.
  */
-export const requiredCents = 794558;
-export const turretCents = 40000;
+export const requiredCents = 774558;
+export const satCents = 60000;
 export const captureCents = 8000;
 
 export function money(cents: number) {
@@ -328,17 +328,19 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'evb',
-		kicker: 'Satellite seat',
+		lane: 'sat',
+		kicker: 'Optional',
 		name: 'RV1126B dev board',
 		stance: 'hold',
+		badge: 'Optional',
 		price: '$200',
-		ext: 'Placeholder. On the required total.',
+		ext: 'Placeholder. Off the required total.',
 		vendor: 'Unspecified',
 		mpn: 'Not locked',
 		stock: 'No fresh distributor card. The crib still holds the September placeholder.',
-		lead: 'The software seat for satellite H.265 and the /i and ToF UART, before a custom satellite exists. A sealed turret has no pins for that. This board does.',
+		lead: 'One optional way to get a UART while writing a satellite. Cooke /i can be patched in other ways, so a whole camera dev board is not on the cart just for those pins.',
 		choice:
-			'The SoC has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A USB board such as the youyeetoo at $75 is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. iVcan’s older RV1126 boards were $160–$244. Leave the $200 placeholder until a board is named. The turrets, and the switch that only powers them, are a separate optional buy.',
+			'If this board is the week’s job, the SoC has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A USB board such as the youyeetoo at $75 is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. iVcan’s older RV1126 boards were $160–$244. Leave the $200 placeholder until a board is named.',
 		options: [
 			{
 				name: 'RV1126B EVB',
@@ -350,7 +352,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'turrets',
-		lane: 'turret',
+		lane: 'sat',
 		kicker: 'Optional',
 		name: 'Two PoE turrets',
 		stance: 'hold',
@@ -362,7 +364,7 @@ export const pieces: Piece[] = [
 		stock: 'No fresh distributor card. The crib still holds the September placeholders.',
 		lead: 'Throwaway encode mules: a known-good PoE H.265 picture so Thor can remux a stream before a custom satellite exists. They are not what we ship. The eyeball gets thrown away.',
 		choice:
-			'Each camera has to be an RV1126 or RV1126B, PoE, IMX415-class. A random IMX415 turret is the wrong pipe. Leave the $100 placeholder until a camera is named. PoE+ is enough for these two. They need the switch in this section. They do not need the dev board, and the dev board does not need them.',
+			'Each camera has to be an RV1126 or RV1126B, PoE, IMX415-class. A random IMX415 turret is the wrong pipe. Leave the $100 placeholder until a camera is named. PoE+ is enough for these two, and the switch in this section powers them.',
 		options: [
 			{
 				name: 'Two turrets',
@@ -374,7 +376,7 @@ export const pieces: Piece[] = [
 	},
 	{
 		id: 'poe',
-		lane: 'turret',
+		lane: 'sat',
 		kicker: 'Optional',
 		name: 'PoE+ switch',
 		stance: 'hold',
@@ -410,7 +412,7 @@ export const pieces: Piece[] = [
 		stock: 'Placeholder from 2026-09-01. Not re-shopped.',
 		lead: 'The live-AI proxy until a CSI or GMSL add-on exists. It is not the take. The take is BRAW on the PYXIS.',
 		choice:
-			'A real dongle is anywhere from about $30 to $200. $80 is a stand-in. The line stays off the required total and off the turret plant.',
+			'A real dongle is anywhere from about $30 to $200. $80 is a stand-in. The line stays off the required total and off the satellite plant.',
 		options: [
 			{
 				name: 'USB HDMI capture',

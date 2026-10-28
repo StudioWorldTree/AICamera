@@ -113,7 +113,7 @@ export const chapters: Chapter[] = [
 		title: 'Shopping',
 		kicker: 'Buy brief',
 		summary:
-			'Cart T at the 2026-10-27 streets: $7,945.58 required. Turrets and their switch are $400, off that total.',
+			'Cart T at the 2026-10-27 streets: $7,745.58 required. The satellite plant is $600, off that total.',
 		group: 'hardware'
 	},
 	{

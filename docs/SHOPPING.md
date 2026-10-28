@@ -2,18 +2,18 @@
 title: "Shopping"
 kicker: "Buy brief"
 group: "hardware"
-summary: "Cart T at the 2026-10-27 streets: $7,945.58 required. Turrets and their switch are $400, off that total."
+summary: "Cart T at the 2026-10-27 streets: $7,745.58 required. The satellite plant is $600, off that total."
 ---
 
 # Hardware shopping
 
 The published page is the cart layout (`src/lib/cart.ts`). This chapter is the same brief for the repository. Streets below were read 2026-10-27 unless a line says otherwise. Confirm before you click. Product calls stay in INTERCONNECT, SENSORS, LENS, and the thermal note.
 
-**Required: $7,945.58.** That sum includes one placeholder, the RV1126B dev board. HDMI capture is **$80** and stays off the required total. The turret plant is **$400** and stays off it too: two PoE cameras and the switch that only powers them. The body 4K sensor is not on the order yet. SDI and HDMI bridge cards are off the cart.
+**Required: $7,745.58.** HDMI capture is **$80** and stays off the required total. The satellite plant is **$600** and stays off it too: an RV1126B dev board, two PoE cameras, and the switch that powers those cameras. Cooke /i can be patched without that board. The body 4K sensor is not on the order yet. SDI and HDMI bridge cards are off the cart.
 
 ## What the buy is
 
-One production body computer: a T4000 on a Rogue-T5, a bench heatsink, an NVMe ring, a 12 V brick, and two IX-to-RJ45 leads. A PYXIS 6K PL that records the cinema master itself. One RV1126B dev board, so satellite encode and the /i and ToF UART can be written before a custom satellite exists. The throwaway PoE turrets, and the small switch that only powers them, are a separate buy.
+One production body computer: a T4000 on a Rogue-T5, a bench heatsink, an NVMe ring, a 12 V brick, and two IX-to-RJ45 leads. A PYXIS 6K PL that records the cinema master itself. Satellites are a separate buy: a dev board, two throwaway PoE cameras, and the switch that powers those cameras. /i does not require that board.
 
 The T4000 hardware encoder does two 4Kp30 streams. A body plus two satellites is therefore hybrid: the satellites encode H.265, Thor remuxes. That haul is about 0.24 Gbps, so the Rogue’s 10G jack is enough. The NAS is the vault. The RTX PRO 6000 stays off the camera.
 
@@ -118,33 +118,23 @@ The September ex-duty list for PL was **$2,195**. US street, duties in, settled 
 
 Cracking one open: teardowns show a sensor board, an I/O board, and a fan. The MIPI from the IMX does not land on a Jetson-compatible connector. /i lives on the PL mount PCB (four pins, RS-232-ish, milliamps). The useful steal is the mount and the /i reader.
 
-## 08 — RV1126B dev board
+## Optional — satellites
 
-**$200** placeholder from 2026-09-01. Not re-shopped. On the cart.
+**$600** of placeholders from 2026-09-01. Not re-shopped. Off the required total.
 
-This is the software seat. Satellite H.265, and the /i and ToF UART, get written here before a custom satellite exists. A sealed turret has no pins for that. The SoC has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A USB board such as the youyeetoo at **$75** is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. iVcan’s older RV1126 boards were **$160–$244**.
+An RV1126B dev board at **$200**, two throwaway PoE H.265 cameras at **$100** each, and the **$200** PoE+ switch that powers those cameras. The board is one way to get a UART. Cooke /i can be patched without a whole camera dev board, so the board is not on the cart just for those pins. The cameras are encode mules. They are not what we ship. A random IMX415 turret is the wrong pipe. If a board or a camera is named, the SoC still has to be an RV1126 or RV1126B. RV1126 is being discontinued. RV1126B is the successor. A USB board such as the youyeetoo at **$75** is the wrong pipe. iVcan’s RV1126B-P with IMX415 was quote-only. Tronlong’s industrial kit was a limited 398 CNY promo and is not clearly this sensor. iVcan’s older RV1126 boards were **$160–$244**. PoE+ is enough for two cameras. Thor has no PoE, and this switch does not power Thor.
 
-Name an RV1126B dev board before RV1126 stock disappears.
+## 08 — HDMI capture
 
-## Optional — turrets
+USB HDMI capture is **$80** optional, and off the required total. It is also off the satellite plant. A real dongle is anywhere from about $30 to $200. It is the live-AI proxy until a CSI or GMSL add-on exists. It is not the take. The take is BRAW on the PYXIS.
 
-**$400** of placeholders from 2026-09-01. Not re-shopped. Off the required total.
-
-Two throwaway PoE H.265 cameras, **$100** each, and the **$200** PoE+ switch that only powers them. They are encode mules. They are not what we ship. A random IMX415 turret is the wrong pipe. The SoC still has to be an RV1126 or RV1126B. PoE+ is enough for two cameras. Thor has no PoE, and this switch does not power Thor. A product satellite brings its own switch decision later. These cameras do not need the dev board, and the dev board does not need them.
-
-Name an RV1126B PoE turret before RV1126 stock disappears, if this optional plant is the week’s job.
-
-## 09 — HDMI capture
-
-USB HDMI capture is **$80** optional, and off the required total. It is also off the turret plant. A real dongle is anywhere from about $30 to $200. It is the live-AI proxy until a CSI or GMSL add-on exists. It is not the take. The take is BRAW on the PYXIS.
-
-## 10 — 4K into Thor
+## 09 — 4K into Thor
 
 **Open.** Not on this order.
 
 Two different 4K pictures arrive at Thor, and only one of them is missing a part.
 
-The satellites encode 4K30 H.265 in the camera. Ethernet carries about 80 Mbps each. Thor stores those streams and can decode them. That 4K is already the design. The dev board on this order is still an unnamed placeholder. The turrets that would send the first of those streams are the optional plant, not this line.
+When satellites are on the plant, they encode 4K30 H.265 in the camera. Ethernet carries about 80 Mbps each. Thor stores those streams and can decode them. That plant is optional and is not this line.
 
 The body 4K is the one Thor itself encodes. The Rogue-T5 camera input is one Samtec QSH-060, sixteen MIPI CSI-2 lanes (CTIM-00160). Four lanes is one 4K30 RAW camera. Those pixels land in the ISP, and the NVENC makes the HEVC. That uses one of the two HQ encoders. The header is on the carrier we are already buying. Nothing on the order mates to it.
 
@@ -164,7 +154,6 @@ The open move is a yes or no from each vendor: a Thor device tree for the IMX585
 
 - Measure the passive sink. Still air on the bench means the **$125.27** active, not a hope.
 - Quote **CBG448**, the wall cable the brick does not include.
-- Name an RV1126B dev board before RV1126 stock disappears.
 - FORECR at **€999** is the escape if the Rogue slips. It is a different brick and a bigger board.
 - A third IX lead is **$82** when the 2.5G jack needs a switch.
 - Get a Thor device tree for the IMX585, and a Thor BSP for one 4-lane camera on the Rogue header. That is the body 4K.
@@ -243,11 +232,14 @@ The numbered carts below are the selection the hardware crib reads. The discussi
 2. CTI Rogue-T5 `AGX302` — carrier only
 3. ATS Thor HS — passive `ATS-NVP-3739` or active `ATS-NVA-3740`
 4. PYXIS 6K PL — BRAW and Cooke /i
-5. 1× RV1126B EVB
-6. 1–2× RV1126/B PoE turrets
-7. PoE+ switch — powers those cameras, not Thor
 
-The published cart total leaves lines 6 and 7 out. They stay on this selection so the crib still carries them.
+### Optional — satellites
+
+Not in the Cart T total. **$600** of placeholders.
+
+1. 1× RV1126B EVB
+2. 1–2× RV1126/B PoE turrets
+3. PoE+ switch — powers those cameras, not Thor
 
 ### Cart C — cine body that is actually /i
 

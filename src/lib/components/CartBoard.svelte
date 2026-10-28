@@ -6,7 +6,7 @@
 		money,
 		pieces,
 		requiredCents,
-		turretCents,
+		satCents,
 		type Piece,
 		type Stance
 	} from '$lib/cart';
@@ -18,16 +18,16 @@
 	};
 
 	const cartPieces = pieces.filter((piece) => !piece.lane);
-	const turretPieces = pieces.filter((piece) => piece.lane === 'turret');
+	const satPieces = pieces.filter((piece) => piece.lane === 'sat');
 	const laterPieces = pieces.filter((piece) => piece.lane === 'later');
 
 	const groups: { key: string; heading: string; note: string; items: Piece[]; start: number }[] = [
 		{ key: 'cart', heading: '', note: '', items: cartPieces, start: 1 },
 		{
-			key: 'turret',
-			heading: 'Optional — turrets',
-			note: 'Off the required total. Two throwaway PoE cameras and the switch that only powers them.',
-			items: turretPieces,
+			key: 'sat',
+			heading: 'Optional — satellites',
+			note: 'Off the required total. A dev board, two throwaway PoE cameras, and the switch that powers those cameras. /i can be patched without this board.',
+			items: satPieces,
 			start: 1
 		},
 		{
@@ -45,21 +45,20 @@
 		<p class="kicker">Buy brief · prices checked {checked}</p>
 		<h1>Cart T</h1>
 		<p class="lede">
-			One production body computer, a cinema camera that keeps its own master, and an RV1126B dev
-			board as the satellite software seat. The throwaway PoE turrets are a separate buy.
+			One production body computer and a cinema camera that keeps its own master. Satellite gear is
+			a separate buy.
 		</p>
 		<div class="totals">
 			<div class="total main">
 				<p class="figure">{money(requiredCents)}</p>
 				<p class="caption">
-					Required, at these streets. Includes the EVB placeholder. Turrets and their switch are not
-					in this number.
+					Required, at these streets. The satellite plant is not in this number.
 				</p>
 			</div>
 			<div class="total">
-				<p class="figure minor">{money(turretCents)}</p>
+				<p class="figure minor">{money(satCents)}</p>
 				<p class="caption">
-					Optional turret plant. Two cameras and the PoE switch they need. Off the required total.
+					Optional satellites. Dev board, two cameras, and their PoE switch. Off the required total.
 				</p>
 			</div>
 			<div class="total">
@@ -87,13 +86,15 @@
 			Thor lives in the body: a T4000 on a Rogue-T5, a bench heatsink, an NVMe ring, a 12&nbsp;V
 			brick, and two IX-to-RJ45 leads. The PYXIS 6K PL records Blackmagic RAW and the Cooke /i
 			sidecar. Thor’s live look is the USB monitor feed. The body 4K is a sensor on the Rogue camera
-			header, into the ISP, then the NVENC. The PoE turrets, and the switch that only powers them,
-			are optional and are not in the required total.
+			header, into the ISP, then the NVENC. Satellites are optional: a dev board, two PoE cameras,
+			and the switch that powers those cameras. None of that is in the required total. Cooke /i can
+			be patched without the dev board.
 		</p>
 		<p>
 			The T4000’s hardware encoder does two 4Kp30 streams. A body plus two satellites is therefore
-			hybrid. The satellites encode H.265. Thor remuxes. That haul is about 0.24&nbsp;Gbps, so the
-			Rogue’s 10G jack is enough. The NAS is the vault. The RTX PRO 6000 stays off the camera.
+			hybrid when those cameras are on the plant. The satellites encode H.265. Thor remuxes. That
+			haul is about 0.24&nbsp;Gbps, so the Rogue’s 10G jack is enough. The NAS is the vault. The RTX
+			PRO 6000 stays off the camera.
 		</p>
 		<p>
 			<a href="{base}/docs/interconnect/">Interconnect</a>
@@ -131,11 +132,11 @@
 
 	{#each groups as group (group.key)}
 		{#if group.heading}
-			<section class="lane" id="turret-plant">
+			<section class="lane" id="sat-plant">
 				<h2>{group.heading}</h2>
 				<p>
 					{group.note}
-					<strong>{money(turretCents)}</strong> at the September placeholders.
+					<strong>{money(satCents)}</strong> at the September placeholders.
 				</p>
 			</section>
 		{/if}
@@ -203,10 +204,6 @@
 		<ul>
 			<li>Measure the passive sink. Still air on the bench means the $125 active, not a hope.</li>
 			<li>Quote CBG448, the wall cable the brick does not include.</li>
-			<li>
-				Name an RV1126B dev board before RV1126 stock disappears. A USB IMX415 board is a different
-				animal.
-			</li>
 			<li>
 				FORECR at €999 is the escape if the Rogue slips. It is a different brick and a bigger board.
 			</li>
