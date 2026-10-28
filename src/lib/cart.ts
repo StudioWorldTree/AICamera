@@ -6,6 +6,8 @@ export type Option = {
 	detail: string;
 	taken?: boolean;
 	aside?: boolean;
+	/** Overrides the card label when “This line” would overclaim. */
+	mark?: string;
 };
 
 export type Piece = {
@@ -13,6 +15,8 @@ export type Piece = {
 	kicker: string;
 	name: string;
 	stance: Stance;
+	/** Overrides the stance badge when the default wording does not fit. */
+	badge?: string;
 	price: string;
 	ext?: string;
 	vendor: string;
@@ -29,7 +33,6 @@ export const checked = '2026-10-27';
 /** Required lines, cents, matching the daBOM rollup. */
 export const requiredCents = 831257;
 export const captureCents = 8000;
-export const sdiCents = 153800;
 
 export function money(cents: number) {
 	const digits = cents % 100 === 0 ? 0 : 2;
@@ -329,30 +332,39 @@ export const pieces: Piece[] = [
 		]
 	},
 	{
-		id: 'sdi',
-		kicker: 'Leave it',
-		name: 'JCB003 SDI to CSI',
-		stance: 'skip',
-		price: '$1,538',
-		vendor: 'WDL Systems',
-		mpn: 'JCB003-01',
-		href: 'https://www.wdlsystems.com/connect-tech-jcb003-01',
-		stock: '4 available. It does run on a Rogue-T5.',
-		lead: 'Two 3G-SDI inputs into MIPI, 1080p60. The PYXIS 12G output does not become 4K by passing through this board.',
+		id: 'body4k',
+		kicker: '4K into Thor',
+		name: 'CSI sensor on the Rogue header',
+		stance: 'hold',
+		badge: 'Not on the order',
+		price: 'Open',
+		vendor: 'Not chosen',
+		mpn: 'Not locked',
+		stock: 'No line on the order. The socket is on the carrier. The module is not.',
+		lead: 'The Rogue-T5 camera input is one Samtec QSH-060, sixteen MIPI CSI-2 lanes, documented in CTIM-00160. Four lanes is one 4K30 RAW camera. Those pixels land in the Thor ISP, and the NVENC makes the HEVC. That uses one of the two HQ encoders. The satellites stay on Ethernet.',
 		choice:
-			'It stays on the sheet so nobody adds it as a 4K pipeline. Live 4K from the PYXIS into the Thor ISP is not a catalog part today. JCB010, the HDMI bridge, is still a quote and its public page is Orin and Xavier. Confirm a Thor BSP before that becomes a line.',
+			'The sensor to aim at is a Sony Starvis 4K module. Vision Components VC MIPI IMX585 is 3840×2160, up to 72 fps, €244.99 on the thousand-piece flyer. The public driver tree stops at Orin. VC said Thor drivers would follow project demand from the end of 2025, and the repo does not show that overlay yet. The header is not the module’s flex. Connect Tech’s Alvium mating board, JCB005, is $448.80 and out of stock, and the product page still limits it to Xavier and Orin. A March 2026 WDL note says to order it for a Rogue-T5. Those pages disagree, so it is not a buy. The open move is a yes or no from each vendor: a Thor device tree for the IMX585, and a Thor BSP for one 4-lane camera on that header.',
 		options: [
 			{
-				name: 'JCB003-01',
-				price: '$1,538',
-				detail: 'WDL SKU 1CJCB031. On the sheet. Off the buy.',
-				aside: true
+				name: 'VC MIPI IMX585',
+				price: '€245',
+				detail: 'Thousand-piece flyer, not a qty-1 street. 4K Starvis. Driver not shown for Thor.',
+				taken: true,
+				mark: 'Aim here'
 			},
 			{
-				name: 'JCB010 HDMI to CSI',
-				price: 'Quote',
-				detail: '4K30 only if the bridge and a Thor BSP both allow it. Unconfirmed.',
-				aside: true
+				name: 'Alvium mating board',
+				price: '$448.80',
+				detail: 'JCB005 at WDL, out of stock. Page says Xavier and Orin. Not confirmed on Thor.',
+				aside: true,
+				mark: 'Wait for a BSP'
+			},
+			{
+				name: 'SDI or HDMI bridge',
+				price: 'Off',
+				detail: '1080p60, or an unconfirmed 4K HDMI card. The monitor feed is already the USB capture.',
+				aside: true,
+				mark: 'Off the cart'
 			}
 		]
 	}

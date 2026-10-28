@@ -81,7 +81,7 @@ as CSI *or* GMSL. You’re picking **cable plant**.
 | FPD-Link III | 10–15 m | DeSer → CSI | TI’s GMSL rival. Fewer Jetson boards |
 | HSB / CoE | Ethernet | Holoscan Sensor Bridge | NVIDIA’s Ethernet-sensor story. AGX kit QSFP |
 | HDMI | meters | bridge chip → CSI | Pocket cameras. 4K30 maybe |
-| 3G-SDI | long | CTI JCB003 → CSI | **1080p only** |
+| 3G-SDI | long | bridge → CSI | **1080p only.** Off the cart. The USB capture is already that picture. |
 | 12G-SDI | long | no cheap Jetson card | PYXIS 4K out; Thor can’t ingest 12G off-the-shelf |
 | USB UVC | 3–5 m | USB | Easy, latency, not the take |
 | GigE / PoE IP | 100 m | Ethernet, already compressed | Our original sat idea; no RAW into ISP |
@@ -146,8 +146,11 @@ the usual starting point.
 ## How I’d shop if we widen past Blackmagic
 
 **Body (on the box):** CSI IMX585 or Alvium C-mount, 20 cm flex, Thor
-NVENC. Add a PL /i reader later if you care. This is the *camera
-Thor was designed for*.
+NVENC. The Rogue-T5 header is the Samtec QSH-060 (CTIM-00160). Four
+lanes is one 4K30 RAW camera into the ISP. The cart does not include
+a module yet: the VC IMX585 driver tree is still Orin, and the Alvium
+mating board’s own page does not list Thor. Add a PL /i reader later
+if you care. This is the *camera Thor was designed for*.
 
 **Sats:** Alvium GM2 or NileCAM81 GMSL2, 5–10 m FAKRA, PoC, hardware
 sync. Not Cooke /i unless you bolt a reader on.
@@ -346,7 +349,7 @@ Full thermal math: [references/THERMAL.md](references/THERMAL.md).
 
 **Rogue-T5 is the preferred carrier** (2026-09-02). Smallest
 production board that takes T4000 *and* T5000; camera I/O is an
-add-on (JCB022 GMSL, JCB003 3G-SDI, MIPI). 2× 10GbE + 2.5G on
+add-on on the 16-lane MIPI header (a CSI module for the body 4K, JCB022 later if a sat must be RAW). 2× 10GbE + 2.5G on
 locking IX plugs (need breakout cables). 12 V.
 
 Rogue-T5 + T4000 + HS is the smallest catalog stack: about

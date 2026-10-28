@@ -5,11 +5,11 @@ group: "hardware"
 summary: "Cart T at the 2026-10-27 streets: $8,312.57 required. Each line, the part on the buy, and the ones set aside."
 ---
 
-# Cart T
+# Hardware shopping
 
 The published page is the cart layout (`src/lib/cart.ts`). This chapter is the same brief for the repository. Streets below were read 2026-10-27 unless a line says otherwise. Confirm before you click. Product calls stay in INTERCONNECT, SENSORS, LENS, and the thermal note.
 
-**Required: $8,312.57.** That sum includes three placeholder lines (two turrets, one EVB, one PoE switch). HDMI capture is **$80** and stays off the required total. JCB003 is **$1,538** and stays on the sheet so it is not ordered as a 4K pipe.
+**Required: $8,312.57.** That sum includes three placeholder lines (two turrets, one EVB, one PoE switch). HDMI capture is **$80** and stays off the required total. The body 4K sensor is not on the order yet. SDI and HDMI bridge cards are off the cart.
 
 ## What the buy is
 
@@ -23,7 +23,7 @@ The lab brick is still the AGX Thor Developer Kit (a T5000 in NVIDIA’s shell).
 
 A Blackmagic body speaks HDMI or 12G-SDI. Thor speaks CSI. Three honest paths:
 
-**A. Capture into CSI.** The catalog SDI card is 1080p60. Live 4K into the Thor ISP is not a part we can order.
+**A. Bridge the PYXIS into CSI.** The SDI card is 1080p60, and there is no 12G card. That door is off the cart. The USB capture is already the monitor picture.
 
 **B. The camera keeps the master.** BRAW and /i stay on the PYXIS. Thor gets a picture to look at. This is the cart.
 
@@ -130,13 +130,27 @@ The switch is a **$200** placeholder. It powers the two turrets and nothing else
 
 USB HDMI capture is **$80** optional, and off the required total. A real dongle is anywhere from about $30 to $200. It is the live-AI proxy until a CSI or GMSL add-on exists. It is not the take. The take is BRAW on the PYXIS.
 
-## 10 — JCB003, leave it
+## 10 — 4K into Thor
 
-**$1,538** at [WDL](https://www.wdlsystems.com/connect-tech-jcb003-01). MPN `JCB003-01`, WDL SKU `1CJCB031`. Four available. It does run on a Rogue-T5. Do not buy it.
+**Open.** Not on this order.
 
-Two 3G-SDI inputs into MIPI, 1080p60. The PYXIS 12G output does not become 4K by passing through this board. It stays on the sheet so nobody adds it as a 4K pipeline.
+Two different 4K pictures arrive at Thor, and only one of them is missing a part.
 
-**JCB010**, the HDMI bridge, is still a quote. Its public page is Orin and Xavier. Confirm a Thor BSP before that becomes a line. 4K30 only if the bridge and the BSP both allow it.
+The satellites encode 4K30 H.265 in the camera. Ethernet carries about 80 Mbps each. Thor stores those streams and can decode them. That 4K is already the design. The turret and the dev board are still unnamed placeholders.
+
+The body 4K is the one Thor itself encodes. The Rogue-T5 camera input is one Samtec QSH-060, sixteen MIPI CSI-2 lanes (CTIM-00160). Four lanes is one 4K30 RAW camera. Those pixels land in the ISP, and the NVENC makes the HEVC. That uses one of the two HQ encoders. The header is on the carrier we are already buying. Nothing on the order mates to it.
+
+The sensor to aim at is a Sony Starvis 4K module. Vision Components **VC MIPI IMX585** is 3840×2160, up to 72 fps, **€244.99** on the thousand-piece flyer. That is not a qty-1 street checked this pass. The public driver tree stops at Orin. VC said Thor drivers would follow project demand from the end of 2025, and the repo does not show that overlay yet.
+
+The header is not the module’s flex. Something has to mate the QSH. Connect Tech’s Alvium board, **JCB005**, is **$448.80** at WDL and out of stock. The product page still limits it to Xavier and Orin. A March 2026 WDL note says to order it for a Rogue-T5. Those pages disagree, so it is not a buy.
+
+The open move is a yes or no from each vendor: a Thor device tree for the IMX585, and a Thor BSP for one 4-lane camera on that header. A one-camera flex is a small board once those answers are yes.
+
+| Choice | Price | Why |
+|---|---|---|
+| VC MIPI IMX585 | **€245** | The 4K sensor to aim at. Thousand-piece flyer. Driver not shown for Thor. |
+| JCB005 Alvium mating board | **$448.80** | Out of stock. Page says Xavier and Orin. Not confirmed on Thor. |
+| SDI or HDMI bridge | Off | 1080p60, or an unconfirmed HDMI card. The monitor feed is already the USB capture. |
 
 ## Choices that still move the build
 
@@ -146,19 +160,20 @@ Two 3G-SDI inputs into MIPI, 1080p60. The PYXIS 12G output does not become 4K by
 - Name an RV1126B PoE turret and a dev board before RV1126 stock disappears.
 - FORECR at **€999** is the escape if the Rogue slips. It is a different brick and a bigger board.
 - A third IX lead is **$82** when the 2.5G jack needs a switch.
+- Get a Thor device tree for the IMX585, and a Thor BSP for one 4-lane camera on the Rogue header. That is the body 4K.
 
 ## What not to buy
 
 - Seeed `900-13834-0000-001` at **$3,399**. Wrong part number.
 - Integrated Rogue assemblies at **$9,291** and up, unless someone else is soldering the SOM.
 - CKG073 at **$784** in place of two CBG695 leads.
-- JCB003 as a 4K pipeline.
+- An SDI or HDMI bridge card. The USB capture is already the 1080p monitor picture, and neither bridge is the body 4K.
 - PYXIS EF or L “and add /i later.” The mount is not swappable.
 - Auvidea X242 until T4000 is in writing.
 - A Pocket opened up to harvest CSI. Wrong pinout.
 - PYXIS 12K. Money, an early sensor-board recall, and 10GbE this cart does not need.
 
-## Cart S, the other buy
+## The lab kit
 
 The resin shell wraps the AGX kit, not this sandwich.
 
@@ -177,8 +192,53 @@ That is not the production ceiling. Cart T is.
 ## Sources
 
 - Arrow T4000 `900-13834-0000-000`, **$2,749**, 2026-10-27. Two stock counts, one price.
-- WDL Rogue-T5 carrier **$1,806**; AGX302-002 **$9,291**; AGX302-005 **$9,367**; MSG103 **$316**; CBG695 **$82**; CKG073 **$784**; JCB003-01 **$1,538**.
+- WDL Rogue-T5 carrier **$1,806**; AGX302-002 **$9,291**; AGX302-005 **$9,367**; MSG103 **$316**; CBG695 **$82**; CKG073 **$784**.
+- WDL JCB005 **$448.80**, out of stock. Product page still says Xavier and Orin. Not on the buy.
+- VC MIPI IMX585 **€244.99** on the thousand-piece flyer. Not a qty-1 street. Not on the buy.
 - Digi-Key ATS-NVP-3739-C1-R0 **$55.58**; Mouser **$61.37**; ATS-NVA-3740-C1-R0 **$125.27**.
 - B&H PYXIS 6K PL catalog card **$2,475**, out of stock. EF and L **$2,245**. Irix kit **$6,355**.
 - ADATA Legend 710 1 TB **$146.99**, Amazon, sold by ADATA. Not a locked MPN.
 - Not re-fetched this pass: AGX kit **$3,499**, FORECR **€999**, Gauntlet **A$3,999**, turret / EVB / switch / HDMI placeholders.
+
+## Crib selection
+
+The numbered carts below are the selection the hardware crib reads. The discussion above is the same buy.
+
+### NVIDIA Jetson T4000 SOM
+
+| | |
+|---|---|
+| PN | `900-13834-0000-000` |
+| Notes | Production module. 64 GB, one NVENC. |
+
+### Connect Tech Rogue-T5
+
+| | |
+|---|---|
+| Carrier-only | PN `AGX302` |
+| Notes | Preferred carrier. T4000 and T5000. |
+
+### NVIDIA AGX Thor Developer Kit
+
+| | |
+|---|---|
+| PN | `945-14070-0080-000` |
+| Notes | Lab brick. T5000 in NVIDIA’s shell. |
+
+### Cart S — software this week
+
+1. AGX Thor Dev Kit — `945-14070-0080-000`
+2. Pocket as an HDMI mule
+
+### Cart T — T4000 + Rogue-T5
+
+1. T4000 SOM — `900-13834-0000-000`
+2. CTI Rogue-T5 `AGX302` — carrier only
+3. ATS Thor HS — passive `ATS-NVP-3739` or active `ATS-NVA-3740`
+4. PYXIS 6K PL — BRAW and Cooke /i
+5. 1–2× RV1126/B PoE turrets
+6. 1× RV1126B EVB
+
+### Cart C — cine body that is actually /i
+
+Same as T. The PYXIS PL is non-negotiable. The mount is not swappable.

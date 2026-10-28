@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { captureCents, checked, money, pieces, requiredCents, sdiCents, type Stance } from '$lib/cart';
+	import { captureCents, checked, money, pieces, requiredCents, type Stance } from '$lib/cart';
 
 	const stanceLabel: Record<Stance, string> = {
 		buy: 'On the cart',
@@ -27,8 +27,8 @@
 				<p class="caption">HDMI capture. Optional. Off the required total.</p>
 			</div>
 			<div class="total leave">
-				<p class="figure minor">{money(sdiCents)}</p>
-				<p class="caption">JCB003. On the sheet so it is not ordered by accident.</p>
+				<p class="figure minor">Open</p>
+				<p class="caption">Body 4K into the ISP. A sensor on the Rogue header. Not on this order.</p>
 			</div>
 		</div>
 	</header>
@@ -44,7 +44,8 @@
 		<p>
 			Thor lives in the body: a T4000 on a Rogue-T5, a bench heatsink, an NVMe ring, a 12&nbsp;V
 			brick, and two IX-to-RJ45 leads. The PYXIS 6K PL records Blackmagic RAW and the Cooke /i
-			sidecar. Thor’s live look is a monitor feed until a CSI or GMSL card exists.
+			sidecar. Thor’s live look is the USB monitor feed. The body 4K is a sensor on the Rogue
+			camera header, into the ISP, then the NVENC.
 		</p>
 		<p>
 			The T4000’s hardware encoder does two 4Kp30 streams. A body plus two satellites is therefore
@@ -70,8 +71,8 @@
 		</p>
 		<ol class="paths">
 			<li>
-				<strong>Capture into CSI.</strong>
-				The catalog SDI card is 1080p60. Live 4K into the Thor ISP is not a part we can order.
+				<strong>Bridge the PYXIS into CSI.</strong>
+				The SDI card is 1080p60, and there is no 12G card. That door is off the cart.
 			</li>
 			<li>
 				<strong>The camera keeps the master.</strong>
@@ -94,7 +95,7 @@
 						<p class="piece-kicker">{piece.kicker}</p>
 						<h2>{piece.name}</h2>
 					</div>
-					<p class="badge">{stanceLabel[piece.stance]}</p>
+					<p class="badge">{piece.badge ?? stanceLabel[piece.stance]}</p>
 				</div>
 
 				<div class="piece-grid">
@@ -122,7 +123,7 @@
 				<ul class="options">
 					{#each piece.options as option (option.name)}
 						<li class:taken={option.taken} class:aside={option.aside && !option.taken}>
-							<p class="mark">{option.taken ? 'This line' : 'Set aside'}</p>
+							<p class="mark">{option.mark ?? (option.taken ? 'This line' : 'Set aside')}</p>
 							<p class="opt-price">{option.price}</p>
 							<p class="opt-name">{option.name}</p>
 							<p class="opt-detail">{option.detail}</p>
@@ -145,6 +146,10 @@
 			</li>
 			<li>FORECR at €999 is the escape if the Rogue slips. It is a different brick and a bigger board.</li>
 			<li>A third IX lead is $82 when the 2.5G jack needs a switch.</li>
+			<li>
+				Ask Vision Components for a Thor device tree on the IMX585, and Connect Tech for a Thor BSP
+				for one 4-lane camera on the Rogue header.
+			</li>
 		</ul>
 		<p class="fine">
 			Street prices are qty-1 USD from public listings on {checked}, except the AGX kit, the FORECR
