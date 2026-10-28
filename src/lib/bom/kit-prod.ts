@@ -2,7 +2,7 @@ import raw from './kit-prod.csv?raw';
 
 /**
  * Committed explode of daBOM `kit-prod`. The static site reads this file.
- * Refresh it with GET /api/v1/items/kit-prod/bom.csv while the crib is running.
+ * Refresh it with `npm run bom` while the crib is running.
  * Assembly rows have blank prices. Sum `ext_for_one_usd` on buy rows only.
  */
 
