@@ -239,7 +239,13 @@
 
 	.total.main {
 		background: var(--bg-2);
-		border-color: color-mix(in oklch, var(--tungsten) 55%, var(--line));
+		border-color: color-mix(in oklch, var(--ice) 55%, var(--line));
+	}
+
+	.total.main .figure {
+		font-family: 'Tactic ExtExd Ultra', var(--font-hud);
+		font-weight: 800;
+		color: var(--ice);
 	}
 
 	.total.leave {
