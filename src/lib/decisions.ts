@@ -1,3 +1,7 @@
+/**
+ * Closed-call ledger for the repository and the CMS.
+ * The public /decisions page does not render this list.
+ */
 import openJson from '../../docs/decisions/open.json';
 
 export type DecisionStatus = 'locked' | 'open' | 'lab';

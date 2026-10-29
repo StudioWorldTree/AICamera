@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import ChapterList from '$lib/components/ChapterList.svelte';
-	import DecisionRow from '$lib/components/DecisionRow.svelte';
 	import ShellViewer from '$lib/components/ShellViewer.svelte';
 	import { hardwareDocs } from '$lib/content';
-	import { locked } from '$lib/decisions';
 
 	const chapters = hardwareDocs();
-	const headline = locked.slice(0, 10);
 </script>
 
 <svelte:head>
@@ -91,18 +88,13 @@
 
 <section class="ledger shell">
 	<div class="head">
-		<h2>Already decided</h2>
-		<a href="{base}/decisions/">Full ledger, including still-open</a>
+		<h2>Now</h2>
+		<a href="{base}/decisions/">What we're building</a>
 	</div>
 	<p class="note">
-		Do not re-litigate without new evidence. Mode switch drops AI, never record. Live overlay is a
-		depth-test, not a DiT. Record path is HEVC.
+		Thor records in the body. An RTX PRO 6000 does the overnight work. The NAS holds the takes.
+		The buy in front of us is the T4000 sandwich. Extra cameras are optional.
 	</p>
-	<div>
-		{#each headline as item (item.id)}
-			<DecisionRow {item} />
-		{/each}
-	</div>
 </section>
 
 <section class="chapters shell">
