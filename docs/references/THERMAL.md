@@ -2,7 +2,7 @@
 title: "Thermal"
 kicker: "Heat"
 group: "hardware"
-summary: "TDG-12271-001 v1.3. TTP max 75 °C. Fanless record in a sealed head with a rear fin plate is the honest steady state. Continuous 70 W AI does not fit a cine shell, and a fan does not go in the mic cavity."
+summary: "TDG-12271-001 v1.3. TTP max 75 °C. A sealed head plus a rear fin plate is the silent record body, about a 70% bet. Continuous 70 W AI needs a sled-sized plate. No fan in the mic cavity."
 ---
 
 # T4000 thermal — facts from TDG-12271-001 v1.3
@@ -268,12 +268,65 @@ existing rule fires: drop AI, keep record.
 Thor PWM + tach exist if we use one fan. Default fan table is an
 example; we must qualify our own cooler in software (ch. 4.2 note 1).
 
+## Can the body stay silent? (2026-10-28)
+
+A T4000 in the camera, with a microphone in the same head, is a
+likely product if steady state is record. It is an unlikely product
+if the head has to sit at 70 W with the AI on.
+
+| Promise | Odds | Why |
+|---|---|---|
+| Sealed fanless head, record all day, room air | **~70%** | 30 W through the TTP lands near 58 °C. Cap is 75 °C. No rotor, so no fan in the mic. |
+| Same head on a warm set, ~35 °C | **~50%** | 35 W through the TTP sits on the cap. Sun on a black face spends the rest. |
+| Continuous 70 W AI, cine-sized body, no fan anywhere | **~15%** | Needs ~0.4 m² of fin. That is a battery brick, not a cheek. |
+| Rear fan, "quiet enough" for the onboard mic | **low** | Same rigid shell. Path is structure-borne as well as air. Scratch tracks on quiet sets pick this up. Ruled out. |
+
+The 70% moves on one measurement: thermocouple on a T4000 + Rogue
+while encoding, 10G PHYs unlinked. Under ~30 W through the plate, the
+silent body is the design. Over ~40 W, the rear plate has to grow and
+the all-day silent claim shrinks to the burst. Coil whine and the SSD
+are the leftover noises. Neither is a blade tone.
+
+Cold head buys about **10 minutes** of AI from a warm record state,
+then drop AI and keep record.
+
+## Which heatsink actually helps
+
+Air is the resistor. Still-air convection is about **6–8 W/m²K**.
+Radiation adds about as much again on the outer faces only. Copper, a
+vapor chamber, and liquid-metal paste shorten the path from the TTP
+to that surface. They are worth doing. They do not multiply what a
+given area can hand to still air. Fins closer than **8 mm** fight
+each other. Past about **50 mm** tall, the air leaving the top is
+already hot.
+
+| Level | What the air sees | 25 °C room, silent | 35 °C set |
+|---|---|---|---|
+| ATS brick, 20 mm fins on the module | ~0.03 m², less inside a shell | Record only with fins in open air | Over the cap |
+| Body skin, pipes into the shell | 0.09 m² | Record, plate near 58–64 °C | Record on the cap |
+| **Rear plate on the body**, ~150 × 120 mm, 40 mm fins | **~0.20 m²** | Record with margin, into the mid-40 W range | Record becomes comfortable |
+| Plate on the sled, ~300 × 150 mm, 40 mm fins, vertical, uncovered | ~0.40 m² | 70 W AI starts to close | 70 W is marginal |
+
+The rear plate is the level that changes the camera. It sits outside
+the seal, so the mic still has no rotor in its cavity, and it is what
+turns the warm-set record case into something you can design around.
+The sled plate is the only passive sink that makes full-time AI
+honest, and only while it sees free air and stays a chimney. Flat,
+bagged, or flagged, it falls back to the record budget. The head can
+stay small. That sink cannot.
+
+A catalog "100 W passive" part is a forced-air rating. The ATS figure
+is 100 W at 50 °C with 8 CFM.
+
 ## Body-integration hold
 
-Thor-in-body is still the product shape. It is **not** a solid plan
-until we pick 1 vs 2 vs 3 above and measure a T4000 + Rogue-T5 +
-ATS stack. Lab remains the AGX kit in resin (kit has its own fan;
-leave it). Production body is metal. See [POWER.md](../POWER.md),
+Working plan is architecture 1: sealed metal head, heatpipes to a
+rear fin plate, no fan, Rogue 2.5G only, V-mount buck on the battery
+plate. Steady promise is record. AI is a burst of about ten minutes.
+
+Still measure T4000 + Rogue-T5 + ATS on the TTP before metal CAD.
+Lab remains the AGX kit in resin (kit has its own fan; leave it).
+Production body is metal. See [POWER.md](../POWER.md),
 [ENCLOSURE.md](../ENCLOSURE.md).
 
 ## Don’t
