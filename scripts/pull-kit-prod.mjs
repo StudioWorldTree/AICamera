@@ -1,9 +1,9 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Refresh the committed Cart T export from the local daBOM crib.
  *
- *   npm run bom
- *   DABOM_API_BASE=http://[::1]:5188/api/v1 npm run bom
+ *   bun run bom
+ *   DABOM_API_BASE=http://[::1]:5188/api/v1 bun run bom
  *
  * Does not commit. Review the diff, then commit the CSV with the site.
  */
