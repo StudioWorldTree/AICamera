@@ -5,7 +5,6 @@
     "": {
       "name": "aicamera",
       "dependencies": {
-        "chiptune3": "^0.8.9",
         "three": "^0.185.1",
       },
       "devDependencies": {
@@ -160,8 +159,6 @@
     "ccount": ["ccount@2.0.1", "", {}, "sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg=="],
 
     "character-entities": ["character-entities@2.0.2", "", {}, "sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ=="],
-
-    "chiptune3": ["chiptune3@0.8.9", "", {}, "sha512-RDH/1HNkxm140p/hGJFiMUFurYWVZny2dg5D6QO7iO13vcFF2kKuRraI19BOfYqz7nM///8vhQYMsVDxO49Dgg=="],
 
     "chokidar": ["chokidar@4.0.3", "", { "dependencies": { "readdirp": "^4.0.1" } }, "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA=="],
 

@@ -5,7 +5,7 @@ deltas: `openspec/changes/*/specs/cartridge-runtime/`.
 
 ## Purpose
 
-The packer and `/bay` read one catalog of cartridges: costs, shelves,
+The packer reads one catalog of cartridges: costs, shelves,
 exclusive tags, and named-mode presets. Catalog JSON lives at
 `sim/3090/catalog.json`. The packer algorithm is a later change.
 
@@ -25,7 +25,7 @@ A null cost means unmeasured, not free.
 
 #### Scenario: seed catalog
 - GIVEN the catalog file for this repo
-- WHEN a packer or `/bay` reads it
+- WHEN a packer reads it
 - THEN every always-on, slottable, and never-on-thor cartridge used by
   named modes is present with kind, shelf, and job set
 

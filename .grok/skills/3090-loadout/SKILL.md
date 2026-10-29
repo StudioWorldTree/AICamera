@@ -14,7 +14,7 @@ bash .grok/skills/3090-loadout/scripts/loadout.sh
 curl -sf --max-time 3 http://100.103.147.70:8745/loadout.json
 ```
 
-Glass: `/bay` (vite live via `/bay-api`, Pages last plate). Feed unit `aicam-bay-feed` binds Tailscale only.
+Glass: fractal1-web (`http://fractal1/` on the tailnet, public https://fractal1.vm.worldtree.network). This notebook does not host `/bay`. Feed unit `fractal1-web-feed` binds Tailscale `:8745` only.
 
 (`FRACTAL1_HOST` overrides the SSH alias.)
 

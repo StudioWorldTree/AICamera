@@ -1,102 +1,46 @@
 # stage-bay
 
-Living spec for the hardware notebook bay: fractal1 brick state as a
-Tailscale-only JSON feed. In-flight deltas: `openspec/changes/*/specs/stage-bay/`.
+The live bay is fractal1-web, not this hardware notebook. In-flight
+deltas: `openspec/changes/*/specs/stage-bay/`.
 
 ## Purpose
 
-`/bay` needs a JSON snapshot of fractal1 without SSHing. Bind like SMB:
-Tailscale IP only. GitHub Pages never calls the feed.
+fractal1-web owns the EVF glass, the Tailscale loadout feed, and the
+public tunnel. This notebook keeps the 3090 derate table in
+`docs/3090-SIM.md` and does not render a bay.
 
 ## Requirements
 
-### Requirement: Tailscale-only loadout feed
-Fractal1 SHALL serve `GET /loadout.json` on `100.103.147.70:8745` and
-SHALL NOT bind that port on `0.0.0.0`. The body SHALL include gpu, ram,
-swap (zram vs swapfile), procs, and stack with resident flags.
+### Requirement: Notebook does not host the bay
+This repo SHALL NOT ship a Bay item in primary nav, a `/bay` route, a
+committed Pages plate, or a `/bay-api` dev proxy.
 
-#### Scenario: GET from the Mac
-- GIVEN the unit is active and Tailscale is up
-- WHEN `curl -sf --max-time 3 http://100.103.147.70:8745/loadout.json`
-- THEN the response is JSON with `gpu.vram_used_mib` and `swap.disk_used_mb`
+#### Scenario: primary nav
+- GIVEN the hardware notebook
+- WHEN primary nav renders
+- THEN there is no Bay item
 
-### Requirement: Bay glass reads as an EVF
-`/bay` SHALL present VRAM, power, RAM, zram vs disk swap, and the model
-mag rack in a dark EVF chrome (tungsten, tally, waveform). It SHALL NOT
-use the docs paper-grid as the primary surface.
+#### Scenario: static build
+- GIVEN a GitHub Pages build of this repo
+- WHEN a visitor requests `/bay/`
+- THEN the site does not prerender a bay glass
 
-#### Scenario: idle brick plate
-- GIVEN last plate or live idle snapshot
-- WHEN `/bay` renders
-- THEN VRAM readout, waveform fill, and mag rack are visible on a dark field
-
-### Requirement: Bay is its own section
-The hardware notebook SHALL expose brick state at `/bay`, a nav sibling
-to Kit and Docs, not a mdsvex docs chapter.
-
-#### Scenario: filmmaker opens Bay
-- GIVEN the notebook
-- WHEN they follow Bay in primary nav
-- THEN they reach `/bay/` and the glass is the EVF, not a markdown article
-
-### Requirement: Dark-locked glass
-`/bay` SHALL render in its dark EVF palette regardless of the site light/dark toggle.
-
-#### Scenario: site is in light theme
-- GIVEN `data-theme=light` on the document
-- WHEN `/bay` is shown
-- THEN the bay surface stays dark (tungsten, tally, near-black)
-
-### Requirement: Live on the tailnet, plate on Pages
-Live metrics SHALL be fetched only from a same-origin proxy (vite dev, or
-the fractal1 nginx build with `VITE_BAY_LIVE=1`) onto the Tailscale-bound
-feed. GitHub Pages SHALL display a committed last plate. Neither the feed
-nor the fractal1 site SHALL listen on `0.0.0.0`.
-
-#### Scenario: Pages visitor
-- GIVEN a public Pages build
-- WHEN `/bay` loads
-- THEN the glass shows the last plate, not a failed fetch to `100.x`
-
-#### Scenario: vite on the tailnet
-- GIVEN `npm run dev` and fractal1 reachable
-- WHEN `/bay` loads
-- THEN the glass updates from `/bay-api/loadout.json`
-
-### Requirement: Live hosting lives in fractal1-web
-The fractal1-hosted live bay (tailnet control surface, read-only public
-origin, feed unit, tunnel) SHALL be owned by the `fractal1-web` repo
-(`duke/fractal1-web` on mimir), not this notebook. This repo SHALL keep
-the Pages plate and the dev proxy only.
+### Requirement: Live bay is fractal1-web
+The glass, the feed unit, nginx, and the tunnel SHALL be owned by
+`fractal1-web` (`duke/fractal1-web` on mimir, deployed at
+`~/work/fractal1-web`). The feed SHALL serve `GET /loadout.json` on the
+Tailscale address only and SHALL NOT bind `0.0.0.0`.
 
 #### Scenario: where the live bay is
 - GIVEN someone needs the live glass or its deploy
 - WHEN they look in this repo
-- THEN `docs/3090-SIM.md` § Bay glass points them to fractal1-web
+- THEN `AGENTS.md` and `docs/3090-SIM.md` § Bay glass point them at fractal1-web
 
-### Requirement: Swap split
-The glass SHALL distinguish zram (compressed RAM) from the disk swapfile.
-It SHALL NOT label zram as “swapping to disk.”
+### Requirement: Derates stay with the sim note
+T4000 read factors (filters ×0.13, bandwidth ×0.30) SHALL live in
+`docs/3090-SIM.md`. The loadout feed SHALL NOT be required to emit them.
 
-#### Scenario: idle brick
-- GIVEN zram ~100 MB and swapfile ~7 MB
-- WHEN the glass renders swap
-- THEN disk paging is the swapfile number and zram is labeled as compressed RAM
-
-### Requirement: Stack vs resident
-The glass SHALL show the 3090 stack (SAM2-tiny, CLIP, FLUX.2 klein 4B)
-as resident only when a live snapshot says so; otherwise on-disk / on the cart.
-
-#### Scenario: idle after unload
-- GIVEN no python CUDA process
-- WHEN the mag rack renders
-- THEN SAM2, CLIP, and klein read as on the cart, not loaded
-
-### Requirement: HUD type
-Bay titles SHALL use Space Age. HUD numerals SHALL use Tactic Extra
-Extended Black.
-
-#### Scenario: VRAM readout
-- GIVEN a VRAM used figure
-- WHEN it is painted
-- THEN the digits are Tactic Extra Extended Black
+#### Scenario: quoting a T4000 fps
+- GIVEN a 3090 FACT fps
+- WHEN a T4000 read is printed
+- THEN the factor comes from `docs/3090-SIM.md`

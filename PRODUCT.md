@@ -7,8 +7,8 @@ product
 ## Users
 
 Duke on the brick EVF: watching fractal1’s 3090 while models swap. Not a
-public marketing page. `/bay` is a filmmaker tally — tungsten, digits,
-what is in the gate.
+public marketing page. The filmmaker tally — tungsten, digits, what is
+in the gate — lives in fractal1-web. This notebook does not ship `/bay`.
 
 ## Product Purpose
 

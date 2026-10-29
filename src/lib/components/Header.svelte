@@ -7,7 +7,6 @@
 	const links = [
 		{ href: '/', label: 'Overview' },
 		{ href: '/kit/', label: 'Kit' },
-		{ href: '/bay/', label: 'Bay' },
 		{ href: '/decisions/', label: 'Decisions' },
 		{ href: '/docs/', label: 'Docs' },
 		{ href: '/changes/', label: 'Changes' }
@@ -125,11 +124,6 @@
 		.mobile a:hover {
 			color: #3ef0ff;
 			text-shadow: 0 0 10px #3ef0ff;
-		}
-		.desk a[href$='/bay/']:hover,
-		.mobile a[href$='/bay/']:hover {
-			color: #ff3ec8;
-			text-shadow: 0 0 10px #ff3ec8;
 		}
 		.ghost:hover {
 			border-color: #b8ff3e;

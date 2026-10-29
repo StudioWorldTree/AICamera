@@ -8,7 +8,7 @@
 
 The catalog says what a legal pack is. Nothing yet takes a desired set
 and returns resident / refused / evict. Without that function the 3090
-loader and `/bay` slot bounce have nothing to call.
+loader has nothing to call. The slot board lives with the bay in fractal1-web.
 
 ## What
 
@@ -26,8 +26,8 @@ loader and `/bay` slot bounce have nothing to call.
 
 ## User journey & surfaces
 
-No new UI because `/bay` bounce is `add-cartridge-glass`. This change is
-the function glass and the harness will call. CLI: `python3 sim/3090/pack.py --envelope 3090 klein-4b sam2-tiny`.
+No new UI in this notebook. The slot board is `add-cartridge-glass` in fractal1-web. This change is
+the function the harness will call. CLI: `python3 sim/3090/pack.py --envelope 3090 klein-4b sam2-tiny`.
 
 ## Out of scope
 

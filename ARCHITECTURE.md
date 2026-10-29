@@ -6,8 +6,8 @@ is `sim/3090/catalog.json`. Packing (`add-cartridge-pack`) is later.
 ## Parakeet ASR process (add-parakeet-api)
 
 GitHub Pages is adapter-static SSG. The ASR API is a **standalone Bun
-process** on fractal1 (`asr/server`), sibling to `aicam-bay-feed`
-(`:8745`), not mounted in SvelteKit. Bind is the Tailscale IPv4 only on
+process** on fractal1 (`asr/server`), sibling to fractal1-web's feed
+(`fractal1-web-feed`, `:8745`), not mounted in SvelteKit. Bind is the Tailscale IPv4 only on
 **`:8750`**. UPnP is on; never `0.0.0.0`.
 
 ```
