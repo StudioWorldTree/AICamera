@@ -2,7 +2,7 @@
 title: "Thermal"
 kicker: "Heat"
 group: "hardware"
-summary: "TDG-12271-001 v1.3. TTP max 75 °C. 70 W fanless in a cine envelope is not honest. Body-as-radiator ~40 W still air; 70 W AI wants heatpipes to a real radiator and at most one slow fan. Measure TTP before metal CAD."
+summary: "TDG-12271-001 v1.3. TTP max 75 °C. Fanless record in a sealed head with a rear fin plate is the honest steady state. Continuous 70 W AI does not fit a cine shell, and a fan does not go in the mic cavity."
 ---
 
 # T4000 thermal — facts from TDG-12271-001 v1.3
@@ -86,13 +86,20 @@ ATS Thor (fits TTP, Digi-Key):
 | `ATS-NVA-3740` | Fan in the fins | same | 104 g | 95 W @ 50 °C |
 | `ATS-NVA-3752` | Blower | 92 × 101 × 29 mm | 174 g | 175 W — T5000, skip |
 
-500 LFM ≈ 2.5 m/s. That is **chassis airflow**, not still air. ATS
-passive at 200 LFM is ~0.45 °C/W — works at 25–35 °C **with a fan
-somewhere in the box**. Natural convection on an 87 × 101 × 20 mm
-fin stack is ~1.5–2.5 °C/W. At 2 °C/W × 70 W = **140 °C rise**.
-TTP would be ~165 °C. **A small “passive” brick does not cool 70 W
-in still air.** The word passive in the ATS catalog means “we didn’t
-put a fan on this extrusion; your system air does.”
+QATS (the maker), not the distributor line cards: **100 W at 50 °C
+ambient with 8 CFM**. Unducted flow is **0.4 °C/W at 1.0 m/s**
+(200 ft/min) and **0.2 °C/W at 2.0 m/s**. Fan not included. There is
+**no still-air column**. Digi-Key’s “0.21 °C/W natural” is that
+2 m/s figure filed under the wrong heading. Natural is better than
+forced only in a catalog bug.
+
+Still air on this extrusion is our estimate, ~**1.5 °C/W** with the
+fins vertical and uncovered (buoyancy ~0.1–0.2 m/s, scaled off the
+1 m/s point). At 1.5 °C/W × 70 W the rise is **105 °C**. TTP would
+sit near 130 °C in a 25 °C room. **The bench brick does not cool
+70 W in still air.** “Passive” here means “we didn’t put a fan on
+this extrusion; your system air does.” Inside a shell the number is
+worse, because the fins then heat a pocket of air.
 
 CTI Rogue-T5 SKU **AGX302-02Y** is “Thor Passive Cooling” on a T5000
 assembly (~$8.4k). Same story: a chunk of aluminum, not a silent
@@ -109,22 +116,154 @@ might get 50 W. **70 W fanless in a PYXIS-class envelope is not
 honest.** Record-only (NVENC + CSI, AI dropped) is more like
 15–30 W — that *is* fanless-capable.
 
+A microphone in the head rules out a rotor in the head. Blade-pass
+and turbulence couple into the shell, and the mic is in that shell.
+The fan, if one is ever needed, lives on a rear plate that does not
+share the acoustic cavity. First design is no fan at all.
+
 Ranked thermal architectures (best first for this product):
 
-1. **Body is the radiator.** TTP → TIM → vapor chamber / heatpipes
-   → magnesium or aluminum cine shell, black anodized, finned back.
-   Honest **~40 W** still air. Matches “drop AI, never record.”
-2. **Heatpipes to a V-mount / rear radiator + one large slow fan.**
-   One 80–92 mm on a fin stack, PWM from Thor (TDG ch. 4.2, default
-   table 750–2900 RPM). 70 W AI. Cine already sounds like this (RED).
-   Prefer this over three tiny blowers.
-3. **Remote radiator.** Heatpipes or a liquid loop to a battery-plate
-   or pack. Optical body stays cool and silent. More plumbing.
-4. **Catalog ATS/CTI HS on the lab bench.** Measure TTP with a
-   thermocouple at Fig. 3-2 before any custom body CAD.
+1. **Sealed head, rear fin plate, no fan.** TTP and the Rogue PHY
+   spreader → TIM → vapor chamber / heatpipes → fins on the back,
+   outside the seal. Mic and lens stay in the front. Honest steady
+   state is the **record** budget below (~35 W through the module).
+   Matches “drop AI, never record.”
+2. **Same plate, one large slow fan on the plate only.** Ducted
+   backward, PWM from Thor (TDG ch. 4.2). This is how 70 W AI gets
+   honest on a hot set. It is not the camera fan. Prefer it over
+   any blower in the head.
+3. **Radiator on the battery sled**, heatpipes or a loop across the
+   dovetail. Head stays small. More plumbing. Same silence.
+4. **Catalog ATS on the lab bench.** Measure TTP with a thermocouple
+   at Fig. 3-2 before any custom body CAD. The brick is the
+   instrument, not the lid.
 
-Do **not**: resin as a heat path; sealed plastic; many small fans;
-opening the TTP; promising sun-load before a metal prototype.
+Do **not**: resin as a heat path; a fan in the mic cavity; many small
+fans; opening the TTP; matte-black sun-facing skin; promising sun-load
+before a metal prototype.
+
+## What the box actually dissipates (2026-10-28)
+
+Electrical power in becomes heat. The LED is the only light that
+leaves. Two paths, and they are not the same path: module watts cross
+the **TTP**; PHY, SSD, and regulator watts are born on the **carrier**
+and the drive.
+
+Rogue-T5, CTIM-00160 rev 0.01 (2026-07-17), page 30. Theoretical
+maximum is a T5000 MAXN pile, not our plant:
+
+| Term in their table | Watts | Ours |
+|---|---|---|
+| Module | 130 (T5000 MAXN) | T4000 **70** default, **90** throttle |
+| 2× USB 3.2 at 5 V / 3 A | 30 | not loaded |
+| 2× 10GbE linked | **6** (3 each) | link **one 2.5G** for the 0.24 Gbps haul; leave 10G dark |
+| 1× 2.5GbE linked | **2** | this jack |
+| 8× GMSL PoC | 40 | no; sats are on their own PoE switch |
+| NVMe | **10** budget | ~**2** at ~30 MB/s. The 10 W is a full-tilt drive |
+| Wi-Fi | 3 | Key E not populated |
+
+Their tested rows (idle, LLM, thermal chamber) are **TBD**. The
+thermal-options headings are empty. Weight line: board only, “with
+ethernet phy heat spreader”, also TBD. So CTI already knows the
+10GBASE-T PHYs need their own spreader, and they have not published
+a temperature. Their TTP cell on that page says **80 °C**, which is
+the **T5000** cap. T4000 stays **75 °C**.
+
+FORECR DSBOARD-THRMAX (UM rev 1.2): the power-consumption section
+says it will be completed later. No watts, no θ. What is published:
+**140 × 125 mm**, **18–36 V** in, 12 V fan connector, optional fan
+or heat spreader, carrier-only ambient **−40 to +85 °C** (same trick
+as the Rogue’s −40 to +85: the fiberglass, not the SOM). A 14.4 V
+V-mount is **under** 18 V, so this board wants a 24 V-class pack.
+That pack is bucked on the board; at ~93 % and 70 W the extra
+regulator heat is about **5 W** the Rogue does not pay, because the
+Rogue takes **12 V straight** onto SYS_VIN_HV. FORECR’s 1G RJ45 is
+cooler than a 10GBASE-T PHY (~1 W vs ~3 W). A QSFP DAC is cool; an
+optical module parks a few watts in the cage. Net: the Rogue is the
+smaller, cooler carrier **if the 10G PHYs stay unlinked**. FORECR
+is the escape board, and it is drawn around a fan.
+
+Our body, heat that has to leave:
+
+| Mode | Through the TTP | Elsewhere in the head | Head total |
+|---|---|---|---|
+| Record, 2.5G, light SSD | **25–35 W** (unmeasured; NVENC + ISP + DRAM + a light CPU) | ~2 PHY + ~2 SSD + ~2 bucks + ~1 sensor | **~32–42 W** |
+| Record, both 10G linked | same | **+6** | **~38–48 W** |
+| AI at the 70 W mode | **70** | ~6–10 | **~76–80 W** |
+| Sitting on the 90 W throttle | **90** | ~8–12 | **~100 W** |
+
+The 25–35 W record band is an estimate until the bench. It is not a
+datasheet row. Put the 12 V buck for a V-mount on the **battery
+plate**, not in the head. That is another few watts that does not
+have to cross the shell.
+
+## Still air, PYXIS-sized
+
+Vertical-plate convection at a 40 K rise is about **6 W/m²K**. A
+high-emissivity surface adds about **6 W/m²K** of radiation over the
+same rise (σΔ(T⁴) / ΔT, ε ≈ 0.8). Planning value **h ≈ 12 W/m²K**
+when every face is exposed. Bare aluminum radiates a sixth of that.
+Black anodize is the right IR finish **indoors**. In sun, black
+absorbs ~0.9 of 1000 W/m²: one 150 cm² face is an extra **~14 W**
+heater. A white high-ε coating (α ≈ 0.25) cuts that to ~4 W.
+
+PYXIS 6K envelope is 106 × 119 × 151 mm, geometric area **0.093 m²**.
+θ of that shell, uniform and unobstructed, is 1 / (12 × 0.093) ≈
+**0.90 °C/W**. A vapor-chamber couple from TTP to shell is another
+**0.15–0.25 °C/W** if it is actually designed. Call the stack
+**1.1 °C/W**. Lens, dovetail, and a hand eat area, so treat 1.1 as
+the optimistic bare body.
+
+TTP budget is min(75 °C, Tj − 0.24·P). Design Tj is **87 °C**, three
+degrees under the 90 °C software throttle, because the sensor is
+±3 °C. At 70 W that binds first: TTP must stay ≤ **70 °C**. At
+30–35 W the 75 °C cap binds.
+
+| Case | Rise at 1.1 °C/W | TTP from 25 °C air | TTP from 35 °C air |
+|---|---|---|---|
+| Record, 30 W through the TTP | 33 K | **58 °C**, fine | **68 °C**, fine |
+| Record, 35 W | 39 K | **64 °C**, fine | **74 °C**, on the cap |
+| AI, 70 W | 77 K | **102 °C**, no | worse |
+
+So a bare cine shell, fanless, does the **record** day in a room and
+gets marginal on a warm set at the top of the record estimate. It
+does not do continuous AI. NVIDIA already refuses to guarantee
+T4000 air cooling above **45 °C** ambient. Sun on a black face spends
+that margin before the silicon does.
+
+A rear fin plate is how the record case gets comfortable, and it is
+still not a 70 W cooler. Fins want ≥8 mm spacing or the boundary
+layers merge. Inner faces convect (~7 W/m²K) and barely radiate.
+A 200 × 150 mm plate with 35 mm fins is ~0.26 m² of fin and about
+**0.5 °C/W** on its own, in free air, fins vertical. With the shell,
+record at 35 °C ambient has margin. Getting θ down to the **0.50 °C/W**
+the 70 W mode needs at 35 °C wants on the order of **0.4 m²** of fin
+(roughly 300 × 150 × 40 mm). That is a battery-plate, not a camera
+cheek. And a tripod can aim the fins horizontal, which derates
+natural convection. The plate has to stay a chimney, or the budget
+shrinks.
+
+Thermal mass buys bursts, not a mode. About 0.8 kg of aluminum in
+the head is ~700 J/K. If the shell is already at steady record and
+AI then adds ~40 W it cannot dump, TTP climbs ~3 K/min. From a warm
+record TTP to the 70 °C AI cap is on the order of **10 minutes**.
+Snaps and short looks fit. A continuous look does not. Then the
+existing rule fires: drop AI, keep record.
+
+## What to build
+
+- Head is sealed metal. No vent, no fan, no rotor near the mic.
+- ATS-NVP-3739 is the bench instrument on the TTP. Product cooler
+  is heatpipes into a **rear fin plate** outside the seal.
+- Rogue-T5, 12 V, **2.5G linked and both 10GBASE-T PHYs dark**.
+  The PHY spreader still needs a pad to the same pipes. Those watts
+  do not cross the TTP, and a cool SoC will not save a hot PHY.
+- V-mount buck stays on the battery plate.
+- Steady fanless promise is **record**. AI is a timed burst, then
+  off. Full-time 70 W is a fan on that rear plate, ducted aft, and
+  only after a TTP measurement says the plate cannot do it.
+- FORECR stays the carrier escape. It is larger, it burns a buck
+  the Rogue skips, and its manual still has no power numbers.
 
 Thor PWM + tach exist if we use one fan. Default fan table is an
 example; we must qualify our own cooler in software (ch. 4.2 note 1).

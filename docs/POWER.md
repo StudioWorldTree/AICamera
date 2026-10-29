@@ -2,7 +2,7 @@
 title: "Power"
 kicker: "Watts"
 group: "hardware"
-summary: "T4000 default 70 W, throttle at 90 W. If power sags: drop AI, never record. Two PoE+ sats ≈ 60 W at the PSE. Do not power Thor from the switch."
+summary: "T4000 default 70 W, throttle at 90 W. Steady fanless is record, about 35–40 W in a sealed head. If power or heat sags: drop AI, never record. Two PoE+ sats ≈ 60 W at the PSE. Do not power Thor from the switch."
 ---
 
 # Power and thermal
@@ -22,10 +22,11 @@ If power sags: **drop AI, never record**.
 | SV 3.3 V | none | T5000 only |
 
 TDG-12271-001 v1.3 is in tree: [references/THERMAL.md](references/THERMAL.md).
-T4000 TTP **75 °C**, SoC 90 °C recommended. 70 W still-air handheld
-is not honest; body-as-radiator ~40 W; 70 W AI wants heatpipes to a
-real radiator and at most one slow fan. Prefer radiators to lots of
-fans. Measure before sun-load promises.
+T4000 TTP **75 °C**, SoC 90 °C recommended. Steady fanless is the
+**record** budget (~30 W through the TTP, ~35–40 W in the head) with
+heatpipes to a rear fin plate. The plate is outside the sealed head.
+A microphone in the head means no fan in the head. Continuous 70 W
+AI does not fit a PYXIS-sized shell. Measure before sun-load promises.
 
 ## PoE satellites
 
